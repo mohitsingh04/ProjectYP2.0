@@ -7,6 +7,8 @@ interface FilterTagsProps {
   selectedState: string[];
   selectedCourses: Set<string>;
   selectedLevel: string[];
+  selectedType: string[];
+  setSelectedType: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedCategory: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedCity: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedState: React.Dispatch<React.SetStateAction<string[]>>;
@@ -20,6 +22,8 @@ const FilterTags: React.FC<FilterTagsProps> = ({
   selectedState,
   selectedCourses,
   selectedLevel,
+  selectedType,
+  setSelectedType,
   setSelectedCategory,
   setSelectedCity,
   setSelectedState,
@@ -101,6 +105,19 @@ const FilterTags: React.FC<FilterTagsProps> = ({
             className={closeBtnStyle}
             onClick={() =>
               setSelectedLevel((prev) => prev.filter((level) => level !== item))
+            }
+          >
+            <FaX />
+          </button>
+        </div>
+      ))}
+      {selectedType.map((item, index) => (
+        <div key={index} className={tagStyle}>
+          <span className="text-truncate">{item}</span>
+          <button
+            className={closeBtnStyle}
+            onClick={() =>
+              setSelectedType((prev) => prev.filter((type) => type !== item))
             }
           >
             <FaX />

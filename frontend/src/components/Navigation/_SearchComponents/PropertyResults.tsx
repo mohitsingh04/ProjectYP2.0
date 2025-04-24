@@ -32,8 +32,6 @@ export default function PropertyResults({
             <Link
               href={`/property/${item.uniqueId}/${item?.property_name
                 ?.replace(/\s+/g, "-")
-                ?.toLowerCase()}/${item?.property_city
-                ?.replace(/\s+/g, "-")
                 ?.toLowerCase()}`}
               onClick={handleClose}
             >

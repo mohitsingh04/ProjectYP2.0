@@ -73,7 +73,7 @@ export default function Banner({ setShow }: BannerProps) {
           </div>
           <div className="col-md-5 d-flex align-items-center">
             <div className="girl-slide-img aos" data-aos="fade-up">
-              <img src="/Images/mainBanner.png" alt="Img" />
+              <img src="/images/mainBanner.png" alt="Img" />
             </div>
           </div>
         </div>

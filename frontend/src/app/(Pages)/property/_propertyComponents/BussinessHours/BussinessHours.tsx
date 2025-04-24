@@ -47,6 +47,7 @@ export default function BusinessHours({
   }, [property]);
 
   const formatTime = (time: string) => {
+    if (!time) return "Closed";
     const [hourStr, minuteStr] = time.split(":");
     let hour = parseInt(hourStr, 10);
     const minute = minuteStr || "00";
@@ -83,22 +84,34 @@ export default function BusinessHours({
                       "sunday",
                     ].includes(key)
                   )
-                  .map(([day, time]) => (
-                    <tr key={day}>
-                      <td>{day.charAt(0).toUpperCase() + day.slice(1)}</td>
-                      {time && "open" in time && "close" in time ? (
-                        <>
-                          <td>{formatTime(time.open)}</td>
-                          <td>{formatTime(time.close)}</td>
-                        </>
-                      ) : (
-                        <>
-                          <td>Closed</td>
-                          <td>Closed</td>
-                        </>
-                      )}
-                    </tr>
-                  ))}
+                  .map(([day, time]) => {
+                    const openTime = time?.open;
+                    const closeTime = time?.close;
+
+                    const isClosed =
+                      !time ||
+                      !openTime ||
+                      !closeTime ||
+                      openTime === "" ||
+                      closeTime === "";
+
+                    return (
+                      <tr key={day}>
+                        <td>{day.charAt(0).toUpperCase() + day.slice(1)}</td>
+                        {isClosed ? (
+                          <>
+                            <td>Closed</td>
+                            <td>Closed</td>
+                          </>
+                        ) : (
+                          <>
+                            <td>{formatTime(openTime)}</td>
+                            <td>{formatTime(closeTime)}</td>
+                          </>
+                        )}
+                      </tr>
+                    );
+                  })}
               </tbody>
             </Table>
           </div>

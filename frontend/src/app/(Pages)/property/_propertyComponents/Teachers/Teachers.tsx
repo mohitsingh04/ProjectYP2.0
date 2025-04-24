@@ -11,6 +11,7 @@ interface Teacher {
   designation: string;
   experience?: string;
   profile?: string[];
+  status: string;
 }
 
 interface Property {
@@ -43,13 +44,16 @@ export default function Teachers({ property }: TeachersProps) {
   const getTeachers = async () => {
     try {
       const response = await API.get<Teacher[]>(
-        `/property/teacher/${property?.uniqueId}`
+        `/teacher/property/${property?.uniqueId}`
       );
-      setTeachers(response.data);
+      const data = response.data;
+      setTeachers(data.filter((item) => item.status === "Active"));
     } catch (error) {
       console.error((error as any)?.message);
     }
   };
+
+  console.log(teachers);
 
   useEffect(() => {
     if (property) {

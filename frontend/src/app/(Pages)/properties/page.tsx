@@ -14,6 +14,7 @@ import LevelCard from "./_instructor-components/SidebarFiltes/LevelCard/LevelCar
 import FilterTags from "./_instructor-components/SidebarFiltes/FilterTags/FilterTags";
 import CourseTypeCard from "./_instructor-components/SidebarFiltes/CourseTypeCard/CourseTypeCard";
 import API from "@/service/API/API";
+import CategoryCard from "./_instructor-components/SidebarFiltes/CategoryCard/CategoryCard";
 
 interface Property {
   property_name: string;
@@ -98,31 +99,75 @@ export default function InstructorList() {
 
     setFilteredCourses(filtered);
   }, [selectedLevel, selectedType]);
-
   const getProperty = async () => {
     try {
       const response = await API.get(`/property`);
+      const locationRes = await API.get(`/locations`);
+
       const data = response.data;
-      setProperty(
-        data?.filter((item: { status: string }) => item.status === "Active")
+      const locData = locationRes.data;
+
+      // Filter active properties
+      const activeProperties = data.filter(
+        (item: { status: string }) => item.status === "Active"
       );
-      setFilteredProperty(
-        data.filter((item: { status: string }) => item.status === "Active")
-      );
-      setCategoryData(
-        data.filter((item: { status: string }) => item.status === "Active")
-      );
-      setCityData(
-        data.filter((item: { status: string }) => item.status === "Active")
-      );
-      setStateData(
-        data.filter((item: { status: string }) => item.status === "Active")
-      );
+
+      // Merge with corresponding location
+      const mergedData = activeProperties.map((property: any) => {
+        const location = locData.find(
+          (loc: any) => loc.property_id === property.uniqueId.toString()
+        );
+
+        // Prefix property fields
+        const prefixedProperty = Object.fromEntries(
+          Object.entries(property).map(([key, value]) => [
+            key === "_id"
+              ? "property__id"
+              : key === "createdAt"
+              ? "property_createdAt"
+              : key === "__v"
+              ? "property_version"
+              : key,
+            value,
+          ])
+        );
+
+        // Prefix location fields
+        const prefixedLocation = location
+          ? Object.fromEntries(
+              Object.entries(location).map(([key, value]) => [
+                key === "_id"
+                  ? "location__id"
+                  : key === "createdAt"
+                  ? "location_createdAt"
+                  : key === "updatedAt"
+                  ? "location_updatedAt"
+                  : key === "__v"
+                  ? "location_version"
+                  : key,
+                value,
+              ])
+            )
+          : {};
+
+        return {
+          ...prefixedProperty,
+          ...prefixedLocation,
+        };
+      });
+
+      // Set all states with merged active properties
+      setProperty(mergedData);
+      setFilteredProperty(mergedData);
+      setCategoryData(mergedData);
+      setCityData(mergedData);
+      setStateData(mergedData);
     } catch (error) {
       console.error((error as any)?.message);
     }
   };
 
+  console.log(property);
   useEffect(() => {
     getProperty();
   }, []);
@@ -232,7 +277,7 @@ export default function InstructorList() {
           selectedState.length > 0
             ? selectedState.some(
                 (state) =>
-                  state.toLowerCase() === item.property_state.toLowerCase()
+                  state?.toLowerCase() === item?.property_state?.toLowerCase()
               )
             : true;
 
@@ -240,7 +285,7 @@ export default function InstructorList() {
           selectedCity.length > 0
             ? selectedCity.some(
                 (city) =>
-                  city.toLowerCase() === item.property_city.toLowerCase()
+                  city?.toLowerCase() === item?.property_city?.toLowerCase()
               )
             : true;
 
@@ -301,14 +346,15 @@ export default function InstructorList() {
     if (selectedState.length > 0) {
       filtered = filtered.filter((item: { property_state: string }) =>
         selectedState.some(
-          (state) => state.toLowerCase() === item.property_state.toLowerCase()
+          (state) =>
+            state?.toLowerCase() === item?.property_state?.toLowerCase()
         )
       );
     }
     if (selectedCity.length > 0) {
       filtered = filtered.filter((item: { property_city: string }) =>
         selectedCity.some(
-          (city) => city.toLowerCase() === item.property_city.toLowerCase()
+          (city) => city?.toLowerCase() === item?.property_city?.toLowerCase()
         )
       );
     }
@@ -326,7 +372,7 @@ export default function InstructorList() {
     if (selectedCity.length > 0) {
       filtered = filtered.filter((item: { property_city: string }) =>
         selectedCity.some(
-          (city) => city.toLowerCase() === item.property_city.toLowerCase()
+          (city) => city?.toLowerCase() === item?.property_city?.toLowerCase()
         )
       );
     }
@@ -338,7 +384,8 @@ export default function InstructorList() {
     if (selectedState.length > 0) {
       filtered = filtered.filter((item: { property_state: string }) =>
         selectedState.some(
-          (state) => state.toLowerCase() === item.property_state.toLowerCase()
+          (state) =>
+            state?.toLowerCase() === item?.property_state?.toLowerCase()
         )
       );
     }
@@ -404,19 +451,21 @@ export default function InstructorList() {
                     selectedCourses={selectedCourses}
                     selectedLevel={selectedLevel}
                     selectedState={selectedState}
+                    selectedType={selectedType}
                     setSelectedCategory={setSelectedCategory}
                     setSelectedCity={setSelectedCity}
                     setSelectedLevel={setSelectedLevel}
                     setSelectedCourses={setSelectedCourses}
+                    setSelectedType={setSelectedType}
                     setSelectedState={setSelectedState}
                   />
 
-                  {/* <CategoryCard
+                  <CategoryCard
                     filteredProperty={filteredProperty}
                     property={categoryData}
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
-                  /> */}
+                  />
                   <CourseCard
                     properties={filteredProperty}
                     selectedCourses={selectedCourses}

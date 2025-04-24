@@ -1,0 +1,4 @@
+{
+  "/(Pages)/property/[uniqueId]/[property_name]/page": "app/(Pages)/property/[uniqueId]/[property_name]/page.js",
+  "/(Pages)/properties/page": "app/(Pages)/properties/page.js"
+}

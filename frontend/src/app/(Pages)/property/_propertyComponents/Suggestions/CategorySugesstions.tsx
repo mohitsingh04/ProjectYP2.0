@@ -66,15 +66,13 @@ export default function CategorySuggestions() {
                           href={`/property/${
                             property.uniqueId
                           }/${property.property_name
-                            .replace(/\s+/g, "-")
-                            .toLowerCase()}/${property.property_city
-                            .replace(/\s+/g, "-")
-                            .toLowerCase()}`}
+                            ?.replace(/\s+/g, "-")
+                            ?.toLowerCase()}`}
                         >
                           {property.property_name}
                         </Link>
                         <h6 className="text-muted m-0">
-                          {property.property_city}, {property.property_state}
+                          {property.property_city} {property.property_state}
                         </h6>
                       </div>
                     </div>

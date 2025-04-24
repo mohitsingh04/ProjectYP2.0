@@ -46,6 +46,7 @@ export default function SearchModal({ show, setShow }: SearchModalProps) {
           propertyData.filter((item: Property) => item.status === "Active")
         );
 
+        console.log(properties);
         const courseRes = await API.get("/course");
         const courseData: Course[] = courseRes.data;
 
@@ -85,8 +86,6 @@ export default function SearchModal({ show, setShow }: SearchModalProps) {
         properties.filter(
           (item: Property) =>
             item.property_name.toLowerCase().includes(query.toLowerCase()) ||
-            item.property_city.toLowerCase().includes(query.toLowerCase()) ||
-            item.property_state.toLowerCase().includes(query.toLowerCase()) ||
             item.category.toLowerCase().includes(query.toLowerCase())
         )
       );

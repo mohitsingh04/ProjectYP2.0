@@ -23,30 +23,36 @@ export default function PropertyCard({ property }: { property: Property }) {
     if (!property?.uniqueId) return;
 
     const getCourses = async () => {
-      try {
-        const { data } = await API.get(
-          `/property/property-course/${property.uniqueId}`
-        );
-        setCoursesLength(data.length);
-      } catch (error) {
-        console.error((error as any)?.message);
+      if (property) {
+        try {
+          const { data } = await API.get(
+            `/property/property-course/${property?.uniqueId}`
+          );
+          setCoursesLength(data.length);
+        } catch (error) {
+          console.error((error as any)?.message);
+        }
       }
     };
 
     const getReviews = async () => {
-      try {
-        const { data } = await API.get(`/review/property/${property.uniqueId}`);
+      if (property) {
+        try {
+          const response = await API.get(
+            `/review/property/${property?.uniqueId}`
+          );
+          const data = response?.data;
+          const totalRating = data.reduce(
+            (sum: number, review: { rating?: number }) =>
+              sum + (review.rating || 0),
+            0
+          );
 
-        const totalRating = data.reduce(
-          (sum: number, review: { rating?: number }) =>
-            sum + (review.rating || 0),
-          0
-        );
-
-        setRatingLength(data.length);
-        setRating(totalRating);
-      } catch (error) {
-        console.error((error as any)?.message);
+          setRatingLength(data.length);
+          setRating(totalRating);
+        } catch (error) {
+          console.error(error);
+        }
       }
     };
 
@@ -92,8 +98,6 @@ export default function PropertyCard({ property }: { property: Property }) {
                   href={`/property/${
                     property.uniqueId
                   }/${property?.property_name
-                    ?.replace(/\s+/g, "-")
-                    ?.toLowerCase()}/${property?.property_city
                     ?.replace(/\s+/g, "-")
                     ?.toLowerCase()}`}
                 >
