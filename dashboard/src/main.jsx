@@ -1,16 +1,15 @@
 import { Fragment } from "react";
 import ReactDOM from "react-dom/client";
-// import { Routedata } from "./common/Routedata";
-import "react-loading-skeleton/dist/skeleton.css";
 
 import "./index.scss";
 import "react-phone-input-2/lib/style.css";
 import "react-phone-input-2/lib/bootstrap.css";
+import "react-loading-skeleton/dist/skeleton.css";
 
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Scrolltotop from "./Scrolltotop";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import Lockscreen from "./components/authentication/Lockscreen";
 
 import Underconstruction from "./components/authentication/Underconstruction";
@@ -20,10 +19,6 @@ import Error403 from "./components/authentication/errorpages/Error403";
 import Error404 from "./components/authentication/errorpages/Error404";
 import Error500 from "./components/authentication/errorpages/Error500";
 import Error503 from "./components/authentication/errorpages/Error503";
-
-// import Firebasesignin from "./common/firebase/Firebasesignin";
-// import Firebasesignup from "./common/firebase/Firebasesignup";
-// import Firebasereset from "./common/firebase/Firebasereset";
 
 import App from "./layouts/App";
 import Custompage from "./layouts/Custompage";
@@ -72,13 +67,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <Scrolltotop />
         <Routes>
-          {/* //firebase authentication */}
           <Route path={`/`} element={<Custompage />}>
-            {/* <Route index element={<Firebasesignin />} />
-
-            <Route path={`${import.meta.env.BASE_URL}firebase/firebasesignin`} element={<Firebasesignin />} />
-            <Route path={`${import.meta.env.BASE_URL}firebase/firebasesignup`} element={<Firebasesignup />} />
-            <Route path={`${import.meta.env.BASE_URL}firebase/firebasereset`} element={<Firebasereset />} /> */}
 
             <Route path="*" element={<Error404 />} />
 
@@ -136,9 +125,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="/dashboard/enquiry/archive" element={<ProtectedRoutes><ArchiveEnquiry/></ProtectedRoutes>}/>
             <Route path="/dashboard/enquiry/archive/view/:objectId" element={<ProtectedRoutes><ViewArchive/></ProtectedRoutes>}/>
 
-            {/* {Routedata.map((idx) => (
-              <Route key={idx.id} path={idx.path} element={idx.element} />
-            ))} */}
           </Route>
         </Routes>
       </BrowserRouter>

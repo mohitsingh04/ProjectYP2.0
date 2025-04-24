@@ -16,7 +16,7 @@ export default function EditUser() {
   const navigator = useNavigate();
   const [states, setStates] = useState([]);
   const [city, setCity] = useState([]);
-  const [permission, setPermissions] = useState([]);
+  const [permissionData, setPermissionData] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [status, setStatus] = useState([]);
   const [user, setUser] = useState("");
@@ -24,6 +24,8 @@ export default function EditUser() {
   const [responseLoading, setResponseLoading] = useState(false);
   const [authUser, setAuthUser] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
+  const [permissionsLoading, setPermissionsLoading] = useState(true);
+  const [selectAll, setSelectAll] = useState(false);
 
   const getAuhtUser = async () => {
     setAuthLoading(true);
@@ -54,6 +56,7 @@ export default function EditUser() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setPermissionsLoading(true);
       try {
         const [userRes, statesRes, permissionsRes, statusRes] =
           await Promise.all([
@@ -66,7 +69,11 @@ export default function EditUser() {
         setUser(userRes.data);
         setSelectedState(userRes.data.state);
         setStates(statesRes.data);
-        setPermissions(permissionsRes.data);
+        const formattedPermissions = permissionsRes.data.map((perm) => ({
+          label: perm.name,
+          value: perm.name,
+        }));
+        setPermissionData(formattedPermissions);
         setStatus(statusRes.data.filter((item) => item.name === "User"));
       } catch (error) {
         console.error(
@@ -76,11 +83,12 @@ export default function EditUser() {
         );
       } finally {
         setLoading(false);
+        setPermissionsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [objectId]);
 
   useEffect(() => {
     if (selectedState) {
@@ -143,6 +151,34 @@ export default function EditUser() {
       }
     },
   });
+  useEffect(() => {
+    // Sync selectAll checkbox with formik values
+    if (permissionData.length > 0) {
+      const allSelected = permissionData.every((perm) =>
+        formik.values.permission.some(
+          (selected) => selected.value === perm.value
+        )
+      );
+      setSelectAll(allSelected);
+    }
+  }, [formik.values.permission, permissionData]);
+
+  const handleSelectAllChange = (e) => {
+    const checked = e.target.checked;
+    setSelectAll(checked);
+    if (checked) {
+      formik.setFieldValue("permission", permissionData);
+    } else {
+      formik.setFieldValue("permission", []);
+    }
+  };
+
+  useEffect(() => {
+    if (formik.values.role === "Super Admin" && permissionData.length > 0) {
+      formik.setFieldValue("permission", permissionData);
+      setSelectAll(true);
+    }
+  }, [formik.values.role, permissionData]);
 
   return (
     <div>
@@ -339,25 +375,38 @@ export default function EditUser() {
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>Permissions</Form.Label>
-                    <Dropdown
-                      options={permission.map((group) => ({
-                        label: group.name,
-                        value: group.name,
-                      }))}
-                      multi
-                      placeholder="Choose Permissions"
-                      values={formik.values.permission}
-                      keepSelectedInList={false}
-                      onChange={(value) =>
-                        formik.setFieldValue("permission", value)
-                      }
-                    />
+                    {permissionsLoading ? (
+                      <div>Loading permissions...</div>
+                    ) : permissionData.length === 0 ? (
+                      <div>No permissions available</div>
+                    ) : (
+                      <>
+                        <Dropdown
+                          options={permissionData}
+                          multi
+                          placeholder="Choose Permissions"
+                          values={formik.values.permission}
+                          onChange={(value) =>
+                            formik.setFieldValue("permission", value)
+                          }
+                          labelField="label"
+                          valueField="value"
+                        />
+                        <Form.Check
+                          type="checkbox"
+                          label="Select All Permissions"
+                          className="mt-2"
+                          checked={selectAll}
+                          onChange={handleSelectAllChange}
+                        />
+                      </>
+                    )}
                     {formik.errors.permission && (
                       <small className="text-danger">
                         {formik.errors.permission}
                       </small>
                     )}
-                  </Form.Group>{" "}
+                  </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label htmlFor="status">Status</Form.Label>
                     <Form.Select
@@ -382,7 +431,7 @@ export default function EditUser() {
                   <button
                     type="submit"
                     className="btn btn-primary"
-                    disabled={responseLoading}
+                    disabled={responseLoading || permissionsLoading}
                   >
                     <i className="fe fe-user-check me-1"></i>
                     {responseLoading ? "Updating..." : "Update"}

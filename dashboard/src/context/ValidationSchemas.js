@@ -205,16 +205,16 @@ export const addressValidation = Yup.object({ property_address: address });
 export const pincodeValidation = Yup.object({ property_pincode: pincode });
 export const accomodationValidation = Yup.object({ accomodation_name: name });
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 export const couponValidation = Yup.object({
   coupon_code: Yup.string()
     .required("Required")
-    .matches(
-      /^[A-Z0-9]{10}$/,
-      "Must be 10 characters, uppercase letters and numbers only"
-    ),
+    .matches(/^[A-Z0-9]+$/, "Must be uppercase letters and numbers only"),
   start_from: Yup.date()
     .required("Required")
-    .min(new Date(), "Start date must be today or in the future"),
+    .min(today, "Start date must be today or in the future"),
   valid_upto: Yup.date()
     .required("Required")
     .min(Yup.ref("start_from"), "Must be after start date"),
@@ -222,5 +222,12 @@ export const couponValidation = Yup.object({
     .required("Required")
     .min(1, "Minimum 1%")
     .max(100, "Maximum 100%"),
-  description: Yup.string().required("Required"),
+});
+
+export const locationValidation = Yup.object({
+  property_address: address,
+  property_pincode: pincode,
+  property_country: country,
+  property_state: state,
+  property_city: city,
 });

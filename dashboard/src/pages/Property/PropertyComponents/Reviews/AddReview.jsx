@@ -37,7 +37,9 @@ export default function AddReview({ property, getReview }) {
         Swal.fire({
           icon: "success",
           title: "Review Submitted",
-          text: "Your review has been submitted successfully!",
+          text:
+            response.data.message ||
+            "Your review has been submitted successfully!",
         });
         formik.resetForm();
         getReview();
@@ -45,7 +47,9 @@ export default function AddReview({ property, getReview }) {
         Swal.fire({
           icon: "error",
           title: "Submission Failed",
-          text: "Something went wrong! Please try again later.",
+          text:
+            error.response.data.error ||
+            "Something went wrong! Please try again later.",
         });
       }
     },

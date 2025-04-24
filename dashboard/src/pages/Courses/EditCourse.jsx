@@ -115,6 +115,7 @@ export default function EditCourse() {
     formData.append("course_type", values.course_type);
     formData.append("course_level", values.course_level);
     formData.append("certification_type", values.certification_type);
+    formData.append("status", values.status);
     formData.append("description", content);
     formData.append(
       "duration",

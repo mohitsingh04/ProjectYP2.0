@@ -6,6 +6,7 @@ import { API } from "../../../../../context/API";
 import { countryValidation } from "../../../../../context/ValidationSchemas";
 
 export default function PropertyCountry({
+  countries,
   property,
   getProperty,
   location,
@@ -13,25 +14,6 @@ export default function PropertyCountry({
 }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [countries, setCountries] = useState([]);
-
-  const getCountries = async () => {
-    try {
-      const response = await API.get(`/countries`);
-      const data = response.data;
-      setCountries(data);
-    } catch (error) {
-      console.error(
-        error.response.data.error ||
-          error.response.data.message ||
-          error.message
-      );
-    }
-  };
-
-  useEffect(() => {
-    getCountries();
-  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -104,7 +86,7 @@ export default function PropertyCountry({
                 }
               >
                 <option value="">Select Country</option>
-                {countries.map((item) => (
+                {countries?.map((item) => (
                   <option key={item._id} value={item.country_name}>
                     {item.country_name}
                   </option>

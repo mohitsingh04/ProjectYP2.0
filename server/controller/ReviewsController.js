@@ -25,7 +25,9 @@ export const addReview = async (req, res) => {
       return res.status(400).json({ error: "All fields are required!" });
     }
 
-    const existPhoneReview = await Review.findOne({ phone_number });
+    const existPhoneReview = await Review.findOne({
+      phone_number: `+${phone_number}`,
+    });
     if (existPhoneReview) {
       return res
         .status(400)
@@ -114,16 +116,40 @@ export const getReviewByPropertyId = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 export const updateReview = async (req, res) => {
   try {
     const { uniqueId } = req.params;
-    const { name, gender, phone_number, rating, review } = req.body;
+    const { name, gender, phone_number, email, rating, review } = req.body;
 
     if (!uniqueId || !review) {
       return res
         .status(400)
         .json({ error: "Unique ID and review are required." });
+    }
+
+    const currentReview = await Review.findOne({ uniqueId });
+    if (!currentReview) {
+      return res.status(404).json({ error: "Review not found." });
+    }
+
+    if (phone_number) {
+      const phoneExists = await Review.findOne({
+        phone_number: `+${phone_number}`,
+        _id: { $ne: currentReview._id },
+      });
+      if (phoneExists) {
+        return res.status(400).json({ error: "Phone number already in use." });
+      }
+    }
+
+    if (email) {
+      const emailExists = await Review.findOne({
+        email,
+        _id: { $ne: currentReview._id },
+      });
+      if (emailExists) {
+        return res.status(400).json({ error: "Email already in use." });
+      }
     }
 
     const updateFields = { name, gender, rating, review };
@@ -132,21 +158,19 @@ export const updateReview = async (req, res) => {
       updateFields.phone_number = `+${phone_number}`;
     }
 
+    if (email) {
+      updateFields.email = email;
+    }
+
     const updatedReview = await Review.findOneAndUpdate(
       { uniqueId },
       { $set: updateFields },
       { new: true, runValidators: true }
     );
 
-    if (!updatedReview) {
-      return res.status(404).json({ error: "Review not found." });
-    }
-
-    return res
-      .status(200)
-      .json({ message: "Review updated successfully.", review: updatedReview });
+    return res.status(200).json({ message: "Review updated successfully." });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(500).json({ error: "Internal Server Error." });
   }
 };
@@ -163,7 +187,7 @@ export const deleteReview = async (req, res) => {
 
     return res.status(200).json({ message: "Review deleted successfully." });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(500).json({ error: "Internal Server Error." });
   }
 };

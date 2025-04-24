@@ -6,40 +6,14 @@ import { API } from "../../../../../context/API";
 import { stateValidation } from "../../../../../context/ValidationSchemas";
 
 export default function PropertyState({
+  states,
   property,
   getProperty,
   location,
-  selectedCountry,
   setSelectedState,
 }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [allStates, setAllStates] = useState([]);
-  const [filteredStates, setFilteredStates] = useState([]);
-
-  const getStates = async () => {
-    try {
-      const response = await API.get(`/states`);
-      setAllStates(response.data);
-    } catch (error) {
-      console.error(
-        error.response.data.error ||
-          error.response.data.message ||
-          error.message
-      );
-    }
-  };
-
-  useEffect(() => {
-    getStates();
-  }, []);
-
-  useEffect(() => {
-    const newFiltered = allStates.filter(
-      (item) => item.country_name === selectedCountry
-    );
-    setFilteredStates(newFiltered);
-  }, [selectedCountry, allStates]);
 
   const formik = useFormik({
     initialValues: {
@@ -116,11 +90,9 @@ export default function PropertyState({
                 isInvalid={formik.errors.property_state}
               >
                 <option value="">
-                  {filteredStates.length > 0
-                    ? "Select State"
-                    : "No states available"}
+                  {states?.length > 0 ? "Select State" : "No states available"}
                 </option>
-                {filteredStates.map((item) => (
+                {states?.map((item) => (
                   <option key={item._id} value={item.name}>
                     {item.name}
                   </option>

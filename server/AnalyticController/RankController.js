@@ -140,8 +140,11 @@ export const AssignRankToAllProperties = async (req, res) => {
 
       await Rank.updateOne({ property_id }, { $set: updateFields });
     }
+
+    res.status(200).json({ message: "Ranks assigned successfully" });
   } catch (error) {
     console.error("Error assigning ranks:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -162,5 +165,18 @@ export const getRankByPropertyId = async (req, res) => {
     return res.status(200).json(propertyRank);
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getAllRanks = async (req, res) => {
+  try {
+    const ranks = await Rank.find().sort({ rank: 1 });
+    if (!ranks) {
+      return res.status(404).json({ error: "Ranks Not Found" });
+    }
+
+    return res.status(200).json(ranks);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };

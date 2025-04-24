@@ -147,6 +147,7 @@ import {
   softDeleteEnquiry,
 } from "../controller/EnqiryControllers.js";
 import {
+  addLocation,
   getAllLocations,
   getLocation,
   UpdateLocation,
@@ -170,6 +171,7 @@ import {
   getAccomodationByPropertyId,
   removeAccomodationImages,
 } from "../controller/AccomodationController.js";
+import ExpireVerification from "../helper/ExpireVerification/ExpireVerification.js";
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -187,6 +189,7 @@ router.get("/profile", profile);
 router.get("/logout", logout);
 router.post("/change-password", changePassword);
 router.get("/get-token", getToken);
+router.get("/verify-email/check/expiry", ExpireVerification);
 
 //?Extra Routes
 router.get("/permissions", getPermissions);
@@ -282,6 +285,7 @@ router.get("/property/:property_slug", getPropertyBySlug);
 router.patch("/property/location/:property_id", UpdateLocation);
 router.get("/property/location/:property_id", getLocation);
 router.get("/locations", getAllLocations);
+router.post("/location", addLocation);
 
 //? Teacher Route
 const teacherProfile = upload.fields([{ name: "profile", maxCount: 1 }]);

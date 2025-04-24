@@ -15,6 +15,30 @@ const App = () => {
   const [lateLoad, setlateLoad] = useState(false);
   const [authUser, setAuthUser] = useState("");
 
+  const getExpriy = useCallback(async () => {
+    try {
+      const response = await API.get(`/verify-email/check/expiry`);
+      console.log(response.data.message);
+    } catch (error) {
+      console.log(error.response.data.error);
+    }
+  }, []);
+  const getRank = useCallback(async () => {
+    try {
+      const response = await API.get(`/analytics/rank/all`);
+      console.log(response.data.message);
+    } catch (error) {
+      console.log(error.response.data.error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getRank();
+  }, [getRank]);
+  useEffect(() => {
+    getExpriy();
+  }, [getExpriy]);
+
   const getAuthUser = useCallback(async () => {
     try {
       const response = await API.get(`/profile`);

@@ -13,7 +13,7 @@ const Footer = () => {
             by
             <Link to="#">
               <span className="fw-semibold mx-1 text-primary text-decoration-underline">
-                Beown Tech
+                Yogprerna
               </span>
             </Link>
             All rights reserved

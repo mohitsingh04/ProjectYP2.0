@@ -98,9 +98,7 @@ export const addProperty = async (req, res) => {
       property_slug: slug,
     });
 
-    const location = new Location({ property_id: uniqueId });
     await newProperty.save();
-    await location.save();
     await addPropertyScore({ property_id: uniqueId, property_score: score });
 
     return res.status(200).json({ message: "Property added successfully." });
@@ -148,7 +146,6 @@ export const getPropertyBySlug = async (req, res) => {
     return res.send({ error: "Internal Server Error." });
   }
 };
-
 export const updateProperty = async (req, res) => {
   try {
     const objectId = req.params.objectId;
@@ -169,7 +166,43 @@ export const updateProperty = async (req, res) => {
     } = req.body;
 
     const existProperty = await Property.findById(objectId);
+    if (!existProperty) {
+      return res.status(404).json({ error: "Property not found." });
+    }
 
+    const formattedAltMobile = property_alt_mobile_no
+      ? `+${property_alt_mobile_no}`
+      : null;
+
+    // ✅ Validation: Alt phone number must be unique and not match any existing phone number
+    if (formattedAltMobile) {
+      const phoneConflict = await Property.findOne({
+        _id: { $ne: objectId },
+        $or: [
+          { property_mobile_no: formattedAltMobile },
+          { property_alt_mobile_no: formattedAltMobile },
+        ],
+      });
+
+      if (phoneConflict) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Alternate mobile number already exists in another property.",
+          });
+      }
+
+      // ✅ Validation: Alt phone must not match current property's own primary phone
+      if (existProperty.property_mobile_no === formattedAltMobile) {
+        return res.status(400).json({
+          error:
+            "Alternate mobile number cannot be the same as the property's primary mobile number.",
+        });
+      }
+    }
+
+    // 🖼️ Description Image Replacement
     let updatedDescription = property_description;
     if (property_description) {
       updatedDescription = await downloadImageAndReplaceSrc(
@@ -177,6 +210,8 @@ export const updateProperty = async (req, res) => {
         existProperty?.uniqueId
       );
     }
+
+    // 🎯 Score calculation
     if (!existProperty?.property_alt_mobile_no && property_alt_mobile_no)
       score += 1;
     if (!existProperty?.property_website && property_website) score += 1;
@@ -186,6 +221,7 @@ export const updateProperty = async (req, res) => {
     if (!existProperty?.est_year && est_year) score += 1;
     if (!existProperty?.property_type && property_type) score += 1;
 
+    // 🧱 Prepare update fields
     const updatedFields = {
       property_description: updatedDescription,
       est_year,
@@ -195,10 +231,11 @@ export const updateProperty = async (req, res) => {
       property_website,
     };
 
-    if (property_alt_mobile_no) {
-      updatedFields.property_alt_mobile_no = `+${property_alt_mobile_no}`;
+    if (formattedAltMobile) {
+      updatedFields.property_alt_mobile_no = formattedAltMobile;
     }
 
+    // 🧹 Remove undefined/null fields
     Object.keys(updatedFields).forEach((key) => {
       if (updatedFields[key] === undefined || updatedFields[key] === null) {
         delete updatedFields[key];
@@ -209,16 +246,14 @@ export const updateProperty = async (req, res) => {
       return res.status(400).json({ error: "No valid fields to update." });
     }
 
+    // 📝 Update property
     const updatedProperty = await Property.findOneAndUpdate(
       { _id: objectId },
       { $set: updatedFields },
       { new: true }
     );
 
-    if (!updatedProperty) {
-      return res.status(404).json({ error: "Property not found." });
-    }
-
+    // 📊 Update property score
     await addPropertyScore({
       property_id: existProperty?.uniqueId,
       property_score: score,

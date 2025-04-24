@@ -26,7 +26,7 @@ export const sendEmailVerification = async ({ uniqueId, email }) => {
       {
         $set: {
           verifyToken: token,
-          verifyTokenExpiry: new Date(Date.now() + 3600000),
+          verifyTokenExpiry: new Date(Date.now() + 6000),
         },
       },
       { new: true }

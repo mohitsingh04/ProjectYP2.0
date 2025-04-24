@@ -214,28 +214,35 @@ export default function ViewCourse() {
               <Card.Footer>
                 <div className="mt-4">
                   <h5>Course Description</h5>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: showFullDescription
-                        ? course.description
-                        : course.description
-                            ?.split(" ")
-                            ?.slice(0, 300)
-                            .join(" ") +
-                            course.description.split(" ").length >
-                            300 && "...",
-                    }}
-                  />
-                  {course.description.split(" ").length > 300 && (
-                    <Button
-                      className="btn btn-secondary"
-                      onClick={() =>
-                        setShowFullDescription(!showFullDescription)
-                      }
-                    >
-                      {showFullDescription ? "Show Less" : "Show More"}
-                    </Button>
-                  )}
+
+                  {(() => {
+                    const words = course.description.split(" ");
+                    const shortDescription = words.slice(0, 300).join(" ");
+                    const isLong = words.length > 300;
+
+                    return (
+                      <>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: showFullDescription
+                              ? course.description
+                              : shortDescription + (isLong ? "..." : ""),
+                          }}
+                        />
+
+                        {isLong && (
+                          <Button
+                            className="btn btn-secondary mt-2"
+                            onClick={() =>
+                              setShowFullDescription(!showFullDescription)
+                            }
+                          >
+                            {showFullDescription ? "Show Less" : "Show More"}
+                          </Button>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </Card.Footer>
             )}

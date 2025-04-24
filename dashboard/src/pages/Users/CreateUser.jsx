@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import Dropdown from "react-dropdown-select";
 import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/bootstrap.css";
 import Swal from "sweetalert2";
 import RoleData from "../../JSONS/Role.json";
 import { API } from "../../context/API";
@@ -12,10 +11,12 @@ import { CreateUserValidation } from "../../context/ValidationSchemas";
 
 export default function CreateUser() {
   const navigator = useNavigate();
-  const [permissions, setPermissions] = useState([]);
+  const [permissionData, setPermissionData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [authUser, setAuthUser] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
+  const [permissionsLoading, setPermissionsLoading] = useState(true);
+  const [selectAll, setSelectAll] = useState(false);
 
   const getAuhtUser = async () => {
     setAuthLoading(true);
@@ -45,16 +46,34 @@ export default function CreateUser() {
 
   useEffect(() => {
     const fetchPermissions = async () => {
+      setPermissionsLoading(true);
       try {
         const response = await API.get("/permissions");
-        setPermissions(response.data);
+        const data = response.data;
+        const formattedPermissions = data.map((perm) => ({
+          label: perm.name,
+          value: perm.name,
+        }));
+        setPermissionData(formattedPermissions);
       } catch (error) {
         console.error("Error fetching permissions:", error);
+      } finally {
+        setPermissionsLoading(false);
       }
     };
 
     fetchPermissions();
   }, []);
+
+  const handleSelectAllChange = (e) => {
+    const checked = e.target.checked;
+    setSelectAll(checked);
+    if (checked) {
+      formik.setFieldValue("permission", permissionData);
+    } else {
+      formik.setFieldValue("permission", []);
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -89,6 +108,24 @@ export default function CreateUser() {
       }
     },
   });
+
+  useEffect(() => {
+    if (permissionData.length > 0) {
+      const allSelected = permissionData.every((perm) =>
+        formik.values.permission.some(
+          (selected) => selected.value === perm.value
+        )
+      );
+      setSelectAll(allSelected);
+    }
+  }, [formik.values.permission, permissionData]);
+
+  useEffect(() => {
+    if (formik.values.role === "Super Admin" && permissionData.length > 0) {
+      formik.setFieldValue("permission", permissionData);
+      setSelectAll(true);
+    }
+  }, [formik.values.role, permissionData]);
 
   return (
     <div>
@@ -206,33 +243,44 @@ export default function CreateUser() {
 
                 <Form.Group className="mb-3">
                   <Form.Label>Permissions</Form.Label>
-                  <Dropdown
-                    options={permissions.map((group) => ({
-                      label: group.name,
-                      value: group.name,
-                    }))}
-                    multi
-                    placeholder="Select permissions"
-                    values={formik.values.permission.map((perm) => ({
-                      label: perm,
-                      value: perm,
-                    }))}
-                    onChange={(values) =>
-                      formik.setFieldValue(
-                        "permission",
-                        values.map((v) => v.value)
-                      )
-                    }
-                    keepSelectedInList={false}
-                  />
-                  {formik.touched.permission && formik.errors.permission && (
+                  {permissionsLoading ? (
+                    <div>Loading permissions...</div>
+                  ) : permissionData.length === 0 ? (
+                    <div>No permissions available</div>
+                  ) : (
+                    <>
+                      <Dropdown
+                        options={permissionData}
+                        multi={true}
+                        values={formik.values.permission}
+                        onChange={(values) => {
+                          formik.setFieldValue("permission", values);
+                        }}
+                        placeholder="Choose Permissions"
+                        labelField="label"
+                        valueField="value"
+                      />
+                      <Form.Check
+                        type="checkbox"
+                        label="Select All Permissions"
+                        className="mt-2"
+                        checked={selectAll}
+                        onChange={handleSelectAllChange}
+                      />
+                    </>
+                  )}
+                  {formik.errors.permission && (
                     <div className="text-danger">
                       {formik.errors.permission}
                     </div>
                   )}
                 </Form.Group>
 
-                <Button variant="primary" type="submit" disabled={loading}>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={loading || permissionsLoading}
+                >
                   <i className="fe fe-send me-1"></i>{" "}
                   {loading ? "Adding User..." : "Submit"}
                 </Button>

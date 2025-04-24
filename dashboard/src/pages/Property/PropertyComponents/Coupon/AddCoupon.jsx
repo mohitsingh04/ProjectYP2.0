@@ -94,11 +94,15 @@ export default function AddCoupon({ property, authUser, getCoupons }) {
                   <Form.Control
                     type="text"
                     name="coupon_code"
-                    placeholder="Enter 10-char code"
+                    placeholder="Enter code or Generate Code"
                     value={formik.values.coupon_code}
-                    onChange={formik.handleChange}
+                    onChange={(e) =>
+                      formik.setFieldValue(
+                        "coupon_code",
+                        e.target.value.toUpperCase()
+                      )
+                    }
                     onBlur={formik.handleBlur}
-                    maxLength={10}
                     isInvalid={formik.errors.coupon_code}
                   />
                   <Button
@@ -162,7 +166,7 @@ export default function AddCoupon({ property, authUser, getCoupons }) {
                 <Form.Control
                   type="number"
                   name="discount"
-                  placeholder="Enter discount percentage"
+                  placeholder="Enter discount percentage (example: 10)"
                   value={formik.values.discount}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}

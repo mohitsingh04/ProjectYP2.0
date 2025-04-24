@@ -13,12 +13,17 @@ import {
   getTrafficByPropertyId,
 } from "../AnalyticController/TrafficController.js";
 import { getEnquiryCountByPropertyId } from "../AnalyticController/EnquiryCountController.js";
-import { getRankByPropertyId } from "../AnalyticController/RankController.js";
+import {
+  AssignRankToAllProperties,
+  getAllRanks,
+  getRankByPropertyId,
+} from "../AnalyticController/RankController.js";
 
 const analyticRouter = express.Router();
 analyticRouter.use(bodyParser.json());
 analyticRouter.use(bodyParser.urlencoded({ extended: true }));
 
+analyticRouter.get("/analytics/rank/all", AssignRankToAllProperties);
 //? Property Score
 analyticRouter.post("/property/score/add", addPropertyScore);
 analyticRouter.get("/property/score/:property_id", getPropertyScoreById);
@@ -38,5 +43,6 @@ analyticRouter.get(
 
 //? Ranks
 analyticRouter.get(`/property/rank/:property_id`, getRankByPropertyId);
+analyticRouter.get(`/ranks`, getAllRanks);
 
 export default analyticRouter;

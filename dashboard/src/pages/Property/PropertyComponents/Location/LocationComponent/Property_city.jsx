@@ -6,39 +6,14 @@ import { API } from "../../../../../context/API";
 import { cityValidation } from "../../../../../context/ValidationSchemas";
 
 export default function PropertyCity({
-  property, // For uniqueId
-  getProperty, // To refresh after update
-  location, // Contains property_city and state_name
-  selectedState, // Can also use location.state_name if consistent
+  cities,
+  property,
+  getProperty,
+  location,
 }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingCities, setLoadingCities] = useState(false);
-  const [allCities, setAllCities] = useState([]);
-  const [filteredCities, setFilteredCities] = useState([]);
-
-  const getCities = async () => {
-    setLoadingCities(true);
-    try {
-      const response = await API.get(`/cities`);
-      setAllCities(response.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingCities(false);
-    }
-  };
-
-  useEffect(() => {
-    getCities();
-  }, []);
-
-  useEffect(() => {
-    const newFiltered = allCities.filter(
-      (item) => item.state_name === selectedState
-    );
-    setFilteredCities(newFiltered);
-  }, [selectedState, allCities]);
 
   const formik = useFormik({
     initialValues: {
@@ -109,7 +84,7 @@ export default function PropertyCity({
                 <option value="">Select City</option>
 
                 {!loadingCities &&
-                  filteredCities.map((item) => (
+                  cities?.map((item) => (
                     <option key={item._id} value={item.name}>
                       {item.name}
                     </option>

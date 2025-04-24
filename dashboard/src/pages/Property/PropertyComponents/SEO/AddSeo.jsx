@@ -59,7 +59,14 @@ export default function AddSeo({ property, getSeo }) {
             <h5 className="m-0">Add SEO</h5>
           </Card.Header>
           <Card.Body>
-            <Form onSubmit={formik.handleSubmit}>
+            <Form
+              onSubmit={formik.handleSubmit}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                }
+              }}
+            >
               <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>

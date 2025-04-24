@@ -18,8 +18,7 @@ export const CreateCoupon = async (req, res) => {
       !coupon_code ||
       !start_from ||
       !valid_upto ||
-      !discount ||
-      !description
+      !discount
     ) {
       return res.status(400).json({ error: "All fields are required" });
     }
@@ -108,8 +107,7 @@ export const UpdateCoupon = async (req, res) => {
       !coupon_code ||
       !start_from ||
       !valid_upto ||
-      !discount ||
-      !description
+      !discount
     ) {
       return res.status(400).json({ error: "All fields are required" });
     }
