@@ -24,8 +24,8 @@ export default function CourseSearchCard({ course }: CourseSearchCardProps) {
           <img
             src={
               course?.image?.[0]
-                ? `${process.env.NEXT_PUBLIC_MEDIA_URL}/${course.image[0]}`
-                : "/Images/CourseBanner.jpg"
+                ? `${process.env.NEXT_PUBLIC_MEDIA_URL}/course/${course.image[0]}`
+                : "/Images/CourseBanner.webp"
             }
             alt={course?.course_name || "Course Image"}
             style={{ aspectRatio: "1/1", objectFit: "cover" }}

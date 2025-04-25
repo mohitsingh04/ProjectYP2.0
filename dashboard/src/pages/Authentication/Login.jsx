@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import ALLImages from "../../common/Imagesdata";
 import { API } from "../../context/API";
 import { LoginValidation } from "../../context/ValidationSchemas";
+import GoogleLoginButton from "./GoogleLoginButton";
 
 const Login = () => {
   const navigator = useNavigate();
@@ -152,18 +153,7 @@ const Login = () => {
           {/* Social Login */}
           <div className="card-footer border-top">
             <div className="d-flex justify-content-center my-3">
-              <Link to="#" className="social-login text-center">
-                {" "}
-                <i className="ri-google-fill"></i>{" "}
-              </Link>
-              <Link to="#" className="social-login text-center mx-4">
-                {" "}
-                <i className="ri-facebook-fill"></i>{" "}
-              </Link>
-              <Link to="#" className="social-login text-center">
-                {" "}
-                <i className="ri-twitter-x-fill"></i>{" "}
-              </Link>
+              <GoogleLoginButton />
             </div>
           </div>
         </Card>

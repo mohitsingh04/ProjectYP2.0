@@ -119,8 +119,6 @@ export default function HomeProperties() {
                                   item.uniqueId
                                 }/${item?.property_name
                                   ?.replace(/\s+/g, "-")
-                                  ?.toLowerCase()}/${item?.property_city
-                                  ?.replace(/\s+/g, "-")
                                   ?.toLowerCase()}`}
                               >
                                 {item?.property_name}

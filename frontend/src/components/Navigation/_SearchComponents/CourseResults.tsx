@@ -39,8 +39,8 @@ export default function CourseResults({
                   <img
                     src={
                       item.image?.[0]
-                        ? `${process.env.NEXT_PUBLIC_MEDIA_URL}/${item.image[0]}`
-                        : "/img/course/course-01.jpg"
+                        ? `${process.env.NEXT_PUBLIC_MEDIA_URL}/course/${item?.image?.[0]}`
+                        : "/Images/CourseBanner.webp"
                     }
                     className="me-2 rounded"
                     width={"50px"}

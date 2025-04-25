@@ -1,4 +1,7 @@
 {
-  "/(Pages)/property/[uniqueId]/[property_name]/page": "app/(Pages)/property/[uniqueId]/[property_name]/page.js",
-  "/(Pages)/properties/page": "app/(Pages)/properties/page.js"
+  "/(Pages)/course/[uniqueId]/[course_name]/page": "app/(Pages)/course/[uniqueId]/[course_name]/page.js",
+  "/page": "app/page.js",
+  "/(Pages)/search/[search]/page": "app/(Pages)/search/[search]/page.js",
+  "/(Pages)/properties/page": "app/(Pages)/properties/page.js",
+  "/(Pages)/property/[uniqueId]/[property_name]/page": "app/(Pages)/property/[uniqueId]/[property_name]/page.js"
 }

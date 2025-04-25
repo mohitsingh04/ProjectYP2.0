@@ -8,6 +8,7 @@ import "react-phone-input-2/lib/style.css";
 import { API } from "../../context/API";
 import Swal from "sweetalert2";
 import { RegisterValidation } from "../../context/ValidationSchemas";
+import GoogleLoginButton from "./GoogleLoginButton";
 
 const Register = () => {
   const [registering, setRegistering] = useState(false);
@@ -71,7 +72,11 @@ const Register = () => {
     <Fragment>
       <div className="col-login mx-auto mt-7">
         <div className="text-center">
-          <img src={ALLImages("ypLogoBig")} className="header-brand-img w-25" alt="" />
+          <img
+            src={ALLImages("ypLogoBig")}
+            className="header-brand-img w-25"
+            alt=""
+          />
         </div>
       </div>
       <div className="container-login100">
@@ -224,15 +229,7 @@ const Register = () => {
           </Card.Body>
           <Card.Footer>
             <div className="d-flex justify-content-center my-3">
-              <Link to="#" className="social-login text-center">
-                <i className="ri-google-fill"></i>
-              </Link>
-              <Link to="#" className="social-login text-center mx-4">
-                <i className="ri-facebook-fill"></i>
-              </Link>
-              <Link to="#" className="social-login text-center">
-                <i className="ri-twitter-x-fill"></i>
-              </Link>
+              <GoogleLoginButton />
             </div>
           </Card.Footer>
         </Card>

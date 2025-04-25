@@ -10,5 +10,17 @@
     "files": [
       "static/chunks/_app-pages-browser_node_modules_react-owl-carousel3_lib_OwlCarousel_js.js"
     ]
+  },
+  "app\\_HomePageComponents\\HomeProperties.tsx -> react-owl-carousel3": {
+    "id": "app\\_HomePageComponents\\HomeProperties.tsx -> react-owl-carousel3",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_react-owl-carousel3_lib_OwlCarousel_js.js"
+    ]
+  },
+  "app\\_HomePageComponents\\LatestBlog.tsx -> react-owl-carousel3": {
+    "id": "app\\_HomePageComponents\\LatestBlog.tsx -> react-owl-carousel3",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_react-owl-carousel3_lib_OwlCarousel_js.js"
+    ]
   }
 }

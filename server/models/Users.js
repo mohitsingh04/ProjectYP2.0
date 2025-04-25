@@ -74,6 +74,10 @@ const UserSchema = new mongoose.Schema({
   permissions: {
     type: Array,
   },
+  isGoogleLogin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const User = regularDatabase.model("User", UserSchema);

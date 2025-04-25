@@ -13,14 +13,17 @@ import PropertyCourse from "../models/PropertyCourse.js";
 import Review from "../models/Reviews.js";
 import Seo from "../models/Seo.js";
 import Teachers from "../models/Teachers.js";
-import * as fs from "node:fs";
-import path from "node:path";
+import fs from "fs/promises";
 import Rank from "../AnalyticModel/Rank.js";
 import Traffic from "../AnalyticModel/Traffic.js";
 import EnquiryCount from "../AnalyticModel/EnquiryCount.js";
 import PropertyScore from "../AnalyticModel/PropertyScore.js";
 import SeoScore from "../AnalyticModel/SeoScore.js";
+import path from "path";
+import { fileURLToPath } from "url";
 import { downloadImageAndReplaceSrc } from "../helper/FolderCleaners/EditorImagesController.js";
+import Accomodation from "../models/Accomodation.js";
+import Coupon from "../models/Coupon.js";
 
 export const addProperty = async (req, res) => {
   try {
@@ -185,12 +188,9 @@ export const updateProperty = async (req, res) => {
       });
 
       if (phoneConflict) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Alternate mobile number already exists in another property.",
-          });
+        return res.status(400).json({
+          error: "Alternate mobile number already exists in another property.",
+        });
       }
 
       // ✅ Validation: Alt phone must not match current property's own primary phone
@@ -269,6 +269,9 @@ export const updateProperty = async (req, res) => {
   }
 };
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export const deleteProperty = async (req, res) => {
   try {
     const objectId = req.params.objectId;
@@ -300,6 +303,8 @@ export const deleteProperty = async (req, res) => {
       EnquiryCount.deleteMany({ property_id: uniqueId }),
       PropertyScore.deleteMany({ property_id: uniqueId }),
       SeoScore.deleteMany({ property_id: uniqueId }),
+      Accomodation.deleteMany({ property_id: uniqueId }),
+      Coupon.deleteMany({ property_id: uniqueId }),
     ]);
 
     try {

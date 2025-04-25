@@ -60,9 +60,11 @@ import PropertyList from "./pages/Property/PropertyList";
 import AccessDenied from "./pages/AccessDenied/AccessDenied";
 import ViewProperty from "./pages/Property/ViewProperty";
 import Analytics from "./pages/Analytics/Analytics";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
+ <GoogleOAuthProvider clientId={import.meta.env.VITE_OAUTH}>
     <HelmetProvider>
       <BrowserRouter>
         <Scrolltotop />
@@ -128,6 +130,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           </Route>
         </Routes>
       </BrowserRouter>
-    </HelmetProvider>
+    </HelmetProvider></GoogleOAuthProvider>
   </Fragment>
 );

@@ -11,6 +11,22 @@
       "static/chunks/main-app.js",
       "static/chunks/app/not-found.js"
     ],
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/page.css",
+      "static/chunks/app/page.js"
+    ],
+    "/(Pages)/course/[uniqueId]/[course_name]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(Pages)/course/[uniqueId]/[course_name]/page.js"
+    ],
+    "/_not-found/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/_not-found/page.js"
+    ],
     "/(Pages)/property/[uniqueId]/[property_name]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -21,6 +37,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(Pages)/properties/page.js"
+    ],
+    "/(Pages)/search/[search]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(Pages)/search/[search]/page.js"
     ]
   }
 }

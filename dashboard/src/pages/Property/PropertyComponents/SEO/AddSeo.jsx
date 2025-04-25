@@ -24,7 +24,7 @@ export default function AddSeo({ property, getSeo }) {
       property_id: property?.uniqueId || "",
       title: property?.property_name || "",
       slug: property?.property_slug || "",
-      meta_description: property?.property_description?.slice(0, 160) || "",
+      meta_description: metaDescription || "",
       primary_focus_keyword: [],
       json_schema: "",
     },
@@ -157,6 +157,7 @@ export default function AddSeo({ property, getSeo }) {
               <Form.Group className="mb-3">
                 <Form.Label>Meta Description</Form.Label>
                 <JoditEditor
+                  key={metaDescription}
                   value={metaDescription}
                   onBlur={(content) => {
                     formik.setFieldValue("meta_description", content);

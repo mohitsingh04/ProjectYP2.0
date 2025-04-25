@@ -62,9 +62,11 @@ const Profile = () => {
                               className="profile-ratio profile-100"
                               src={
                                 authUser?.profile?.[0]
-                                  ? `${import.meta.env.VITE_MEDIA_URL}/user/${
-                                      authUser?.profile?.[0]
-                                    }`
+                                  ? authUser?.isGoogleLogin
+                                    ? authUser?.profile?.[0]
+                                    : `${import.meta.env.VITE_MEDIA_URL}/user/${
+                                        authUser?.profile?.[0]
+                                      }`
                                   : ALLImages("face8")
                               }
                               alt="img"
@@ -88,13 +90,21 @@ const Profile = () => {
                         </div>
                       </Col>
                       <Col lg={12} md={12} xl={6}>
-                        <div className="text-xl-right mt-4 mt-xl-0">
+                        <div className="text-xl-right mt-4 mt-xl-0 d-flex justify-content-end">
                           <div>
                             <Link
                               to={`/dashboard/profile/${authUser?._id}`}
                               className="btn btn-primary me-1"
                             >
                               <i className="fe fe-edit"></i> Edit Profile
+                            </Link>
+                          </div>
+                          <div>
+                            <Link
+                              to={`/forgot-password`}
+                              className="btn btn-success me-1"
+                            >
+                              <i className="fe fe-lock me-1"></i>Create password
                             </Link>
                           </div>
                         </div>

@@ -691,7 +691,8 @@ const Header = ({ ThemeChanger }) => {
                 variant="light"
                 className="header-link w-100 rounded"
               >
-                <i className="ri-hand-coin-line header-link-icon me-2"></i>Sponser
+                <i className="ri-hand-coin-line header-link-icon me-2"></i>
+                Sponser
                 <i class=""></i>
               </Link>
             </div>
@@ -707,9 +708,11 @@ const Header = ({ ThemeChanger }) => {
                     <img
                       src={
                         authUser?.profile?.[0]
-                          ? `${import.meta.env.VITE_MEDIA_URL}/user/${
-                              authUser?.profile?.[0]
-                            }`
+                          ? authUser?.isGoogleLogin
+                            ? authUser?.profile?.[0]
+                            : `${import.meta.env.VITE_MEDIA_URL}/user/${
+                                authUser?.profile?.[0]
+                              }`
                           : ALLImages("face9")
                       }
                       alt="img"

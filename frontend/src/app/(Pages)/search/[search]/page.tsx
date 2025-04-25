@@ -66,10 +66,10 @@ export default function Page() {
       setFilteredProperties(
         property.filter(
           (item) =>
-            item.property_name.toLowerCase().includes(search.toLowerCase()) ||
-            item.property_city.toLowerCase().includes(search.toLowerCase()) ||
-            item.property_state.toLowerCase().includes(search.toLowerCase()) ||
-            item.category.toLowerCase().includes(search.toLowerCase())
+            item.property_name?.toLowerCase().includes(search.toLowerCase()) ||
+            item.property_city?.toLowerCase().includes(search.toLowerCase()) ||
+            item.property_state?.toLowerCase().includes(search.toLowerCase()) ||
+            item.category?.toLowerCase().includes(search.toLowerCase())
         )
       );
       setFilteredCourses(

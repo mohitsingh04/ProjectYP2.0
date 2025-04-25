@@ -95,9 +95,11 @@ export default function EditProfileImage({ authUser, authLoading }) {
                       previewImage
                         ? previewImage
                         : authUser?.profile?.[0]
-                        ? `${import.meta.env.VITE_MEDIA_URL}/user/${
-                            authUser?.profile?.[0]
-                          }`
+                        ? authUser?.isGoogleLogin
+                          ? authUser?.profile?.[0]
+                          : `${import.meta.env.VITE_MEDIA_URL}/user/${
+                              authUser?.profile?.[0]
+                            }`
                         : ALLImages("face8")
                     }
                   />
@@ -124,13 +126,15 @@ export default function EditProfileImage({ authUser, authLoading }) {
                     <i className="fe fe-user-check me-1"></i>Update
                   </button>
 
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={handleDelete}
-                  >
-                    <i className="fe fe-trash-2 me-1"></i>Delete
-                  </button>
+                  {authUser?.profile?.lenght > 0 && (
+                    <button
+                      type="button"
+                      className="btn btn-danger"
+                      onClick={handleDelete}
+                    >
+                      <i className="fe fe-trash-2 me-1"></i>Delete
+                    </button>
+                  )}
                 </form>
               </Col>
             </Row>

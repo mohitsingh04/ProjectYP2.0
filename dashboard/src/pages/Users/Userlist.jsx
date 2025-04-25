@@ -109,7 +109,9 @@ export default function Userlist() {
         <img
           src={
             row?.profile?.[0]
-              ? `${import.meta.env.VITE_MEDIA_URL}/user/${row?.profile?.[0]}`
+              ? row?.isGoogleLogin
+                ? row?.profile?.[0]
+                : `${import.meta.env.VITE_MEDIA_URL}/user/${row?.profile?.[0]}`
               : ALLImages("face8")
           }
           alt={row?.profile?.[0] || "Profile"}

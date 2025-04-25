@@ -99,9 +99,11 @@ export default function ViewUser() {
                               className="profile-ratio profile-100"
                               src={
                                 user?.profile?.[0]
-                                  ? `${import.meta.env.VITE_MEDIA_URL}/user/${
-                                      user?.profile?.[0]
-                                    }`
+                                  ? user?.isGoogleLogin
+                                    ? user?.profile?.[0]
+                                    : `${import.meta.env.VITE_MEDIA_URL}/user/${
+                                        user?.profile?.[0]
+                                      }`
                                   : ALLImages("face8")
                               }
                               alt="img"

@@ -172,6 +172,7 @@ import {
   removeAccomodationImages,
 } from "../controller/AccomodationController.js";
 import ExpireVerification from "../helper/ExpireVerification/ExpireVerification.js";
+import { GoogleLoginAuth } from "../controller/GoogleAuth.js";
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -190,6 +191,8 @@ router.get("/logout", logout);
 router.post("/change-password", changePassword);
 router.get("/get-token", getToken);
 router.get("/verify-email/check/expiry", ExpireVerification);
+
+router.post("/google", GoogleLoginAuth);
 
 //?Extra Routes
 router.get("/permissions", getPermissions);

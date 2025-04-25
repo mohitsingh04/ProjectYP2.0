@@ -93,13 +93,7 @@ export default function PropertyCard({ property }: { property: Property }) {
                     property.uniqueId
                   }/${property?.property_name
                     ?.replace(/\s+/g, "-")
-                    .toLowerCase()}/${
-                    property?.property_city
-                      ? property.property_city
-                          .replace(/\s+/g, "-")
-                          .toLowerCase()
-                      : "unknown"
-                  }`}
+                    .toLowerCase()}`}
                 >
                   {property?.property_name}
                 </Link>
