@@ -8,8 +8,8 @@ export const createOrUpdateTraffic = async (req, res) => {
     }
 
     const now = new Date();
-    now.setDate(now.getDate() + 2);
-    now.setMonth(now.getMonth() + 1);
+    // now.setDate(now.getDate() + 2);
+    // now.setMonth(now.getMonth() + 1);
     const year = now.getFullYear();
     const month = now
       .toLocaleString("default", { month: "short" })

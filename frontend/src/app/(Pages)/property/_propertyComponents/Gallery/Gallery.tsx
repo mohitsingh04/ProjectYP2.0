@@ -1,4 +1,3 @@
-"use client";
 import API from "@/service/API/API";
 import { useEffect, useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
@@ -6,7 +5,6 @@ import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Slideshow from "yet-another-react-lightbox/plugins/slideshow";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import "yet-another-react-lightbox/styles.css";
 
 interface Property {
   uniqueId: string;
@@ -24,6 +22,7 @@ interface GalleryProps {
 export default function Gallery({ property }: GalleryProps) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
+  const [currentImages, setCurrentImages] = useState<{ src: string }[]>([]);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
 
   useEffect(() => {
@@ -41,6 +40,12 @@ export default function Gallery({ property }: GalleryProps) {
 
     getGallery();
   }, [property]);
+
+  const handleImageClick = (images: { src: string }[], imgIndex: number) => {
+    setCurrentImages(images);
+    setIndex(imgIndex);
+    setOpen(true);
+  };
 
   return (
     <>
@@ -68,10 +73,7 @@ export default function Gallery({ property }: GalleryProps) {
                         objectFit: "cover",
                         cursor: "pointer",
                       }}
-                      onClick={() => {
-                        setIndex(imgIndex);
-                        setOpen(true);
-                      }}
+                      onClick={() => handleImageClick(filteredImages, imgIndex)}
                     />
                   </div>
                 ))}
@@ -86,15 +88,7 @@ export default function Gallery({ property }: GalleryProps) {
         open={open}
         close={() => setOpen(false)}
         index={index}
-        slides={gallery
-          .flatMap((galleryItem) =>
-            galleryItem?.gallery
-              ?.filter((img: string) => img.toLowerCase().endsWith(".webp"))
-              ?.map((img: string) => ({
-                src: `${process.env.NEXT_PUBLIC_MEDIA_URL}/${img}`,
-              }))
-          )
-          .filter(Boolean)}
+        slides={currentImages}
         zoom={{ maxZoomPixelRatio: 10, scrollToZoom: true }}
         plugins={[Fullscreen, Slideshow, Thumbnails, Zoom]}
         thumbnails={{ position: "bottom" }}

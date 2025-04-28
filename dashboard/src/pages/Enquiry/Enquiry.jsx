@@ -52,8 +52,9 @@ export default function Enquiry() {
       setFilteredEnquires(response.data);
     } catch (error) {
       console.error("Error fetching enquires:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -91,13 +92,16 @@ export default function Enquiry() {
           response?.data?.message || "enquires removed.",
           "success"
         );
-        getEnquires();
       } catch (error) {
+        console.log(error);
         Swal.fire(
           "Error",
           error.response?.data?.error || "Failed to delete!",
           "error"
         );
+      } finally {
+        setEnquiries((prev) => prev.filter((item) => item._id !== id));
+        setFilteredEnquires((prev) => prev.filter((item) => item._id !== id));
       }
     }
   };

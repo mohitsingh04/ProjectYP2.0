@@ -53,8 +53,6 @@ export default function Teachers({ property }: TeachersProps) {
     }
   };
 
-  console.log(teachers);
-
   useEffect(() => {
     if (property) {
       getTeachers();

@@ -27,13 +27,17 @@ export const addReview = async (req, res) => {
 
     const existPhoneReview = await Review.findOne({
       phone_number: `+${phone_number}`,
+      property_id: property_id,
     });
     if (existPhoneReview) {
       return res
         .status(400)
         .json({ error: "Review already exists for this phone number!" });
     }
-    const existEmailReview = await Review.findOne({ email });
+    const existEmailReview = await Review.findOne({
+      email,
+      property_id: property_id,
+    });
     if (existEmailReview) {
       return res
         .status(400)
@@ -136,6 +140,7 @@ export const updateReview = async (req, res) => {
       const phoneExists = await Review.findOne({
         phone_number: `+${phone_number}`,
         _id: { $ne: currentReview._id },
+        property_id: currentReview?.property_id,
       });
       if (phoneExists) {
         return res.status(400).json({ error: "Phone number already in use." });
@@ -146,6 +151,7 @@ export const updateReview = async (req, res) => {
       const emailExists = await Review.findOne({
         email,
         _id: { $ne: currentReview._id },
+        property_id: currentReview?.property_id,
       });
       if (emailExists) {
         return res.status(400).json({ error: "Email already in use." });

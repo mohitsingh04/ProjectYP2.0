@@ -119,7 +119,7 @@ export default function Reviews() {
                               const randomColor = getRandomColor();
                               return (
                                 <div
-                                  className={`d-flex justify-content-center align-items-center rounded-circle fw-bold fs-4 text-${randomColor} bg-${randomColor}-subtle overflow-hidden`}
+                                  className={`d-flex justify-content-center align-items-center rounded-circle fw-bold fs-4 text-${randomColor}-emphasis bg-${randomColor}-subtle overflow-hidden`}
                                   style={{ width: "60px", height: "60px" }}
                                 >
                                   {getInitials(review.name)}
@@ -157,14 +157,14 @@ export default function Reviews() {
                               className="me-2"
                               onClick={() => setIsUpdating(review)}
                             >
-                              <i className="fe fe-edit me-1"></i>Edit
+                              <i className="fe fe-edit"></i>
                             </Button>
                             <Button
                               variant="danger"
                               size="sm"
                               onClick={() => handleDelete(review.uniqueId)}
                             >
-                              <i className="fe fe-trash-2 me-1"></i>Delete
+                              <i className="fe fe-trash-2"></i>
                             </Button>
                           </Col>
                         </Row>

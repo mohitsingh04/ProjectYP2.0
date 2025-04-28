@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { API } from "../../../../context/API";
@@ -13,6 +13,12 @@ export default function RemoveCertifications({
     certifications?.certifications?.filter((img) =>
       img.toLowerCase().endsWith(".webp")
     ) || [];
+
+  useEffect(() => {
+    if (certifications?.certifications?.length <= 0) {
+      setRemoving(false);
+    }
+  }, [certifications]);
 
   const handleImageRemoveConfirm = async (img) => {
     const result = await Swal.fire({

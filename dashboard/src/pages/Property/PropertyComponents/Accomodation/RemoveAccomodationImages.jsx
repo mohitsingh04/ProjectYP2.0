@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { API } from "../../../../context/API";
@@ -12,6 +12,12 @@ export default function RemoveAccomodationImages({
     accomodation?.accomodation_images?.filter((img) =>
       img.toLowerCase().endsWith(".webp")
     ) || [];
+
+  useEffect(() => {
+    if (accomodation?.accomodation_images.length <= 0) {
+      setRemoving("");
+    }
+  }, [accomodation]);
 
   const handleRemoveImage = async (imgPath) => {
     const result = await Swal.fire({

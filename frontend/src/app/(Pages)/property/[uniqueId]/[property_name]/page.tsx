@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   notFound,
   useParams,
@@ -28,19 +28,23 @@ interface Property {
   featured_image?: string;
   property_logo?: string[];
   property_name: string;
-  property_address: string;
-  property_city: string;
-  property_pincode: string;
-  property_state: string;
   property_description?: string;
   property_hostel_type: string[];
   category: string;
   property_hostel_description: string;
 }
 
+interface Location {
+  property_address: string;
+  property_city: string;
+  property_pincode: string;
+  property_state: string;
+}
+
 export default function CourseDetails() {
   const [property, setProperty] = useState<Property | null>(null);
   const [reviews, setReviews] = useState([]);
+  const [location, setLocation] = useState<Location | null>(null);
   const { uniqueId, property_name, property_city } = useParams();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -65,6 +69,23 @@ export default function CourseDetails() {
       console.error((error as any)?.message);
     }
   };
+
+  const getLocation = useCallback(async () => {
+    if (property) {
+      try {
+        const response = await API.get(
+          `/property/location/${property?.uniqueId}`
+        );
+        setLocation(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [property]);
+
+  useEffect(() => {
+    getLocation();
+  }, [getLocation]);
 
   const name =
     typeof property_name === "string" ? property_name.replace(/-/g, " ") : "";
@@ -101,6 +122,22 @@ export default function CourseDetails() {
     }
   }, [property]);
 
+  const TrafficCount = useCallback(async () => {
+    if (property) {
+      try {
+        const response = await API.post(`/property/traffic`, {
+          property_id: property?.uniqueId,
+        });
+        console.log(response.data.message);
+      } catch (error) {
+        console.log((error as any).response.data.message);
+      }
+    }
+  }, [property]);
+  useEffect(() => {
+    TrafficCount();
+  }, [TrafficCount]);
+
   return (
     <>
       <section className="page-content course-sec">
@@ -127,7 +164,11 @@ export default function CourseDetails() {
             </div>
           </div>
         </div>
-        <PropertyBanner property={property} reviews={reviews} />
+        <PropertyBanner
+          property={property}
+          reviews={reviews}
+          location={location}
+        />
         <div className="course-content">
           <div className="container">
             <div className="row">

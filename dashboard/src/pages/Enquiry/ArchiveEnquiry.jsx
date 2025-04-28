@@ -48,7 +48,6 @@ export default function ArchiveEnquiry() {
     setLoading(true);
     try {
       const response = await API.get("/enquiry/archive/all");
-      console.log(response);
       setArchive(response.data);
       setFilteredArchives(response.data);
     } catch (error) {

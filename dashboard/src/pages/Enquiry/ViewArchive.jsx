@@ -173,8 +173,9 @@ export default function ViewArchive() {
                         ([key]) =>
                           key !== "_id" &&
                           key !== "createdAt" &&
+                          key !== "updatedAt" &&
                           key !== "__v" &&
-                          key !== "updatedAt"
+                          key !== "property_id"
                       )
                       .map(([key, value]) => (
                         <tr key={key}>

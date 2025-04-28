@@ -446,6 +446,8 @@ const Header = ({ ThemeChanger }) => {
     }
   };
 
+  const [dropDownShow, setDropDownShow] = useState(false);
+  const toggleDropDownShow = () => setDropDownShow(!dropDownShow);
   return (
     <Fragment>
       <header className="app-header">
@@ -697,11 +699,17 @@ const Header = ({ ThemeChanger }) => {
               </Link>
             </div>
             {/* <!-- Profile --> */}
-            <Dropdown className="header-element profile-1" autoClose="outside">
+            <Dropdown
+              className="header-element profile-1"
+              autoClose="outside"
+              onToggle={(isOpen) => setDropDownShow(isOpen)}
+              show={dropDownShow}
+            >
               <Dropdown.Toggle
                 variant=""
                 className="leading-none d-flex px-1"
                 id="dropdown-basic"
+                onClick={toggleDropDownShow}
               >
                 <div className="d-flex align-items-center">
                   <div className="">
@@ -727,21 +735,17 @@ const Header = ({ ThemeChanger }) => {
                 className="main-header-dropdown pt-0 overflow-hidden header-profile-dropdown"
                 align="end"
               >
-                <Link
-                  to={`/dashboard/profile`}
-                  as="li"
-                  className="dropdown-item d-flex"
-                  href="#/action-1"
+                <Dropdown.Item
+                  as={Link}
+                  to="/dashboard/profile"
+                  className="d-flex"
+                  onClick={toggleDropDownShow}
                 >
                   <i className="ti ti-user-circle fs-18 me-2 op-7"></i>Profile
-                </Link>
-                <button
-                  className="dropdown-item d-flex"
-                  href="#/action-1"
-                  onClick={handleLogout}
-                >
+                </Dropdown.Item>
+                <Dropdown.Item className="d-flex" onClick={handleLogout}>
                   <i className="ti ti-logout fs-18 me-2 op-7"></i>Log Out
-                </button>
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
             {/* <!-- Right sidebar --> */}

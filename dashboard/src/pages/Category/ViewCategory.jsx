@@ -178,8 +178,7 @@ export default function ViewCategory() {
                             }`
                           : ALLImages("logo2")
                       }
-                      className="profile-ratio border border-4"
-                      width={200}
+                      className="profile-ratio border w-50 w-md-100"
                       alt=""
                     />
                   </div>

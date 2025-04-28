@@ -74,7 +74,14 @@ export default function ViewEnquiry({ enquiry, getEnquires, setIsViewing }) {
               <Table striped responsive>
                 <tbody>
                   {Object.entries(enquiry)
-                    .filter(([key]) => key !== "_id" && key !== "createdAt")
+                    .filter(
+                      ([key]) =>
+                        key !== "_id" &&
+                        key !== "createdAt" &&
+                        key !== "updatedAt" &&
+                        key !== "__v" &&
+                        key !== "property_id"
+                    )
                     .map(([key, value]) => (
                       <tr key={key}>
                         <td className="fw-semibold">

@@ -6,10 +6,6 @@ interface Property {
   uniqueId: string;
   property_logo?: string[];
   property_name?: string;
-  property_address?: string;
-  property_city?: string;
-  property_pincode?: string;
-  property_state?: string;
   featured_image?: string;
 }
 
@@ -17,14 +13,23 @@ interface Review {
   rating: number;
 }
 
+interface Location {
+  property_address?: string;
+  property_city?: string;
+  property_pincode?: string;
+  property_state?: string;
+}
+
 interface PropertyBannerProps {
   property: Property | null;
   reviews: Review[];
+  location: Location | null;
 }
 
 export default function PropertyBanner({
   property,
   reviews,
+  location,
 }: PropertyBannerProps) {
   const [propertyCourses, setPropertyCourses] = useState([]);
 
@@ -85,10 +90,10 @@ export default function PropertyBanner({
               <div className="align-content-center">
                 <h2>{property?.property_name || "No Name"}</h2>
                 <p>
-                  {property?.property_address || "Address not available"},{" "}
-                  {property?.property_city || "City not available"},{" "}
-                  {property?.property_pincode || "000000"} ,{" "}
-                  {property?.property_state || "State not available"}
+                  {location?.property_address || "Address not available"},{" "}
+                  {location?.property_city || "City not available"},{" "}
+                  {location?.property_pincode || "000000"} ,{" "}
+                  {location?.property_state || "State not available"}
                 </p>
               </div>
             </div>

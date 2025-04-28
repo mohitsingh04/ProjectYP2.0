@@ -61,6 +61,7 @@ import AccessDenied from "./pages/AccessDenied/AccessDenied";
 import ViewProperty from "./pages/Property/ViewProperty";
 import Analytics from "./pages/Analytics/Analytics";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import OTPLogin from "./pages/Authentication/Test";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
@@ -88,6 +89,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path={`/errorpages/error403`} element={<Error403 />} />
             <Route path={`/errorpages/error500`} element={<Error500 />} />
             <Route path={`/errorpages/error503`} element={<Error503 />} />
+
+            <Route path={`/test`} element={<OTPLogin />} />
           </Route>
 
           {/* //main route */}

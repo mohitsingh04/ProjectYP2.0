@@ -259,7 +259,8 @@ export default function ViewProperty() {
                   <Card.Footer>
                     <Nav
                       variant="pills"
-                      className="tab-style-2 nav-style-2 nav-pills"
+                      className="tab-style-2 nav-style-2 nav-pills flex-nowrap overflow-auto"
+                      style={{ scrollbarWidth: "none" }}
                     >
                       {tabsData.map((tab, index) => (
                         <Nav.Item key={index} className="mt-2">

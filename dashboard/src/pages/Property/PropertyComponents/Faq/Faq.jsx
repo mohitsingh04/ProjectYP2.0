@@ -92,13 +92,13 @@ export default function Faq() {
                                   onClick={() => setIsUpdating(faq.uniqueId)}
                                   className="btn btn-sm btn-primary"
                                 >
-                                  <i className="fe fe-edit"></i> Edit
+                                  <i className="fe fe-edit"></i>
                                 </span>
                                 <span
                                   className="btn btn-sm btn-danger"
                                   onClick={() => handleDelete(faq.uniqueId)}
                                 >
-                                  <i className="fe fe-trash-2"></i> Delete
+                                  <i className="fe fe-trash-2"></i>
                                 </span>
                               </div>
                             </div>
