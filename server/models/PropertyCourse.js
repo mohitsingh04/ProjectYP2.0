@@ -46,6 +46,24 @@ const PropertyCourseSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    requirements: {
+      type: Array,
+    },
+    cerification_info: {
+      type: Boolean,
+    },
+    best_for: {
+      type: Array,
+    },
+    languages: {
+      type: Array,
+    },
+    key_outcomes: {
+      type: Array,
+    },
+    course_format: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

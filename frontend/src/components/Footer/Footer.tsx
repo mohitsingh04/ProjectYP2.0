@@ -50,7 +50,7 @@ export default function Footer() {
                     <Link href="/">Courses</Link>
                   </li>
                   <li>
-                    <Link href="/">Blog</Link>
+                    <Link href="/blog">Blog</Link>
                   </li>
                 </ul>
               </div>

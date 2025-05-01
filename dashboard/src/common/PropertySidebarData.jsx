@@ -23,6 +23,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
 
   {
@@ -33,6 +34,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
   {
     tab: `basic-details`,
@@ -42,6 +44,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
   {
     tab: `location`,
@@ -51,6 +54,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: false,
   },
   {
     tab: `working-hours`,
@@ -60,6 +64,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: false,
   },
   {
     tab: `accomodation`,
@@ -69,6 +74,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: false,
   },
   {
     tab: `amenities`,
@@ -78,6 +84,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: false,
   },
   {
     tab: `teachers`,
@@ -87,6 +94,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
   {
     tab: `courses`,
@@ -96,6 +104,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
   {
     tab: `gallery`,
@@ -105,6 +114,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
   {
     tab: `reviews`,
@@ -114,6 +124,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
   {
     tab: `faqs`,
@@ -123,6 +134,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
   {
     tab: `certifications`,
@@ -132,6 +144,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
   // {
   //   tab: `additional-details`,
@@ -150,6 +163,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
   {
     tab: `coupons`,
@@ -159,5 +173,6 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    online: true,
   },
 ];

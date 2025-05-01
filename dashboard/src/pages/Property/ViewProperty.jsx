@@ -32,72 +32,84 @@ const tabsData = [
     label: "Enquiry",
     icon: "ri-file-list-line",
     component: <Enquiry />,
+    online: true,
   },
   {
     key: "basic-details",
     label: "Basic Details",
     icon: "ri-profile-line",
     component: <BasicDetails />,
+    online: true,
   },
   {
     key: "location",
     label: "Location",
     icon: "ri-map-pin-line",
     component: <LocationDetails />,
+    online: false,
   },
   {
     key: "working-hours",
     label: "Working Hours",
     icon: "ri-time-line",
     component: <Businesshours />,
+    online: false,
   },
   {
     key: "accomodation",
     label: "Accomodation",
     icon: "ri-hotel-line",
     component: <Accomodation />,
+    online: false,
   },
   {
     key: "amenities",
     label: "Amenties",
     icon: "ri-building-2-line",
     component: <Amenities />,
+    online: false,
   },
   {
     key: "teachers",
     label: "Teachers",
     icon: "ri-user-star-line",
     component: <Teacher />,
+    online: true,
   },
   {
     key: "courses",
     label: "Courses",
     icon: "ri-book-open-line",
     component: <Course />,
+    online: true,
   },
   {
     key: "gallery",
     label: "Gallery",
     icon: "ri-image-line",
     component: <Gallery />,
+    online: true,
   },
   {
     key: "reviews",
     label: "Reviews",
     icon: "ri-chat-quote-line",
     component: <Reviews />,
+    online: true,
   },
   {
     key: "faqs",
     label: "FAQ's",
     icon: "ri-question-answer-line",
     component: <Faq />,
+    online: true,
   },
   {
     key: "certifications",
     label: "Certifications",
     icon: "ri-trophy-line",
     component: <Certifications />,
+    online: true,
   },
   // {
   //   key: "additional-details",
@@ -110,12 +122,14 @@ const tabsData = [
     label: "SEO",
     icon: "ri-bar-chart-line",
     component: <Seo />,
+    online: true,
   },
   {
     key: "coupons",
     label: "Coupons",
     icon: "ri-price-tag-3-line",
     component: <Coupon />,
+    online: true,
   },
 ];
 
@@ -125,6 +139,25 @@ export default function ViewProperty() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "enquiry";
   const [authUser, setAuthUser] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  const getCategories = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const getCategoryToRelatedId = (id) => {
+    const category = categories.find((item) => item.uniqueId === Number(id));
+    return category ? category?.category_name : "Unknown";
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, [getCategories]);
 
   const [property, setProperty] = useState("");
   const [loading, setLoading] = useState(true);
@@ -228,7 +261,7 @@ export default function ViewProperty() {
                           <div className="user-wrap mt-auto">
                             <h4>{property?.property_name}</h4>
                             <h6 className="text-muted mb-3">
-                              {property?.category}
+                              {getCategoryToRelatedId(property?.category)}
                             </h6>
                             <Button className="mt-1 mb-1 me-1">
                               <i className="fe fe-heart"></i> Follow
@@ -262,7 +295,11 @@ export default function ViewProperty() {
                       className="tab-style-2 nav-style-2 nav-pills flex-nowrap overflow-auto"
                       style={{ scrollbarWidth: "none" }}
                     >
-                      {tabsData.map((tab, index) => (
+                      {(getCategoryToRelatedId(property?.category) ===
+                      "Online Yoga Studio"
+                        ? tabsData.filter((tab) => tab.online === true)
+                        : tabsData
+                      ).map((tab, index) => (
                         <Nav.Item key={index} className="mt-2">
                           <Nav.Link
                             className="text-nowrap text-center p-2"
@@ -276,6 +313,7 @@ export default function ViewProperty() {
                           </Nav.Link>
                         </Nav.Item>
                       ))}
+
                       <Nav.Item className="mt-2">
                         <Nav.Link
                           as={Link}

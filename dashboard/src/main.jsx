@@ -62,77 +62,108 @@ import ViewProperty from "./pages/Property/ViewProperty";
 import Analytics from "./pages/Analytics/Analytics";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import OTPLogin from "./pages/Authentication/Test";
+import LegalPrivacyPolicy from "./pages/Legal/LegalPrivacyPolicy";
+import LegalTermsAndConditions from "./pages/Legal/LegalTermsAndConditions";
+import Legaldisclaimer from "./pages/Legal/LegalDisclaimers";
+import LegalCancleationPolicy from "./pages/Legal/LegalCancelationPolicy";
+import Blogs from "./pages/Blogs/Blogs";
+import CreateBlog from "./pages/Blogs/CreateBlog";
+import EditBlog from "./pages/Blogs/EditBlog";
+import BlogCategory from "./pages/Blogs/Category/BlogCategory";
+import Tags from "./pages/Blogs/Tags/Tags";
+import CreateBlogCategory from "./pages/Blogs/Category/CreateBlogCategory";
+import EditBlogCategory from "./pages/Blogs/Category/EditBlogCategory";
+import ViewBlog from "./pages/Blogs/ViewBlog";
+import KeyOUtComes from "./pages/KeyOutcomes/KeyOutComes";
+import Requirments from "./pages/Requirments/Requirments";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
- <GoogleOAuthProvider clientId={import.meta.env.VITE_OAUTH}>
-    <HelmetProvider>
-      <BrowserRouter>
-        <Scrolltotop />
-        <Routes>
-          <Route path={`/`} element={<Custompage />}>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_OAUTH}>
+      <HelmetProvider>
+        <BrowserRouter>
+          <Scrolltotop />
+          <Routes>
+            <Route path={`/`} element={<Custompage />}>
 
-            <Route path="*" element={<Error404 />} />
+              <Route path="*" element={<Error404 />} />
 
-            <Route index element={<ProtectedRoutes><Login /></ProtectedRoutes>} />
-            <Route path={`/register`} element={<ProtectedRoutes><Register /></ProtectedRoutes>} />
-            <Route path={`/verify-email/send/:email`} element={<ProtectedRoutes><VerifyEmailSwal /></ProtectedRoutes>}/>
-            <Route path={`/verify-email/:token`}element={<ProtectedRoutes><VerifyEmailConfirm /></ProtectedRoutes>}/>
-            <Route path={`/forgot-password`} element={<ProtectedRoutes><Forgotpassword /></ProtectedRoutes>} />
-            <Route path={`/forgot-password/send/:email`}element={<ProtectedRoutes><ForgotpasswordSwal /></ProtectedRoutes>}/>
-            <Route path="/reset-password/:token" element={<ProtectedRoutes><ResetPassword /></ProtectedRoutes>} />
+              <Route index element={<ProtectedRoutes><Login /></ProtectedRoutes>} />
+              <Route path={`/register`} element={<ProtectedRoutes><Register /></ProtectedRoutes>} />
+              <Route path={`/verify-email/send/:email`} element={<ProtectedRoutes><VerifyEmailSwal /></ProtectedRoutes>}/>
+              <Route path={`/verify-email/:token`}element={<ProtectedRoutes><VerifyEmailConfirm /></ProtectedRoutes>}/>
+              <Route path={`/forgot-password`} element={<ProtectedRoutes><Forgotpassword /></ProtectedRoutes>} />
+              <Route path={`/forgot-password/send/:email`}element={<ProtectedRoutes><ForgotpasswordSwal /></ProtectedRoutes>}/>
+              <Route path="/reset-password/:token" element={<ProtectedRoutes><ResetPassword /></ProtectedRoutes>} />
 
-            <Route path={`/lockscreen`} element={<Lockscreen />} />
-            <Route path={`/comming-soon`}element={<Underconstruction />}/>
-            <Route path={`/errorpages/error400`} element={<Error400 />} />
-            <Route path={`/errorpages/error401`} element={<Error401 />} />
-            <Route path={`/errorpages/error403`} element={<Error403 />} />
-            <Route path={`/errorpages/error500`} element={<Error500 />} />
-            <Route path={`/errorpages/error503`} element={<Error503 />} />
+              <Route path={`/lockscreen`} element={<Lockscreen />} />
+              <Route path={`/comming-soon`}element={<Underconstruction />}/>
+              <Route path={`/errorpages/error400`} element={<Error400 />} />
+              <Route path={`/errorpages/error401`} element={<Error401 />} />
+              <Route path={`/errorpages/error403`} element={<Error403 />} />
+              <Route path={`/errorpages/error500`} element={<Error500 />} />
+              <Route path={`/errorpages/error503`} element={<Error503 />} />
 
-            <Route path={`/test`} element={<OTPLogin />} />
-          </Route>
+              <Route path={`/test`} element={<OTPLogin />} />
+            </Route>
 
-          {/* //main route */}
-          <Route path={`/dashboard`} element={<App />}>
-          <Route index element={<ProtectedRoutes><Dashboard/></ProtectedRoutes>} />
-          <Route path="/dashboard/access-denied" element={<AccessDenied/>} />
-          <Route path="/dashboard/analytics/:objectId" element={<Analytics/>}/>
-            <Route path="/dashboard/profile" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
-            <Route path="/dashboard/profile/:objectId"element={<ProtectedRoutes><Editprofile /></ProtectedRoutes>}/>
+            {/* //main route */}
+            <Route path={`/dashboard`} element={<App />}>
+            <Route index element={<ProtectedRoutes><Dashboard/></ProtectedRoutes>} />
+            <Route path="/dashboard/access-denied" element={<AccessDenied/>} />
+            <Route path="/dashboard/analytics/:objectId" element={<Analytics/>}/>
+              <Route path="/dashboard/profile" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
+              <Route path="/dashboard/profile/:objectId"element={<ProtectedRoutes><Editprofile /></ProtectedRoutes>}/>
 
-            <Route path="/dashboard/user"element={<ProtectedRoutes><Userlist /></ProtectedRoutes>}/>
-            <Route path="/dashboard/user/create"element={<ProtectedRoutes><CreateUser /></ProtectedRoutes>}/>
-            <Route path="/dashboard/user/view/:objectId"element={<ProtectedRoutes><ViewUser /></ProtectedRoutes>}/>
-            <Route path="/dashboard/user/edit/:objectId"element={<ProtectedRoutes><EditUser /></ProtectedRoutes>}/>
+              <Route path="/dashboard/user"element={<ProtectedRoutes><Userlist /></ProtectedRoutes>}/>
+              <Route path="/dashboard/user/create"element={<ProtectedRoutes><CreateUser /></ProtectedRoutes>}/>
+              <Route path="/dashboard/user/view/:objectId"element={<ProtectedRoutes><ViewUser /></ProtectedRoutes>}/>
+              <Route path="/dashboard/user/edit/:objectId"element={<ProtectedRoutes><EditUser /></ProtectedRoutes>}/>
 
-            <Route path="/dashboard/status"element={<ProtectedRoutes><Statuslist /></ProtectedRoutes>}/>
-            <Route path="/dashboard/status/create"element={<ProtectedRoutes><CreateStatus /></ProtectedRoutes>}/>
-            <Route path="/dashboard/status/view/:objectId"element={<ProtectedRoutes><ViewStatus /></ProtectedRoutes>}/>
-            <Route path="/dashboard/status/edit/:objectId"element={<ProtectedRoutes><EditStatus /></ProtectedRoutes>}/>
+              <Route path="/dashboard/status"element={<ProtectedRoutes><Statuslist /></ProtectedRoutes>}/>
+              <Route path="/dashboard/status/create"element={<ProtectedRoutes><CreateStatus /></ProtectedRoutes>}/>
+              <Route path="/dashboard/status/view/:objectId"element={<ProtectedRoutes><ViewStatus /></ProtectedRoutes>}/>
+              <Route path="/dashboard/status/edit/:objectId"element={<ProtectedRoutes><EditStatus /></ProtectedRoutes>}/>
 
-            <Route path="/dashboard/course"element={<ProtectedRoutes><Courselist /></ProtectedRoutes>}/>
-            <Route path="/dashboard/course/create"element={<ProtectedRoutes><CreateCourse /></ProtectedRoutes>}/>
-            <Route path="/dashboard/course/view/:objectId"element={<ProtectedRoutes><ViewCourse /></ProtectedRoutes>}/>
-            <Route path="/dashboard/course/edit/:objectId"element={<ProtectedRoutes><EditCourse /></ProtectedRoutes>}/>
+              <Route path="/dashboard/course"element={<ProtectedRoutes><Courselist /></ProtectedRoutes>}/>
+              <Route path="/dashboard/course/create"element={<ProtectedRoutes><CreateCourse /></ProtectedRoutes>}/>
+              <Route path="/dashboard/course/view/:objectId"element={<ProtectedRoutes><ViewCourse /></ProtectedRoutes>}/>
+              <Route path="/dashboard/course/edit/:objectId"element={<ProtectedRoutes><EditCourse /></ProtectedRoutes>}/>
 
-            <Route path="/dashboard/category"element={<ProtectedRoutes><CategoryList/></ProtectedRoutes>}/>
-            <Route path="/dashboard/category/create"element={<ProtectedRoutes><CreateCategory /></ProtectedRoutes>}/>
-            <Route path="/dashboard/category/view/:objectId"element={<ProtectedRoutes><ViewCategory /></ProtectedRoutes>}/>
-            <Route path="/dashboard/category/edit/:objectId"element={<ProtectedRoutes><EditCategory /></ProtectedRoutes>}/>
+              <Route path="/dashboard/category"element={<ProtectedRoutes><CategoryList/></ProtectedRoutes>}/>
+              <Route path="/dashboard/category/create"element={<ProtectedRoutes><CreateCategory /></ProtectedRoutes>}/>
+              <Route path="/dashboard/category/view/:objectId"element={<ProtectedRoutes><ViewCategory /></ProtectedRoutes>}/>
+              <Route path="/dashboard/category/edit/:objectId"element={<ProtectedRoutes><EditCategory /></ProtectedRoutes>}/>
 
-            <Route path="/dashboard/property" element={<ProtectedRoutes><PropertyList/></ProtectedRoutes>}/>
-            <Route path="/dashboard/property/create" element={<ProtectedRoutes><CreateProperty/></ProtectedRoutes>}/>
-            <Route path="/dashboard/property/view/:objectId" element={<ProtectedRoutes><ViewProperty/></ProtectedRoutes>}/>
+              <Route path="/dashboard/property" element={<ProtectedRoutes><PropertyList/></ProtectedRoutes>}/>
+              <Route path="/dashboard/property/create" element={<ProtectedRoutes><CreateProperty/></ProtectedRoutes>}/>
+              <Route path="/dashboard/property/view/:objectId" element={<ProtectedRoutes><ViewProperty/></ProtectedRoutes>}/>
 
-            <Route path="/dashboard/enquiry" element={<ProtectedRoutes><Enquiry/></ProtectedRoutes>}/>
-            <Route path="/dashboard/enquiry/view/:objectId" element={<ProtectedRoutes><ViewEnquiry/></ProtectedRoutes>}/>
-            <Route path="/dashboard/enquiry/archive" element={<ProtectedRoutes><ArchiveEnquiry/></ProtectedRoutes>}/>
-            <Route path="/dashboard/enquiry/archive/view/:objectId" element={<ProtectedRoutes><ViewArchive/></ProtectedRoutes>}/>
+              <Route path="/dashboard/enquiry" element={<ProtectedRoutes><Enquiry/></ProtectedRoutes>}/>
+              <Route path="/dashboard/enquiry/view/:objectId" element={<ProtectedRoutes><ViewEnquiry/></ProtectedRoutes>}/>
+              <Route path="/dashboard/enquiry/archive" element={<ProtectedRoutes><ArchiveEnquiry/></ProtectedRoutes>}/>
+              <Route path="/dashboard/enquiry/archive/view/:objectId" element={<ProtectedRoutes><ViewArchive/></ProtectedRoutes>}/>
 
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </HelmetProvider></GoogleOAuthProvider>
+              <Route path="/dashboard/legal/privacy-policy" element={<ProtectedRoutes><LegalPrivacyPolicy/></ProtectedRoutes>}/>
+              <Route path="/dashboard/legal/terms-and-conditions" element={<ProtectedRoutes><LegalTermsAndConditions/></ProtectedRoutes>}/>
+              <Route path="/dashboard/legal/disclaimer" element={<ProtectedRoutes><Legaldisclaimer/></ProtectedRoutes>}/>
+              <Route path="/dashboard/legal/cancelation-policy" element={<ProtectedRoutes><LegalCancleationPolicy/></ProtectedRoutes>}/>
+
+              <Route path="/dashboard/blogs" element={<ProtectedRoutes><Blogs/></ProtectedRoutes>} />
+              <Route path="/dashboard/blogs/create" element={<ProtectedRoutes><CreateBlog/></ProtectedRoutes>} />
+              <Route path="/dashboard/blogs/view/:objectId" element={<ProtectedRoutes><ViewBlog/></ProtectedRoutes>} />
+              <Route path="/dashboard/blogs/edit/:objectId" element={<ProtectedRoutes><EditBlog/></ProtectedRoutes>} />
+              <Route path="/dashboard/blogs/category" element={<ProtectedRoutes><BlogCategory/></ProtectedRoutes>} />
+              <Route path="/dashboard/blogs/category/create" element={<ProtectedRoutes><CreateBlogCategory/></ProtectedRoutes>} />
+              <Route path="/dashboard/blogs/category/edit/:objectId" element={<ProtectedRoutes><EditBlogCategory/></ProtectedRoutes>} />
+              <Route path="/dashboard/blogs/tags" element={<ProtectedRoutes><Tags/></ProtectedRoutes>} />
+              
+              <Route path="/dashboard/key-outcomes" element={<ProtectedRoutes><KeyOUtComes/></ProtectedRoutes>} />
+              <Route path="/dashboard/requirments" element={<ProtectedRoutes><Requirments/></ProtectedRoutes>} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </HelmetProvider>
+    </GoogleOAuthProvider>
   </Fragment>
 );

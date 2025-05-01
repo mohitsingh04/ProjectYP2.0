@@ -43,6 +43,16 @@ export const categoryStorage = multer.diskStorage({
   },
 });
 export const categoryUploadMulter = multer({ storage: categoryStorage });
+
+// 5. Course images
+export const blogStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "../media/blogs"),
+  filename: (req, file, cb) => {
+    cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
+  },
+});
+export const blogUploadMulter = multer({ storage: blogStorage });
+
 export const processImage = async (req, res, next) => {
   const files = req.files;
 

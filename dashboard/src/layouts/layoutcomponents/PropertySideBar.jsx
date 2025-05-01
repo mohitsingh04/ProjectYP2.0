@@ -661,6 +661,35 @@ const PropertySidebar = ({ local_varaiable, ThemeChanger }) => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("tab");
   const navigator = useNavigate();
+  const [category, setCategory] = useState([]);
+
+  const getCategory = async () => {
+    try {
+      const response = await API.get(`/category`);
+      const data = response.data;
+      setCategory(
+        data.filter(
+          (item) =>
+            item.status === "Active" && item.parent_category === "Academic Type"
+        )
+      );
+    } catch (error) {
+      console.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          error.message
+      );
+    }
+  };
+
+  useEffect(() => {
+    getCategory();
+  }, []);
+
+  const getCategoryToRelatedId = (id) => {
+    const val = category.find((item) => item.uniqueId === Number(id));
+    return val ? val?.category_name : "Unknown";
+  };
 
   const getAuthUser = async () => {
     try {
@@ -827,7 +856,11 @@ const PropertySidebar = ({ local_varaiable, ThemeChanger }) => {
                 </div>
               )}
               {property.length !== 0 &&
-                MENUITEMS.map((levelone) => (
+                (getCategoryToRelatedId(selectedProperty?.value?.category) ===
+                "Online Yoga Studio"
+                  ? MENUITEMS.filter((tab) => tab.online === true)
+                  : MENUITEMS
+                ).map((levelone) => (
                   <Fragment key={Math.random()}>
                     {
                       <li

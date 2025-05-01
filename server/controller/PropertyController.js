@@ -24,6 +24,7 @@ import { fileURLToPath } from "url";
 import { downloadImageAndReplaceSrc } from "../helper/FolderCleaners/EditorImagesController.js";
 import Accomodation from "../models/Accomodation.js";
 import Coupon from "../models/Coupon.js";
+import Category from "../models/Category.js";
 
 export const addProperty = async (req, res) => {
   try {
@@ -39,8 +40,20 @@ export const addProperty = async (req, res) => {
 
     let score = 3;
 
+    const allCategories = await Category.find();
+    const currentCategory = allCategories.filter(
+      (item) => item.uniqueId === Number(category)
+    );
+
+    if (currentCategory?.[0]?.category_name === "Online Yoga Studio") {
+      score += 39;
+      console.log("39");
+    } else if (category) {
+      score += 1;
+      console.log("`1`");
+    }
+
     if (property_description) score += 1;
-    if (category) score += 1;
     if (property_type) score += 1;
 
     if (property_name) {
@@ -177,7 +190,6 @@ export const updateProperty = async (req, res) => {
       ? `+${property_alt_mobile_no}`
       : null;
 
-    // ✅ Validation: Alt phone number must be unique and not match any existing phone number
     if (formattedAltMobile) {
       const phoneConflict = await Property.findOne({
         _id: { $ne: objectId },
@@ -193,7 +205,6 @@ export const updateProperty = async (req, res) => {
         });
       }
 
-      // ✅ Validation: Alt phone must not match current property's own primary phone
       if (existProperty.property_mobile_no === formattedAltMobile) {
         return res.status(400).json({
           error:
@@ -202,7 +213,6 @@ export const updateProperty = async (req, res) => {
       }
     }
 
-    // 🖼️ Description Image Replacement
     let updatedDescription = property_description;
     if (property_description) {
       updatedDescription = await downloadImageAndReplaceSrc(
@@ -210,18 +220,33 @@ export const updateProperty = async (req, res) => {
         existProperty?.uniqueId
       );
     }
+    const allCategories = await Category.find();
+    const currentCategory = allCategories.filter(
+      (item) => item.uniqueId === Number(category)
+    );
 
-    // 🎯 Score calculation
     if (!existProperty?.property_alt_mobile_no && property_alt_mobile_no)
       score += 1;
     if (!existProperty?.property_website && property_website) score += 1;
     if (!existProperty?.property_description && property_description)
       score += 1;
-    if (!existProperty?.category && category) score += 1;
+    if (!existProperty?.category) {
+      if (currentCategory?.[0]?.category_name === "Online Yoga Studio") {
+        score += 39;
+      } else if (category) {
+        score += 1;
+      }
+    } else {
+      if (
+        currentCategory?.[0]?.category_name !== "Online Yoga Studio" &&
+        existProperty?.category === "Online Yoga Studio"
+      ) {
+        score -= 38;
+      }
+    }
     if (!existProperty?.est_year && est_year) score += 1;
     if (!existProperty?.property_type && property_type) score += 1;
 
-    // 🧱 Prepare update fields
     const updatedFields = {
       property_description: updatedDescription,
       est_year,
@@ -235,7 +260,6 @@ export const updateProperty = async (req, res) => {
       updatedFields.property_alt_mobile_no = formattedAltMobile;
     }
 
-    // 🧹 Remove undefined/null fields
     Object.keys(updatedFields).forEach((key) => {
       if (updatedFields[key] === undefined || updatedFields[key] === null) {
         delete updatedFields[key];
@@ -246,14 +270,12 @@ export const updateProperty = async (req, res) => {
       return res.status(400).json({ error: "No valid fields to update." });
     }
 
-    // 📝 Update property
     const updatedProperty = await Property.findOneAndUpdate(
       { _id: objectId },
       { $set: updatedFields },
       { new: true }
     );
 
-    // 📊 Update property score
     await addPropertyScore({
       property_id: existProperty?.uniqueId,
       property_score: score,

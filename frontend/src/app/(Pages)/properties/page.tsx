@@ -460,12 +460,12 @@ export default function InstructorList() {
                     setSelectedState={setSelectedState}
                   />
 
-                  <CategoryCard
+                  {/* <CategoryCard
                     filteredProperty={filteredProperty}
                     property={categoryData}
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
-                  />
+                  /> */}
                   <CourseCard
                     properties={filteredProperty}
                     selectedCourses={selectedCourses}

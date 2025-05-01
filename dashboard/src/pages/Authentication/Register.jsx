@@ -197,7 +197,7 @@ const Register = () => {
               </div>
               <label className="custom-control custom-checkbox">
                 <input
-                  className="form-check-input"
+                  className="form-check-input border-dark"
                   type="checkbox"
                   onChange={(e) => setTerms(e.target.checked)}
                 />

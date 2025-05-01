@@ -193,6 +193,7 @@ export const propertyCourseValidation = Yup.object({
   duration_type,
   course_level,
   certification_type,
+  course_format: Yup.string().required("Course Format is Required"),
 });
 
 export const stateValidation = Yup.object({ property_state: state });
@@ -230,4 +231,11 @@ export const locationValidation = Yup.object({
   property_country: country,
   property_state: state,
   property_city: city,
+});
+
+export const BlogCategoryValidation = Yup.object({
+  blog_category: Yup.string()
+    .required("Blog Category is required")
+    .min(3, "Must be at least 3 characters"),
+  parent_category: Yup.string().required("Parent Category is required"),
 });

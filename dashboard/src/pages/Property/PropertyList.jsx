@@ -15,6 +15,25 @@ export default function PropertyList() {
   const [loading, setLoading] = useState(true);
   const [authUser, setAuthUser] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+
+  const getCategories = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const getCategoryToRelatedId = (id) => {
+    const category = categories.find((item) => item.uniqueId === Number(id));
+    return category ? category?.category_name : "Unknown";
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, [getCategories]);
 
   const getAuhtUser = async () => {
     setAuthLoading(true);
@@ -137,7 +156,7 @@ export default function PropertyList() {
       name: "Category",
       selector: (row) => row.category,
       sortable: true,
-      cell: (row) => row.category,
+      cell: (row) => getCategoryToRelatedId(row.category),
     },
     {
       name: "Status",

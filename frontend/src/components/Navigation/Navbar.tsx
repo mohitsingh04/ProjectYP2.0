@@ -90,7 +90,7 @@ export default function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <Link href={`/`} className="submenu">
+                  <Link href={`/blog`} className="submenu">
                     Blog
                   </Link>
                 </li>

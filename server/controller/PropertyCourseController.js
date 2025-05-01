@@ -16,6 +16,12 @@ export const addPropertyCourse = async (req, res) => {
       certification_type,
       property_id,
       description,
+      final_requirement,
+      cerification_info,
+      best_for,
+      languages,
+      course_format,
+      final_key_outcomes,
     } = req.body;
 
     if (!userId || !course_name || !property_id || !course_id) {
@@ -63,6 +69,12 @@ export const addPropertyCourse = async (req, res) => {
       property_id,
       description,
       image,
+      requirements: final_requirement,
+      best_for,
+      cerification_info,
+      languages,
+      course_format,
+      key_outcomes: final_key_outcomes,
     });
 
     await newCourse.save();
@@ -135,6 +147,12 @@ export const updatePropertyCourse = async (req, res) => {
       course_id,
       certification_type,
       description,
+      final_requirement,
+      cerification_info,
+      best_for,
+      languages,
+      course_format,
+      final_key_outcomes,
     } = req.body;
 
     if (!course_name || !objectId) {
@@ -152,6 +170,12 @@ export const updatePropertyCourse = async (req, res) => {
       status,
       certification_type,
       description,
+      cerification_info,
+      requirements: final_requirement,
+      best_for,
+      languages,
+      course_format,
+      key_outcomes: final_key_outcomes,
     };
 
     if (course_id) {

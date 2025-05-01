@@ -43,10 +43,19 @@ const CourseSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "Pending",
+    default: "Active",
   },
   certification_type: {
     type: String,
+  },
+  requirements: {
+    type: Array,
+  },
+  best_for: {
+    type: Array,
+  },
+  key_outcomes: {
+    type: Array,
   },
   createdAt: {
     type: Date,

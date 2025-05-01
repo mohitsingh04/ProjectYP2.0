@@ -12,16 +12,47 @@ export default function ViewCourse() {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [authUser, setAuthUser] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
+  const [requirmentOptions, setRequirmentOptions] = useState([]);
+  const [keyOutcomes, setKeyOutcomesOptions] = useState([]);
 
-  const getAuhtUser = async () => {
+  const fetchData = async () => {
+    try {
+      const [requrimentResponse, keyOutcomeRes] = await Promise.all([
+        API.get("/requirment/all"),
+        API.get("/key-outcome/all"),
+      ]);
+      setRequirmentOptions(requrimentResponse.data);
+      setKeyOutcomesOptions(keyOutcomeRes.data);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const getRequirmentToRelatedId = (id) => {
+    const requirments = requirmentOptions.find(
+      (item) => item.uniqueId === Number(id)
+    );
+    return requirments ? requirments.requirment : id;
+  };
+
+  const getKeyOutcomesToRelatedId = (id) => {
+    const outcome = keyOutcomes.find((item) => item.uniqueId === Number(id));
+    return outcome ? outcome.key_outcome : id;
+  };
+
+  const getAuthUser = async () => {
     setAuthLoading(true);
     try {
       const response = await API.get(`/profile`);
       setAuthUser(response.data);
     } catch (error) {
       console.error(
-        error.response.data.error ||
-          error.response.data.message ||
+        error.response?.data?.error ||
+          error.response?.data?.message ||
           error.message
       );
     } finally {
@@ -30,7 +61,7 @@ export default function ViewCourse() {
   };
 
   useEffect(() => {
-    getAuhtUser();
+    getAuthUser();
   }, []);
 
   if (!authLoading) {
@@ -75,8 +106,8 @@ export default function ViewCourse() {
       setCourse(response.data);
     } catch (error) {
       console.error(
-        error.response.data.error ||
-          error.response.data.message ||
+        error.response?.data?.error ||
+          error.response?.data?.message ||
           error.message
       );
     }
@@ -159,67 +190,100 @@ export default function ViewCourse() {
                   />
                 </Col>
                 <Col md={6}>
-                  <Table striped>
-                    <tbody>
-                      <tr>
-                        <th>Course Name</th>
-                        <td>{course.course_name}</td>
-                      </tr>
-                      {course.course_short_name && (
-                        <tr>
-                          <th>Course Short Name</th>
-                          <td>{course.course_short_name}</td>
-                        </tr>
-                      )}
-                      <tr>
-                        <th>Duration</th>
-                        <td>{course.duration}</td>
-                      </tr>
-                      <tr>
-                        <th>Course Type</th>
-                        <td>{course.course_type}</td>
-                      </tr>
-                      <tr>
-                        <th>Certification Type</th>
-                        <td>{course.certification_type}</td>
-                      </tr>
-                      <tr>
-                        <th>Course Level</th>
-                        <td>{course.course_level}</td>
-                      </tr>
-                      <tr>
-                        <th>Course Status</th>
-                        <td>
-                          <span
-                            className={`badge ${
-                              course.status === "Active"
-                                ? "bg-success"
-                                : course.status === "Suspended"
-                                ? "bg-danger"
-                                : "bg-warning"
-                            }`}
-                          >
-                            {course.status}
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </Table>
+                  <Row className="mt-4">
+                    <Col>
+                      <Table striped>
+                        <tbody>
+                          {Object.entries(course).map(([key, value]) => {
+                            if (
+                              [
+                                "userId",
+                                "uniqueId",
+                                "createdAt",
+                                "updatedAt",
+                                "_id",
+                                "__v",
+                                "image",
+                                "description",
+                              ].includes(key)
+                            )
+                              return null;
+
+                            const formatKey = key
+                              .replace(/_/g, " ")
+                              .replace(/\b\w/g, (c) => c.toUpperCase());
+
+                            let displayValue;
+
+                            if (
+                              key === "requirements" &&
+                              Array.isArray(value)
+                            ) {
+                              const items = value.map((id) =>
+                                getRequirmentToRelatedId(id)
+                              );
+                              displayValue = (
+                                <ul>
+                                  {items.map((item, index) => (
+                                    <li key={index}>{item}</li>
+                                  ))}
+                                </ul>
+                              );
+                            } else if (
+                              key === "key_outcomes" &&
+                              Array.isArray(value)
+                            ) {
+                              const items = value.map((id) =>
+                                getKeyOutcomesToRelatedId(id)
+                              );
+                              displayValue = (
+                                <ul>
+                                  {items.map((item, index) => (
+                                    <li key={index}>{item}</li>
+                                  ))}
+                                </ul>
+                              );
+                            } else if (Array.isArray(value)) {
+                              displayValue = (
+                                <ul>
+                                  {value.length ? (
+                                    value.map((item, idx) => (
+                                      <li key={idx}>{item}</li>
+                                    ))
+                                  ) : (
+                                    <li>None</li>
+                                  )}
+                                </ul>
+                              );
+                            } else if (typeof value === "boolean") {
+                              displayValue = value ? "true" : "false";
+                            } else {
+                              displayValue = value;
+                            }
+
+                            return (
+                              <tr key={key}>
+                                <th className="align-content-start">{formatKey}</th>
+                                <td>{displayValue}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
-
-              {/* Course Description Section */}
             </Card.Body>
+
             {course.description && (
               <Card.Footer>
                 <div className="mt-4">
                   <h5>Course Description</h5>
-
                   {(() => {
                     const words = course.description.split(" ");
                     const shortDescription = words.slice(0, 300).join(" ");
                     const isLong = words.length > 300;
-
                     return (
                       <>
                         <div
@@ -229,7 +293,6 @@ export default function ViewCourse() {
                               : shortDescription + (isLong ? "..." : ""),
                           }}
                         />
-
                         {isLong && (
                           <Button
                             className="btn btn-secondary mt-2"

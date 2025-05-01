@@ -55,7 +55,7 @@ export const getEditorConfig = () => ({
   ],
   events: {
     afterInsertImage: (node) => {
-      console.log("Image inserted:", node.src);
+      // console.log("Image inserted:", node.src);
     },
     error: (error) => {
       Swal.fire({

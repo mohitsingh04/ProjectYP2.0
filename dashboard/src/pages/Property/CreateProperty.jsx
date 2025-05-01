@@ -25,6 +25,8 @@ export default function CreateProperty() {
   const [authUser, setAuthUser] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
   const editorConfig = useMemo(() => getEditorConfig(), []);
+  const [academic, setAcdemic] = useState([]);
+  const [propertyTypes, setPropertTyes] = useState([]);
 
   const getAuhtUser = async () => {
     setAuthLoading(true);
@@ -70,6 +72,15 @@ export default function CreateProperty() {
       setCategoryLoading(false);
     }
   };
+
+  useEffect(() => {
+    setAcdemic(
+      categories.filter((item) => item.parent_category === "Academic Type")
+    );
+    setPropertTyes(
+      categories.filter((item) => item.parent_category === "Property Type")
+    );
+  }, [categories]);
 
   useEffect(() => {
     getCategories();
@@ -219,14 +230,14 @@ export default function CreateProperty() {
                   </Col>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Category</Form.Label>
+                      <Form.Label>Academic</Form.Label>
                       <Form.Select
                         {...formik.getFieldProps("category")}
                         isInvalid={formik.errors.category}
                       >
-                        <option value="">Select Category</option>
-                        {categories.map((item, index) => (
-                          <option value={item.category_name} key={index}>
+                        <option value="">Select Academic Type</option>
+                        {academic.map((item, index) => (
+                          <option value={item.uniqueId} key={index}>
                             {item.category_name}
                           </option>
                         ))}
@@ -244,10 +255,11 @@ export default function CreateProperty() {
                         isInvalid={formik.errors.property_type}
                       >
                         <option value="">--Select Type--</option>
-                        <option value="Goverment">Goverment</option>
-                        <option value="Semigoverment">Semigoverment</option>
-                        <option value="private">private</option>
-                        <option value="Organization">Organization</option>
+                        {propertyTypes.map((item, index) => (
+                          <option value={item.uniqueId} key={index}>
+                            {item.category_name}
+                          </option>
+                        ))}
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">
                         {formik.errors.property_type}

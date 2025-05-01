@@ -140,7 +140,7 @@ export default function EditCategory() {
             title: "Success!",
             text: response.data.message || "Category Updated",
           }).then(() => {
-            navigator(`/dashboard/category/view/${objectId}`);
+            navigator(`/dashboard/category`);
           });
         }
       } catch (error) {

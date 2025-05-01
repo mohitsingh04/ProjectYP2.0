@@ -47,6 +47,9 @@ export const updateCourse = async (req, res) => {
       description,
       status,
       certification_type,
+      requirements,
+      best_for,
+      key_outcomes,
     } = req.body;
 
     let updatedDescription = description;
@@ -77,7 +80,10 @@ export const updateCourse = async (req, res) => {
           course_level,
           description: updatedDescription,
           status,
+          requirements,
           certification_type,
+          best_for,
+          key_outcomes,
         },
       },
       { new: true }
@@ -100,6 +106,9 @@ export const addCourse = async (req, res) => {
       duration,
       description,
       certification_type,
+      requirements,
+      best_for,
+      key_outcomes,
     } = req.body;
 
     const course_image = req.files?.["image"]?.[0]?.webpFilename || "";
@@ -136,6 +145,9 @@ export const addCourse = async (req, res) => {
       description: updatedDescription,
       course_slug: courseSlug,
       certification_type,
+      requirements,
+      best_for,
+      key_outcomes,
     });
 
     await newCourse.save();

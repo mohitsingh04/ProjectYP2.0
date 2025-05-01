@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Spinner } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,10 +8,34 @@ import { API } from "../../../../../context/API";
 export default function Property_type({ property, getProperty }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [category, setCategory] = useState([]);
+
+  const getCategory = async () => {
+    try {
+      const response = await API.get(`/category`);
+      const data = response.data;
+      setCategory(
+        data.filter(
+          (item) =>
+            item.status === "Active" && item.parent_category === "Property Type"
+        )
+      );
+    } catch (error) {
+      console.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          error.message
+      );
+    }
+  };
+
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
-      property_type: property?.property_type || "",
+      property_type: property?.property_type?.toString() || "",
     },
     validationSchema: Yup.object({
       property_type: Yup.string().required("Property Type is required"),
@@ -47,6 +71,11 @@ export default function Property_type({ property, getProperty }) {
     },
   });
 
+  const getCategoryToRelatedId = (id) => {
+    const val = category.find((item) => item.uniqueId === Number(id));
+    return val ? val?.category_name : "Unknown";
+  };
+
   const handleCancel = () => {
     formik.resetForm();
     setIsUpdating(false);
@@ -59,7 +88,10 @@ export default function Property_type({ property, getProperty }) {
 
         {!isUpdating ? (
           <div className="input-group">
-            <Form.Control value={property?.property_type || "N/A"} disabled />
+            <Form.Control
+              value={getCategoryToRelatedId(property?.property_type) || "N/A"}
+              disabled
+            />
             <Button onClick={() => setIsUpdating(true)}>
               <i className="fe fe-edit"></i>
             </Button>
@@ -76,10 +108,11 @@ export default function Property_type({ property, getProperty }) {
                 }
               >
                 <option value="">Select Property Type</option>
-                <option value="Private">Private</option>
-                <option value="Semi-Government">Semi-Government</option>
-                <option value="Government">Government</option>
-                <option value="Organization">Organization</option>
+                {category.map((item) => (
+                  <option key={item._id} value={item.uniqueId?.toString()}>
+                    {item.category_name}
+                  </option>
+                ))}
               </Form.Select>
 
               <Button variant="success" type="submit" disabled={isLoading}>

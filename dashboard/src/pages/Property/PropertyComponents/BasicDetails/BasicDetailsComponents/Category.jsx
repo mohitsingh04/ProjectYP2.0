@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Form, Spinner } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -14,7 +14,12 @@ export default function Category({ property, getProperty }) {
     try {
       const response = await API.get(`/category`);
       const data = response.data;
-      setCategory(data.filter((item) => item.status === "Active"));
+      setCategory(
+        data.filter(
+          (item) =>
+            item.status === "Active" && item.parent_category === "Academic Type"
+        )
+      );
     } catch (error) {
       console.error(
         error.response.data.error ||
@@ -28,13 +33,19 @@ export default function Category({ property, getProperty }) {
     getCategory();
   }, []);
 
+  const getCategoryToRelatedId = (id) => {
+    const val = category.find((item) => item.uniqueId === Number(id));
+    return val ? val?.category_name : "Unknown";
+  };
+
   const formik = useFormik({
     initialValues: {
-      category: property?.category || "",
+      category: property?.category?.toString() || "",
     },
     validationSchema: Yup.object({
       category: Yup.string().required("Category is required"),
     }),
+    enableReinitialize: true,
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
@@ -67,11 +78,14 @@ export default function Category({ property, getProperty }) {
   return (
     <div>
       <Form.Group>
-        <Form.Label>Category</Form.Label>
+        <Form.Label>Academic Type</Form.Label>
 
         {!isUpdating ? (
           <div className="input-group">
-            <Form.Control value={property?.category || "N/A"} disabled />
+            <Form.Control
+              value={getCategoryToRelatedId(property?.category) || "N/A"}
+              disabled
+            />
             <Button onClick={() => setIsUpdating(true)}>
               <i className="fe fe-edit"></i>
             </Button>
@@ -87,7 +101,7 @@ export default function Category({ property, getProperty }) {
               >
                 <option value="">Select Category</option>
                 {category.map((item) => (
-                  <option key={item._id} value={item.category_name}>
+                  <option key={item._id} value={item.uniqueId?.toString()}>
                     {item.category_name}
                   </option>
                 ))}

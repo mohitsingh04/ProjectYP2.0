@@ -1,8 +1,19 @@
 import Swal from "sweetalert2";
+import Dropdown from "react-dropdown-select";
 import { useFormik } from "formik";
 import JoditEditor from "jodit-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Breadcrumb, Button, Card, Col, Form, Row } from "react-bootstrap";
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  Form,
+  InputGroup,
+  OverlayTrigger,
+  Row,
+  Tooltip,
+} from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import ALLImages from "../../common/Imagesdata";
 import { API } from "../../context/API";
@@ -18,6 +29,37 @@ export default function CreateCourse() {
   const [authUser, setAuthUser] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
   const editorConfig = useMemo(() => getEditorConfig(), []);
+  const [bestFor, setBestFor] = useState([]);
+  const [bestForInput, setBestForInput] = useState("");
+
+  const [requirmentOptions, setRequirmentOptions] = useState([]);
+  const [KeyOutComesOption, setKeyOutcomesOptions] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const [requrimentResponse, keyOutcomeRes] = await Promise.all([
+        API.get("/requirment/all"),
+        API.get("/key-outcome/all"),
+      ]);
+
+      const allRequirments = requrimentResponse.data.map((requirment) => ({
+        label: requirment.requirment,
+        value: requirment.uniqueId,
+      }));
+      const keyOutceData = keyOutcomeRes.data.map((keyOpt) => ({
+        label: keyOpt.key_outcome,
+        value: keyOpt.uniqueId,
+      }));
+      setRequirmentOptions(allRequirments);
+      setKeyOutcomesOptions(keyOutceData);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const getAuhtUser = async () => {
     setAuthLoading(true);
@@ -56,6 +98,8 @@ export default function CreateCourse() {
     status: "",
     course_level: "",
     course_short_name: "",
+    requirements: [],
+    key_outcomes: [],
   };
 
   const handleSubmit = async (values) => {
@@ -74,7 +118,17 @@ export default function CreateCourse() {
     if (values.image) {
       formData.append("image", values.image);
     }
+    values.requirements.forEach((item, index) => {
+      formData.append(`requirements[${index}]`, item.value);
+    });
+    values.key_outcomes.forEach((item, index) => {
+      formData.append(`key_outcomes[${index}]`, item.value);
+    });
+    bestFor.map((item) => {
+      formData.append("best_for", item);
+    });
     setBtnLoading(true);
+
     try {
       const response = await API.post(`/course`, formData);
 
@@ -113,6 +167,24 @@ export default function CreateCourse() {
       setPreviewImage(URL.createObjectURL(file));
     }
   };
+
+  const handleBestFor = () => {
+    if (bestFor.includes(bestForInput.trim())) {
+      Swal.fire({
+        icon: "warning",
+        title: "Duplicate Entry",
+        text: `"${bestForInput}" is already in the list.`,
+      });
+    } else if (bestForInput.trim() !== "") {
+      setBestFor((prev) => [...prev, bestForInput.trim()]);
+      setBestForInput("");
+    }
+  };
+
+  const handleBestForRemove = (indexToRemove) => {
+    setBestFor((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+
   return (
     <div>
       <div className="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
@@ -157,10 +229,14 @@ export default function CreateCourse() {
                         isInvalid={formik.errors.course_type}
                       >
                         <option value="">Select Course</option>
-                        <option value="Yoga">Yoga</option>
-                        <option value="Retreat">Retreat</option>
-                        <option value="Teacher Training">
-                          Teacher Training
+                        <option value="Academic Degrees">
+                          Academic Degrees
+                        </option>
+                        <option value="Professional Certification Courses">
+                          Professional Certification Courses
+                        </option>
+                        <option value="Specialized Styles of Yoga">
+                          Specialized Styles of Yoga
                         </option>
                       </Form.Select>
 
@@ -248,7 +324,7 @@ export default function CreateCourse() {
 
                   <Col md={6}>
                     <Form.Group>
-                      <Form.Label>Course Level</Form.Label>
+                      <Form.Label>Course Difficulty Level</Form.Label>
                       <Form.Select
                         name="course_level"
                         onChange={formik.handleChange}
@@ -330,6 +406,140 @@ export default function CreateCourse() {
                         className="d-none"
                       />
                     </Form.Group>
+                  </Col>
+
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>
+                        Pre-requisites
+                        <OverlayTrigger
+                          placement={`top-start`}
+                          overlay={
+                            <Tooltip
+                              className="tooltip-light"
+                              style={{ fontSize: "10px" }}
+                            >
+                              Yoga mat required", "No prior experience needed"
+                            </Tooltip>
+                          }
+                          key={Math.random()}
+                        >
+                          <i className="fe fe-info ms-1"></i>
+                        </OverlayTrigger>
+                      </Form.Label>
+                      <Dropdown
+                        options={requirmentOptions}
+                        multi
+                        keepSelectedInList={false}
+                        placeholder="Choose Requirments"
+                        values={formik.values.requirements}
+                        onChange={(value) =>
+                          formik.setFieldValue("requirements", value)
+                        }
+                        labelField="label"
+                        valueField="value"
+                        searchable={true}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {formik.errors.requirements}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>
+                        Key Outcomes (What Will You Learn)
+                        <OverlayTrigger
+                          placement={`top-start`}
+                          overlay={
+                            <Tooltip
+                              className="tooltip-light"
+                              style={{ fontSize: "10px" }}
+                            >
+                              Bullet list of learning outcomes, e.g. improved
+                              flexibility, stress relief techniques
+                            </Tooltip>
+                          }
+                          key={Math.random()}
+                        >
+                          <i className="fe fe-info ms-1"></i>
+                        </OverlayTrigger>
+                      </Form.Label>
+                      <Dropdown
+                        options={KeyOutComesOption}
+                        multi
+                        keepSelectedInList={false}
+                        placeholder="Choose Key Outcomes"
+                        values={formik.values.key_outcomes}
+                        onChange={(value) =>
+                          formik.setFieldValue("key_outcomes", value)
+                        }
+                        labelField="label"
+                        valueField="value"
+                        searchable={true}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {formik.errors.key_outcomes}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Row>
+                      <Col>
+                        <Form.Group>
+                          <Form.Label>
+                            Best For People{" "}
+                            <OverlayTrigger
+                              placement={`top-start`}
+                              overlay={
+                                <Tooltip
+                                  className="tooltip-light"
+                                  style={{ fontSize: "10px" }}
+                                >
+                                  "People with back pain", "Busy professionals",
+                                  "Pregnant women", etc.
+                                </Tooltip>
+                              }
+                              key={Math.random()}
+                            >
+                              <i className="fe fe-info ms-1"></i>
+                            </OverlayTrigger>
+                          </Form.Label>
+                          <InputGroup>
+                            <Form.Control
+                              onChange={(e) => setBestForInput(e.target.value)}
+                              value={bestForInput}
+                              placeholder="Enter Pre Requirements"
+                            />
+                            <Button onClick={() => handleBestFor()}>Add</Button>
+                          </InputGroup>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row className="mt-3">
+                      <Col>
+                        {bestFor.length > 0 && (
+                          <div className="tags">
+                            {bestFor.map((item, index) => (
+                              <div
+                                key={index}
+                                className="tag shadow-sm"
+                                style={{ fontSize: "0.9rem" }}
+                              >
+                                <span>{item}</span>
+                                <button
+                                  type="button"
+                                  className="tag-addon btn"
+                                  onClick={() => handleBestForRemove(index)}
+                                >
+                                  <i className="fe fe-x"></i>
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </Col>
+                    </Row>
                   </Col>
 
                   <Col md={12}>

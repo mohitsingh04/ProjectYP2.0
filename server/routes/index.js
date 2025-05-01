@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import {
+  blogUploadMulter,
   categoryUploadMulter,
   courseUploadMulter,
   processImage,
@@ -173,6 +174,40 @@ import {
 } from "../controller/AccomodationController.js";
 import ExpireVerification from "../helper/ExpireVerification/ExpireVerification.js";
 import { GoogleLoginAuth } from "../controller/GoogleAuth.js";
+import { addOrUpdateLegal, getLegal } from "../controller/LegalController.js";
+import {
+  CreateBlog,
+  deleteBlog,
+  getAllBlogs,
+  getBlogById,
+  getBlogByUniqueId,
+  UpdateBlog,
+} from "../controller/BlogsController.js";
+import {
+  createBlogCategory,
+  deleteBlogCategory,
+  getAllBlogCategories,
+  getBlogCategoryById,
+  updateBlogCategory,
+} from "../controller/BlogCategoryController.js";
+import {
+  CreateTagController,
+  deleteblogTag,
+  getAllBlogTags,
+  getBlogTagById,
+} from "../controller/BlogTagController.js";
+import {
+  CreateKeyOutComeController,
+  deleteKeyOutCome,
+  getAllKeyOutComes,
+  getKeyOutComeById,
+} from "../controller/KeyOutComesController.js";
+import {
+  CreateRequirmentController,
+  deleteRequirment,
+  getAllRequirments,
+  getRequirmentById,
+} from "../controller/RequirmentsController.js";
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -399,5 +434,43 @@ router.post("/coupons", CreateCoupon);
 router.get("/coupons/property/:property_id", getCouponByPropertyId);
 router.delete("/coupon/:uniqueId", DeleteCoupon);
 router.patch("/coupon/:uniqueId", UpdateCoupon);
+
+//Legal Routes
+router.get("/legal", getLegal);
+router.patch("/legal", addOrUpdateLegal);
+
+//Blog Routes
+
+const blogUpload = blogUploadMulter.fields([
+  { name: "featured_image", maxCount: 1 },
+]);
+router.get("/blog", getAllBlogs);
+router.post("/blog", blogUpload, processImage, CreateBlog);
+router.delete("/blog/:objectId", deleteBlog);
+router.get("/blog/:objectId", getBlogById);
+router.get("/blog/id/:uniqueId", getBlogByUniqueId);
+router.patch("/blog/:objectId", blogUpload, processImage, UpdateBlog);
+
+//Blog Category Routes
+router.get("/blog/category/all", getAllBlogCategories);
+router.get("/blog/category/id/:objectId", getBlogCategoryById);
+router.post("/blog/category", createBlogCategory);
+router.patch("/blog/category/:objectId", updateBlogCategory);
+router.delete("/blog/category/:objectId", deleteBlogCategory);
+
+router.get("/blog/tag/all", getAllBlogTags);
+router.get("/blog/tag/id/:objectId", getBlogTagById);
+router.post("/blog/tag", CreateTagController);
+router.delete("/blog/tag/:objectId", deleteblogTag);
+
+router.post(`/key-outcome`, CreateKeyOutComeController);
+router.get(`/key-outcome/all`, getAllKeyOutComes);
+router.get(`/key-outcome/id/:objectId`, getKeyOutComeById);
+router.delete(`/key-outcome/:objectId`, deleteKeyOutCome);
+
+router.post(`/requirment`, CreateRequirmentController);
+router.get(`/requirment/all`, getAllRequirments);
+router.get(`/requirment/id/:objectId`, getRequirmentById);
+router.delete(`/requirment/:objectId`, deleteRequirment);
 
 export default router;

@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Card, Form, Button, Row, Col, InputGroup } from "react-bootstrap";
+import {
+  Card,
+  Form,
+  Button,
+  Row,
+  Col,
+  InputGroup,
+  Tooltip,
+  OverlayTrigger,
+} from "react-bootstrap";
 import { useFormik } from "formik";
 import { propertyCourseValidation } from "../../../../context/ValidationSchemas";
 import { API } from "../../../../context/API";
 import Swal from "sweetalert2";
+import Dropdown from "react-dropdown-select";
 
 export default function AddCourse({
   property,
@@ -17,6 +27,50 @@ export default function AddCourse({
   const [priceInput, setPriceInput] = useState("");
   const [filteredCourse, setFilteredCourse] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
+  const [bestFor, setBestFor] = useState([]);
+  const [bestForInput, setBestForInput] = useState("");
+  const [languages, setLanguages] = useState([]);
+  const [languagesInput, setLanguagesInput] = useState("");
+
+  const [requirmentOptions, setRequirmentOptions] = useState([]);
+  const [keyOutcomes, setKeyOutcomesOptions] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const [requrimentResponse, keyOutcomeRes] = await Promise.all([
+        API.get("/requirment/all"),
+        API.get("/key-outcome/all"),
+      ]);
+
+      const allRequirments = requrimentResponse.data.map((requirment) => ({
+        label: requirment.requirment,
+        value: requirment.uniqueId,
+      }));
+      const keyOutceData = keyOutcomeRes.data.map((keyOpt) => ({
+        label: keyOpt.key_outcome,
+        value: keyOpt.uniqueId,
+      }));
+      setKeyOutcomesOptions(keyOutceData);
+      setRequirmentOptions(allRequirments);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const getRequirmentToRelatedId = (id) => {
+    const requirments = requirmentOptions.find(
+      (item) => item.value === Number(id)
+    );
+    return requirments ? requirments?.label : id;
+  };
+  const getKeyOutcomesToRelatedId = (id) => {
+    const outcome = keyOutcomes.find((item) => item.value === Number(id));
+    return outcome ? outcome?.label : id;
+  };
 
   useEffect(() => {
     if (selectedCourse) {
@@ -26,6 +80,18 @@ export default function AddCourse({
       setFilteredCourse(foundCourse || null);
     }
   }, [selectedCourse, courses]);
+
+  useEffect(() => {
+    if (filteredCourse?.best_for) {
+      setBestFor(filteredCourse?.best_for);
+    }
+  }, [filteredCourse]);
+
+  useEffect(() => {
+    if (filteredCourse?.languages) {
+      setLanguages(filteredCourse?.languages);
+    }
+  }, [filteredCourse]);
 
   const formik = useFormik({
     initialValues: {
@@ -39,6 +105,18 @@ export default function AddCourse({
       duration_type: filteredCourse?.duration?.split(" ")?.[1] || "",
       course_level: filteredCourse?.course_level || "",
       certification_type: filteredCourse?.certification_type || "",
+      cerification_info: false,
+      course_format: "",
+      requirements:
+        filteredCourse?.requirements?.map((c) => ({
+          label: getRequirmentToRelatedId(c),
+          value: Number(c),
+        })) || [],
+      key_outcomes:
+        filteredCourse?.key_outcomes?.map((c) => ({
+          label: getKeyOutcomesToRelatedId(c),
+          value: Number(c),
+        })) || [],
     },
     enableReinitialize: true,
     validateOnBlur: false,
@@ -49,7 +127,14 @@ export default function AddCourse({
         ...values,
         prices,
         duration: `${values.duration_value} ${values.duration_type}`,
+        best_for: bestFor,
+        languages: languages,
+        final_requirement: values.requirements.map((item) => item.value),
+        final_key_outcomes: values.key_outcomes.map((item) => item.value),
       };
+
+      console.log(data);
+
       try {
         const response = await API.post(`/property-course`, data);
         Swal.fire({
@@ -83,6 +168,38 @@ export default function AddCourse({
         text: "Please select a currency and enter a price.",
       });
     }
+  };
+
+  const handleBestFor = () => {
+    if (bestFor.includes(bestForInput.trim())) {
+      Swal.fire({
+        icon: "warning",
+        title: "Duplicate Entry",
+        text: `"${bestForInput}" is already in the list.`,
+      });
+    } else if (bestForInput.trim() !== "") {
+      setBestFor((prev) => [...prev, bestForInput.trim()]);
+      setBestForInput("");
+    }
+  };
+  const handleBestForRemove = (indexToRemove) => {
+    setBestFor((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+  const handleLanguages = () => {
+    if (languages.includes(languagesInput.trim())) {
+      Swal.fire({
+        icon: "warning",
+        title: "Duplicate Entry",
+        text: `"${languagesInput}" is already in the list.`,
+      });
+    } else if (languagesInput.trim() !== "") {
+      setLanguages((prev) => [...prev, languagesInput.trim()]);
+      setLanguagesInput("");
+    }
+  };
+
+  const handleLanguagesRemove = (indexToRemove) => {
+    setLanguages((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -128,9 +245,13 @@ export default function AddCourse({
                   isInvalid={formik.errors.course_type}
                 >
                   <option value="">Select Type</option>
-                  <option value="Yoga">Yoga</option>
-                  <option value="Retreat">Retreat</option>
-                  <option value="Teacher Training">Teacher Training</option>
+                  <option value="Academic Degrees">Academic Degrees</option>
+                  <option value="Professional Certification Courses">
+                    Professional Certification Courses
+                  </option>
+                  <option value="Specialized Styles of Yoga">
+                    Specialized Styles of Yoga
+                  </option>
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.course_type}
@@ -264,7 +385,6 @@ export default function AddCourse({
               </InputGroup>
             </Col>
             <Col md={6}>
-              {" "}
               {Object.keys(prices).length > 0 && (
                 <div className="tags">
                   {Object.entries(prices).map(([currency, value]) => (
@@ -296,6 +416,237 @@ export default function AddCourse({
                   ))}
                 </div>
               )}
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>
+                  Pre-requisites
+                  <OverlayTrigger
+                    placement={`top-start`}
+                    overlay={
+                      <Tooltip
+                        className="tooltip-light"
+                        style={{ fontSize: "10px" }}
+                      >
+                        Yoga mat required", "No prior experience needed"
+                      </Tooltip>
+                    }
+                    key={Math.random()}
+                  >
+                    <i className="fe fe-info ms-1"></i>
+                  </OverlayTrigger>
+                </Form.Label>
+                <Dropdown
+                  options={requirmentOptions}
+                  multi
+                  keepSelectedInList={false}
+                  placeholder="Choose Requirments"
+                  values={formik.values.requirements}
+                  onChange={(value) =>
+                    formik.setFieldValue("requirements", value)
+                  }
+                  labelField="label"
+                  valueField="value"
+                  searchable={true}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {formik.errors.requirements}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>
+                  Key Outcomes (What Will You Learn)
+                  <OverlayTrigger
+                    placement={`top-start`}
+                    overlay={
+                      <Tooltip
+                        className="tooltip-light"
+                        style={{ fontSize: "10px" }}
+                      >
+                        Bullet list of learning outcomes, e.g. improved
+                        flexibility, stress relief techniques
+                      </Tooltip>
+                    }
+                    key={Math.random()}
+                  >
+                    <i className="fe fe-info ms-1"></i>
+                  </OverlayTrigger>
+                </Form.Label>
+                <Dropdown
+                  options={keyOutcomes}
+                  multi
+                  keepSelectedInList={false}
+                  placeholder="Choose Key Outcomes"
+                  values={formik.values.key_outcomes}
+                  onChange={(value) =>
+                    formik.setFieldValue("key_outcomes", value)
+                  }
+                  labelField="label"
+                  valueField="value"
+                  searchable={true}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {formik.errors.key_outcomes}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Row>
+                <Col>
+                  <Form.Group>
+                    <Form.Label>
+                      Best For People{" "}
+                      <OverlayTrigger
+                        placement={`top-start`}
+                        overlay={
+                          <Tooltip
+                            className="tooltip-light"
+                            style={{ fontSize: "10px" }}
+                          >
+                            "People with back pain", "Busy professionals",
+                            "Pregnant women", etc.
+                          </Tooltip>
+                        }
+                        key={Math.random()}
+                      >
+                        <i className="fe fe-info ms-1"></i>
+                      </OverlayTrigger>
+                    </Form.Label>
+                    <InputGroup>
+                      <Form.Control
+                        onChange={(e) => setBestForInput(e.target.value)}
+                        value={bestForInput}
+                        placeholder="Enter Best For Peoples"
+                      />
+                      <Button onClick={() => handleBestFor()}>Add</Button>
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row className="mt-3">
+                <Col>
+                  {bestFor.length > 0 && (
+                    <div className="tags">
+                      {bestFor.map((item, index) => (
+                        <div
+                          key={index}
+                          className="tag shadow-sm"
+                          style={{ fontSize: "0.9rem" }}
+                        >
+                          <span>{item}</span>
+                          <button
+                            type="button"
+                            className="tag-addon btn"
+                            onClick={() => handleBestForRemove(index)}
+                          >
+                            <i className="fe fe-x"></i>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Col>
+              </Row>
+            </Col>
+            <Col md={6}>
+              <Row>
+                <Col>
+                  <Form.Group>
+                    <Form.Label>
+                      Languages{" "}
+                      <OverlayTrigger
+                        placement={`top-start`}
+                        overlay={
+                          <Tooltip
+                            className="tooltip-light"
+                            style={{ fontSize: "10px" }}
+                          >
+                            English, Hindi, Bilingual, etc.
+                          </Tooltip>
+                        }
+                        key={Math.random()}
+                      >
+                        <i className="fe fe-info ms-1"></i>
+                      </OverlayTrigger>
+                    </Form.Label>
+                    <InputGroup>
+                      <Form.Control
+                        onChange={(e) => setLanguagesInput(e.target.value)}
+                        value={languagesInput}
+                        placeholder="Enter Languages"
+                      />
+                      <Button onClick={() => handleLanguages()}>Add</Button>
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row className="mt-3">
+                <Col>
+                  {languages.length > 0 && (
+                    <div className="tags">
+                      {languages.map((item, index) => (
+                        <div
+                          key={index}
+                          className="tag shadow-sm"
+                          style={{ fontSize: "0.9rem" }}
+                        >
+                          <span>{item}</span>
+                          <button
+                            type="button"
+                            className="tag-addon btn"
+                            onClick={() => handleLanguagesRemove(index)}
+                          >
+                            <i className="fe fe-x"></i>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Col>
+              </Row>
+            </Col>
+            <Col md={6} className="mt-3">
+              <Form.Group>
+                <Form.Label>Course Format</Form.Label>
+                <Form.Select
+                  name="course_format"
+                  value={formik.values.course_format}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  isInvalid={formik.errors.course_format}
+                >
+                  <option value="" disabled>
+                    --select format--
+                  </option>
+                  <option value={`Online`}>Online</option>
+                  <option value={`Offline`}>Offline</option>
+                </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {formik.errors.course_format}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row className="mb-3">
+            <Col md={6}>
+              <Form.Check
+                type="checkbox"
+                id="cerification_info"
+                name="cerification_info"
+                label="I agree to the terms"
+                onChange={formik.handleChange}
+                checked={formik.values.cerification_info}
+                isInvalid={formik.errors.cerification_info}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.cerification_info}
+              </Form.Control.Feedback>
             </Col>
           </Row>
 

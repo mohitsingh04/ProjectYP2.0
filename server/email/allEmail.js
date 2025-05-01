@@ -134,3 +134,50 @@ export const newUserInfoEmail = async ({ email, password }) => {
     return { success: false, error: error.message };
   }
 };
+
+export const policyMail = async ({ legalPolicy }) => {
+  try {
+    const allUsers = await User.find();
+    if (!legalPolicy) {
+      throw new Error("Legal Policy is required.");
+    }
+
+    allUsers.forEach(async (user) => {
+      if (user.role === "Property Manager") {
+        const mailOptions = {
+          from: process.env.EMAIL,
+          to: user.email,
+          subject: legalPolicy,
+          html: `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+              <div style="max-width: 600px; margin: auto; padding: 20px;">
+                <h2 style="color: #1d4b99;">Important Update: ${legalPolicy} Changes</h2>
+                <p>Dear ${user.name || "User"},</p>
+                <p>We hope you are doing well.</p>
+                <p>We would like to inform you that we have recently updated our <strong>${legalPolicy}</strong>. These changes have been made to better serve you and to maintain transparency in how we operate.</p>
+                <p>We encourage you to review the updated <strong>${legalPolicy}</strong> to stay informed about the latest changes.</p>
+        
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${process.env.FRONTEND_DASHBOARD_URL}/${legalPolicy
+            .replace(/\s+/g, "-")
+            .toLowerCase()}" 
+                     style="background-color: #1d4b99; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                    View ${legalPolicy}
+                  </a>
+                </div>
+        
+                <p>If you have any questions or concerns regarding the updates, please feel free to reach out to our support team.</p>
+                <p style="margin-top: 30px;">Best regards,<br>Your Company Name</p>
+              </div>
+            </div>
+          `,
+        };
+
+        await transporter.sendMail(mailOptions);
+      }
+    });
+  } catch (error) {
+    console.error("Email sending error:", error.message);
+    return { success: false, error: error.message };
+  }
+};
