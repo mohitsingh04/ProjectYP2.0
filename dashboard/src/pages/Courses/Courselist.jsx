@@ -46,8 +46,10 @@ export default function CourseList() {
     setLoading(true);
     try {
       const response = await API.get("/course");
-      setCourses(response.data);
-      setFilteredCourses(response.data);
+      const data = response.data;
+      const finalData = data.filter((item) => item?.isDeleted === false);
+      setCourses(finalData);
+      setFilteredCourses(finalData);
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
@@ -69,7 +71,6 @@ export default function CourseList() {
       );
     }
   }, [search, courses]);
-
   const deleteCourse = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -83,17 +84,17 @@ export default function CourseList() {
 
     if (result.isConfirmed) {
       try {
-        const response = await API.delete(`/course/${id}`);
+        const response = await API.get(`/course/soft/${id}`);
         Swal.fire(
           "Deleted!",
-          response?.data?.message || "courses removed.",
+          response?.data?.message || "Course has been soft deleted.",
           "success"
         );
         getCourse();
       } catch (error) {
         Swal.fire(
-          "Error",
-          error.response?.data?.error || "Failed to delete!",
+          "Error!",
+          error.response?.data?.error || "Failed to delete course!",
           "error"
         );
       }
@@ -146,7 +147,7 @@ export default function CourseList() {
           className={`badge ${
             row.status === "Active"
               ? "bg-success"
-              : row.status === "Suspended"
+              : row.status === "Suspended" || row.status === "Deleted"
               ? "bg-danger"
               : "bg-warning"
           }`}

@@ -21,6 +21,22 @@ export default function Course() {
   const [search, setSearch] = useState("");
   const [isViewing, setIsViewing] = useState("");
   const [isEditing, setIsEditing] = useState("");
+  const [allCourse, setAllCourse] = useState([]);
+
+  const fetchCourseDetail = async () => {
+    try {
+      const response = await API.get(`/course`);
+      setAllCourse(response.data);
+    } catch (error) {
+      console.error("Error fetching course detail:", error);
+      Swal.fire("Error", "Failed to fetch course detail.", "error");
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    fetchCourseDetail();
+  }, []);
 
   const getPropertyCourses = useCallback(async () => {
     try {
@@ -61,24 +77,12 @@ export default function Course() {
     getAuthUser();
   }, []);
 
-  const getCourses = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await API.get("/course");
-      setCourses(response.data);
-    } catch (error) {
-      console.error(
-        error.response.data.error ||
-          error.response.data.message ||
-          error.message
-      );
-    }
-    setLoading(false);
-  }, []);
-
   useEffect(() => {
-    getCourses();
-  }, [getCourses]);
+    if (allCourse) {
+      setCourses(allCourse.filter((item) => item.status === "Active"));
+      setLoading(false);
+    }
+  }, [allCourse]);
 
   const getProperty = useCallback(async () => {
     try {
@@ -139,20 +143,26 @@ export default function Course() {
     }
   };
 
+  const courseFinder = (row) => {
+    const item = allCourse.find((item) => item.uniqueId === row.course_id);
+    return item;
+  };
+
   const columns = [
     {
       name: "Course Name",
-      selector: (row) => row.course_name,
+      selector: (row) => row.course_name || courseFinder(row).course_name,
       sortable: true,
     },
     {
       name: "Certification Type",
-      selector: (row) => row.certification_type,
+      selector: (row) =>
+        row.certification_type || courseFinder(row).certification_type,
       sortable: true,
     },
     {
       name: "Duration",
-      selector: (row) => row.duration,
+      selector: (row) => row.duration || courseFinder(row).duration,
       sortable: true,
     },
     {
@@ -249,6 +259,7 @@ export default function Course() {
           ) : (
             <ViewCourse
               course={isViewing}
+              allCourse={allCourse}
               setIsViewing={setIsViewing}
               setIsEditing={setIsEditing}
               getPropertyCourses={getPropertyCourses}

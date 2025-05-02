@@ -15,7 +15,7 @@ export default function AddSeo({ property, getSeo }) {
 
   useEffect(() => {
     if (property) {
-      setMetaDescription(property?.property_description?.slice(0, 160));
+      setMetaDescription(property?.property_description?.slice(0, 200));
     }
   }, [property]);
 

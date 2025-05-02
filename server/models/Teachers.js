@@ -29,7 +29,7 @@ const TeachersSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "Pending",
+    default: "Active",
   },
   createdAt: {
     type: Date,

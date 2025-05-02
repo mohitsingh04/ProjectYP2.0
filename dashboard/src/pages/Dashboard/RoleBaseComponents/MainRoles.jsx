@@ -54,7 +54,7 @@ export default function MainRoles({ authUser, properties }) {
       roles: ["Super Admin"],
     },
     {
-      title: "Suber Admin",
+      title: "Super Admin",
       count: users.filter((item) => item.role === "Super Admin").length || 0,
       icon: "fe-shield",
       color: "secondary",

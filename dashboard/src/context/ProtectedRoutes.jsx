@@ -126,6 +126,7 @@ export default function ProtectedRoutes({ children }) {
       "dashboard/blogs/tags",
       "dashboard/key-outcomes",
       "dashboard/requirments",
+      "dashboard/course/soft",
     ],
   };
 

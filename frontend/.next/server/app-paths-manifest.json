@@ -1,5 +1,4 @@
 {
   "/page": "app/page.js",
-  "/(Pages)/blog/[uniqueId]/[title]/page": "app/(Pages)/blog/[uniqueId]/[title]/page.js",
-  "/(Pages)/blog/page": "app/(Pages)/blog/page.js"
+  "/(Pages)/property/[uniqueId]/[property_name]/page": "app/(Pages)/property/[uniqueId]/[property_name]/page.js"
 }

@@ -183,4 +183,42 @@ export const getCourseByUniqueId = async (req, res) => {
   }
 };
 
-//? Check Aboved
+export const softDeleteCourse = async (req, res) => {
+  try {
+    const { objectId } = req.params;
+    const course = await Course.findById(objectId);
+    if (!course) {
+      return res.status(404).json({ error: "Course not found!" });
+    }
+
+    await Course.findOneAndUpdate(
+      { _id: objectId },
+      { $set: { isDeleted: true, status: "Suspended" } }
+    );
+
+    return res.status(200).json({ message: "Course is Softly Deleted" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const restoreCourse = async (req, res) => {
+  try {
+    const { objectId } = req.params;
+    const course = await Course.findById(objectId);
+    if (!course) {
+      return res.status(404).json({ error: "Course not found!" });
+    }
+
+    await Course.findOneAndUpdate(
+      { _id: objectId },
+      { $set: { isDeleted: false, status: "Active" } }
+    );
+
+    return res.status(200).json({ message: "Course is Softly Deleted" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};

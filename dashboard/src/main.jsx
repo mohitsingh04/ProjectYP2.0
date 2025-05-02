@@ -76,6 +76,7 @@ import EditBlogCategory from "./pages/Blogs/Category/EditBlogCategory";
 import ViewBlog from "./pages/Blogs/ViewBlog";
 import KeyOUtComes from "./pages/KeyOutcomes/KeyOutComes";
 import Requirments from "./pages/Requirments/Requirments";
+import SoftDeletedCourses from "./pages/Courses/SoftDeletedCourses";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
@@ -129,6 +130,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route path="/dashboard/course/create"element={<ProtectedRoutes><CreateCourse /></ProtectedRoutes>}/>
               <Route path="/dashboard/course/view/:objectId"element={<ProtectedRoutes><ViewCourse /></ProtectedRoutes>}/>
               <Route path="/dashboard/course/edit/:objectId"element={<ProtectedRoutes><EditCourse /></ProtectedRoutes>}/>
+              <Route path="/dashboard/course/soft"element={<ProtectedRoutes><SoftDeletedCourses /></ProtectedRoutes>}/>
 
               <Route path="/dashboard/category"element={<ProtectedRoutes><CategoryList/></ProtectedRoutes>}/>
               <Route path="/dashboard/category/create"element={<ProtectedRoutes><CreateCategory /></ProtectedRoutes>}/>

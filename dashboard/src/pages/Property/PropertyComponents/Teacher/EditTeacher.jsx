@@ -33,7 +33,7 @@ export default function EditTeacher({ teacher, setIsEditing, getTeachers }) {
       teacher_name: teacher?.teacher_name || "",
       designation: teacher?.designation || "",
       experience_value: teacher?.experience?.split(" ")[0] || "",
-      experience_type: teacher?.experience?.split(" ")[1] || "years",
+      experience_type: teacher?.experience?.split(" ")[1] || "",
       profile: null,
       status: teacher?.status || "Active",
     },
@@ -151,6 +151,7 @@ export default function EditTeacher({ teacher, setIsEditing, getTeachers }) {
                   {...formik.getFieldProps("experience_type")}
                   isInvalid={!!formik.errors.experience_type}
                 >
+                  <option value="">--select type--</option>
                   <option value="years">Years</option>
                   <option value="months">Months</option>
                 </Form.Select>

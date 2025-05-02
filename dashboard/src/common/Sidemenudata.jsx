@@ -101,6 +101,14 @@ export const MENUITEMS = [
         dirchange: false,
         title: "Create Course",
       },
+      {
+        path: `/dashboard/course/soft`,
+        type: "link",
+        active: false,
+        selected: false,
+        dirchange: false,
+        title: "Deleted Courses",
+      },
     ],
   },
   {

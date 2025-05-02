@@ -22,16 +22,6 @@
       "static/chunks/main-app.js",
       "static/css/app/(Pages)/property/[uniqueId]/[property_name]/page.css",
       "static/chunks/app/(Pages)/property/[uniqueId]/[property_name]/page.js"
-    ],
-    "/(Pages)/blog/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(Pages)/blog/page.js"
-    ],
-    "/(Pages)/blog/[uniqueId]/[title]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(Pages)/blog/[uniqueId]/[title]/page.js"
     ]
   }
 }

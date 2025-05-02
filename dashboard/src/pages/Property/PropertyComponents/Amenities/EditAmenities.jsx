@@ -184,7 +184,7 @@ export default function EditAmenities({
               </div>
             </div>
 
-            {category === "Mandatory" &&
+            {category === "Transportation" &&
               amenity === "Parking" &&
               isSelected && (
                 <div className="mt-3">

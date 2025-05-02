@@ -85,6 +85,8 @@ import {
   getCourse,
   getCourseById,
   getCourseByUniqueId,
+  restoreCourse,
+  softDeleteCourse,
   updateCourse,
 } from "../controller/CourseController.js";
 import {
@@ -261,6 +263,8 @@ router.patch("/course/:objectId", courseUpload, processImage, updateCourse);
 router.delete("/course/:objectId", deleteCourse);
 router.get("/course/:objectId", getCourseById);
 router.get("/course-detail/:uniqueId", getCourseByUniqueId);
+router.get("/course/soft/:objectId", softDeleteCourse);
+router.get("/course/restore/:objectId", restoreCourse);
 
 // ?Category Route
 const categoryUpload = categoryUploadMulter.fields([

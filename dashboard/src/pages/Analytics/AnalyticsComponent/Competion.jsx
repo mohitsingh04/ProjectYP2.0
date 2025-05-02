@@ -8,6 +8,25 @@ export default function Competion({ currentProperty, allProperties }) {
   const [currentLocation, setCurrentLocation] = useState("");
   const [competitions, setCompetitions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+
+  const getCategories = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  const getCategoryToRelatedId = (id) => {
+    const category = categories.find((item) => item.uniqueId === Number(id));
+    return category ? category?.category_name : "Unknown";
+  };
 
   const colors = ["primary", "secondary", "success", "danger", "info"];
 
@@ -104,7 +123,7 @@ export default function Competion({ currentProperty, allProperties }) {
                       <span
                         className={`badge bg-${colors[index]} text-fixed-white`}
                       >
-                        {item?.property?.category}
+                        {getCategoryToRelatedId(item?.property?.category)}
                       </span>
                     </div>
                   </div>

@@ -153,7 +153,7 @@ export default function EnrollmentForm({ property }: EnrollmentFormProps) {
               <div className="invalid-feedback">{formik.errors.date}</div>
             ) : null}
             <div className="col-md-6">
-              <label className="form-label">Preferred Date</label>
+              <label className="form-label">City</label>
               <input
                 type="text"
                 placeholder="Enter City"

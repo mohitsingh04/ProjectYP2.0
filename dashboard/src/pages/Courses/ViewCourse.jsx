@@ -205,6 +205,7 @@ export default function ViewCourse() {
                                 "__v",
                                 "image",
                                 "description",
+                                "isDeleted"
                               ].includes(key)
                             )
                               return null;

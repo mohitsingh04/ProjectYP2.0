@@ -153,7 +153,7 @@ export default function AddAmenities({
               </div>
             </div>
 
-            {category === "Mandatory" &&
+            {category === "Transportation" &&
               amenity === "Parking" &&
               isSelected && (
                 <div className="mt-3">

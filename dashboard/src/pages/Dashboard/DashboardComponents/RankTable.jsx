@@ -1,12 +1,29 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import ALLImages from "../../../common/Imagesdata";
 import { API } from "../../../context/API";
 
 export default function RankTable({ properties }) {
   const [topRanks, setTopRanks] = useState([]);
+  const [categories, setCategories] = useState([]);
 
+  const getCategories = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  useEffect(() => {
+    getCategories();
+  }, [getCategories()]);
+
+  const getCategoryToRelatedId = (id) => {
+    const category = categories.find((item) => item.uniqueId === Number(id));
+    return category ? category?.category_name : "Unknown";
+  };
   const getTopRanks = useCallback(async () => {
     try {
       const response = await API.get(`/ranks`);
@@ -75,7 +92,7 @@ export default function RankTable({ properties }) {
                                 {item.property_name}
                               </h6>
                               <span className="fs-12 text-muted">
-                                {item.category}
+                                {getCategoryToRelatedId(item.category)}
                               </span>
                             </div>
                           </div>

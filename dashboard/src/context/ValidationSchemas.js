@@ -173,17 +173,27 @@ export const seoValidation = Yup.object({
     .max(2, "Maximum 2 keywords allowed")
     .required("Primary focus keyword is required"),
 });
+// import * as Yup from "yup";
 
 export const teacherValidation = Yup.object({
   teacher_name: name,
   designation: Yup.string().required("Designation is required"),
+
   experience_value: Yup.number()
     .typeError("Must be a number")
-    .required("Experience value is required")
+    .nullable()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    )
     .moreThan(0, "Experience must be greater than 0"),
+
   experience_type: Yup.string()
     .oneOf(["months", "years"], "Invalid experience type")
-    .required("Experience type is required"),
+    .when("experience_value", {
+      is: (val) => val !== null && val !== undefined && val !== "",
+      then: (schema) => schema.required("Experience type is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
 });
 
 export const propertyCourseValidation = Yup.object({

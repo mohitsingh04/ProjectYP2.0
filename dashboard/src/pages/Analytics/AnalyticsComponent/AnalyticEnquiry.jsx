@@ -1,13 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Card, Table } from "react-bootstrap";
 import { API } from "../../../context/API";
+import { Link } from "react-router-dom";
 
 export default function AnalyticEnquiry({ currentProperty }) {
   const [enquiry, setEnquiry] = useState([]);
   const getEnquiry = useCallback(async () => {
     if (currentProperty) {
       try {
-        const response = await API.get(`/property/enquiry/100000`);
+        const response = await API.get(
+          `/property/enquiry/${currentProperty?.uniqueId}`
+        );
         setEnquiry(response.data);
       } catch (error) {
         console.log(error);
@@ -89,9 +92,12 @@ export default function AnalyticEnquiry({ currentProperty }) {
                     </td>
                     <td>
                       <div className="btn-list">
-                        <Button className="btn-icon btn-wave waves-effect waves-light">
+                        <Link
+                          to={`/dashboard/enquiry/view/${item?._id}`}
+                          className="btn-icon btn btn-primary btn-wave waves-effect waves-light"
+                        >
                           <i className="fe fe-eye lh-1"></i>
-                        </Button>
+                        </Link>
                       </div>
                     </td>
                   </tr>

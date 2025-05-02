@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Card,
   Form,
@@ -31,6 +31,20 @@ export default function EditCourse({
 
   const [requirmentOptions, setRequirmentOptions] = useState([]);
   const [keyOutcomes, setKeyOutcomesOptions] = useState([]);
+  const [mainCourse, setMainCourse] = useState([]);
+
+  const getMainCourse = useCallback(async () => {
+    try {
+      const response = await API.get(`/course-detail/${course?.course_id}`);
+      setMainCourse(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getMainCourse();
+  }, [getMainCourse]);
 
   const fetchData = async () => {
     try {
@@ -107,13 +121,21 @@ export default function EditCourse({
 
   const formik = useFormik({
     initialValues: {
-      course_type: course?.course_type || "",
-      course_name: course?.course_name || "",
-      course_short_name: course?.course_short_name || "",
-      duration_value: course?.duration?.split(" ")?.[0] || "",
-      duration_type: course?.duration?.split(" ")?.[1] || "",
-      course_level: course?.course_level || "",
-      certification_type: course?.certification_type || "",
+      course_id: course?.course_id || mainCourse?.uniqueId || "",
+      course_type: course?.course_type || mainCourse?.course_type || "",
+      course_name: mainCourse?.course_name || "",
+      course_short_name:
+        course?.course_short_name || mainCourse?.course_short_name || "",
+      duration_value:
+        course?.duration?.split(" ")?.[0] ||
+        mainCourse?.duration?.split(" ")?.[0] ||
+        "",
+      duration_type:
+        course?.duration?.split(" ")?.[1] ||
+        mainCourse?.duration?.split(" ")?.[1] ||
+        "",
+      course_level: course?.course_level || mainCourse?.course_level || "",
+      certification_type: mainCourse?.certification_type || "",
       status: course?.status || "",
       cerification_info: course?.cerification_info || false,
       course_format: course?.course_format || "",
@@ -121,12 +143,22 @@ export default function EditCourse({
         course?.requirements?.map((c) => ({
           label: getRequirmentToRelatedId(c),
           value: Number(c),
-        })) || [],
+        })) ||
+        mainCourse?.requirements?.map((c) => ({
+          label: getRequirmentToRelatedId(c),
+          value: Number(c),
+        })) ||
+        [],
       key_outcomes:
         course?.key_outcomes?.map((c) => ({
           label: getKeyOutcomesToRelatedId(c),
           value: Number(c),
-        })) || [],
+        })) ||
+        mainCourse?.key_outcomes?.map((c) => ({
+          label: getKeyOutcomesToRelatedId(c),
+          value: Number(c),
+        })) ||
+        [],
     },
     enableReinitialize: true,
     validateOnBlur: false,
@@ -310,6 +342,7 @@ export default function EditCourse({
                   <option value="Days">Days</option>
                   <option value="Weeks">Weeks</option>
                   <option value="Months">Months</option>
+                  <option value="Years">Years</option>
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.duration_type}
@@ -647,6 +680,8 @@ export default function EditCourse({
                   </option>
                   <option value={`Online`}>Online</option>
                   <option value={`Offline`}>Offline</option>
+                  <option value={`Hybrid`}>Hybrid</option>
+                  <option value={`Recorded`}>Recorded</option>
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.course_format}
@@ -661,7 +696,7 @@ export default function EditCourse({
                 type="checkbox"
                 id="cerification_info"
                 name="cerification_info"
-                label="I agree to the terms"
+                label="Cerification"
                 onChange={formik.handleChange}
                 checked={formik.values.cerification_info}
                 isInvalid={formik.errors.cerification_info}

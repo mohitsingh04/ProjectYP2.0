@@ -6,9 +6,6 @@ const PropertyCourseSchema = new mongoose.Schema(
     userId: {
       type: Number,
     },
-    image: {
-      type: Array,
-    },
     uniqueId: {
       type: Number,
     },
@@ -19,9 +16,6 @@ const PropertyCourseSchema = new mongoose.Schema(
       type: String,
     },
     certification_type: {
-      type: String,
-    },
-    course_name: {
       type: String,
     },
     prices: {
@@ -42,9 +36,6 @@ const PropertyCourseSchema = new mongoose.Schema(
     },
     property_id: {
       type: Number,
-    },
-    description: {
-      type: String,
     },
     requirements: {
       type: Array,

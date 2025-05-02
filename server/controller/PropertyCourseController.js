@@ -6,16 +6,14 @@ export const addPropertyCourse = async (req, res) => {
   try {
     const {
       userId,
-      course_name,
+      course_id,
+      property_id,
       course_type,
       course_short_name,
       prices,
       course_level,
       duration,
-      course_id,
       certification_type,
-      property_id,
-      description,
       final_requirement,
       cerification_info,
       best_for,
@@ -24,13 +22,13 @@ export const addPropertyCourse = async (req, res) => {
       final_key_outcomes,
     } = req.body;
 
-    if (!userId || !course_name || !property_id || !course_id) {
+    if (!userId || !course_id || !property_id) {
       return res.status(400).json({ error: "Missing required fields." });
     }
 
     const existingCourse = await PropertyCourse.findOne({
       property_id,
-      course_name,
+      course_id,
     });
 
     if (existingCourse) {
@@ -44,8 +42,6 @@ export const addPropertyCourse = async (req, res) => {
         .json({ error: "Course not found in Course collection." });
     }
 
-    const image = baseCourse.image || [];
-
     const lastCourse = await PropertyCourse.findOne()
       .sort({ _id: -1 })
       .limit(1);
@@ -55,28 +51,86 @@ export const addPropertyCourse = async (req, res) => {
       property_id,
     });
 
-    const newCourse = new PropertyCourse({
-      userId,
-      uniqueId: nextUniqueId,
-      course_name,
+    const propertyCourseFields = [
+      "course_type",
+      "course_short_name",
+      "prices",
+      "course_level",
+      "duration",
+      "certification_type",
+      "requirements",
+      "best_for",
+      "key_outcomes",
+      "languages",
+      "course_format",
+      "cerification_info",
+    ];
+
+    const inputData = {
       course_type,
       course_short_name,
       prices,
       course_level,
       duration,
-      course_id,
       certification_type,
-      property_id,
-      description,
-      image,
       requirements: final_requirement,
       best_for,
-      cerification_info,
+      key_outcomes: final_key_outcomes,
       languages,
       course_format,
-      key_outcomes: final_key_outcomes,
-    });
+      cerification_info,
+    };
 
+    const arrayFieldsWithTypes = {
+      requirements: "object",
+      best_for: "object",
+      key_outcomes: "object",
+      prices: "object",
+      languages: "string",
+    };
+
+    const arraysAreEqual = (a, b) => {
+      return JSON.stringify(a) === JSON.stringify(b);
+    };
+
+    const newCourseData = {
+      userId,
+      course_id,
+      uniqueId: nextUniqueId,
+      property_id,
+    };
+
+    for (const field of propertyCourseFields) {
+      const inputVal = inputData[field];
+      const baseVal = baseCourse[field];
+
+      if (typeof inputVal === "undefined") continue;
+
+      const expectedType = arrayFieldsWithTypes[field];
+
+      if (Array.isArray(inputVal) && Array.isArray(baseVal)) {
+        const inputIsExpected = inputVal.every(
+          (item) => typeof item === expectedType
+        );
+        const baseIsExpected = baseVal.every(
+          (item) => typeof item === expectedType
+        );
+
+        if (
+          !inputIsExpected ||
+          !baseIsExpected ||
+          !arraysAreEqual(inputVal, baseVal)
+        ) {
+          newCourseData[field === "price" ? "prices" : field] = inputVal;
+        }
+      } else {
+        if (JSON.stringify(inputVal) !== JSON.stringify(baseVal)) {
+          newCourseData[field === "price" ? "prices" : field] = inputVal;
+        }
+      }
+    }
+
+    const newCourse = new PropertyCourse(newCourseData);
     await newCourse.save();
 
     if (existingCourseCount === 0) {
@@ -131,22 +185,18 @@ export const getPropertyCourseByPropertyId = async (req, res) => {
     return res.send({ error: "Internal Server Error" });
   }
 };
-
 export const updatePropertyCourse = async (req, res) => {
   try {
     const objectId = req.params.objectId;
 
     const {
-      course_name,
+      course_id,
       course_type,
       course_short_name,
-      status,
       prices,
       course_level,
       duration,
-      course_id,
       certification_type,
-      description,
       final_requirement,
       cerification_info,
       best_for,
@@ -155,37 +205,110 @@ export const updatePropertyCourse = async (req, res) => {
       final_key_outcomes,
     } = req.body;
 
-    if (!course_name || !objectId) {
+    if (!objectId || !course_id) {
       return res.status(400).json({ error: "Missing required fields." });
     }
 
-    let updateData = {
-      course_name,
+    // Find the existing course
+    const existingCourse = await PropertyCourse.findById(objectId);
+    if (!existingCourse) {
+      return res.status(404).json({ error: "Course not found." });
+    }
+
+    // Find the base course
+    const baseCourse = await Course.findOne({ uniqueId: course_id });
+    if (!baseCourse) {
+      return res.status(404).json({ error: "Base course not found." });
+    }
+
+    // Define fields to compare
+    const propertyCourseFields = [
+      "course_type",
+      "course_short_name",
+      "prices",
+      "course_level",
+      "duration",
+      "certification_type",
+      "requirements",
+      "best_for",
+      "key_outcomes",
+      "languages",
+      "course_format",
+      "cerification_info",
+    ];
+
+    // Define expected types for array fields
+    const arrayFieldsWithTypes = {
+      requirements: "object",
+      best_for: "object",
+      key_outcomes: "object",
+      prices: "object",
+      languages: "string",
+    };
+
+    // Input data mapping
+    const inputData = {
       course_type,
       course_short_name,
       prices,
       course_level,
       duration,
-      course_id,
-      status,
       certification_type,
-      description,
-      cerification_info,
       requirements: final_requirement,
       best_for,
+      key_outcomes: final_key_outcomes,
       languages,
       course_format,
-      key_outcomes: final_key_outcomes,
+      cerification_info,
     };
 
-    if (course_id) {
-      const baseCourse = await Course.findOne({ uniqueId: course_id });
-      if (!baseCourse) {
-        return res.status(404).json({ error: "Base course not found." });
+    // Helper: compare arrays deeply
+    const arraysAreEqual = (a, b) => {
+      return JSON.stringify(a) === JSON.stringify(b);
+    };
+
+    // Prepare update data
+    const updateData = {
+      course_id,
+    };
+
+    // Compare fields with base course
+    for (const field of propertyCourseFields) {
+      const inputVal = inputData[field];
+      const baseVal = baseCourse[field];
+
+      if (typeof inputVal === "undefined") continue;
+
+      const expectedType = arrayFieldsWithTypes[field];
+
+      if (Array.isArray(inputVal) && Array.isArray(baseVal)) {
+        const inputIsExpected = inputVal.every(
+          (item) => typeof item === expectedType
+        );
+        const baseIsExpected = baseVal.every(
+          (item) => typeof item === expectedType
+        );
+
+        if (
+          !inputIsExpected ||
+          !baseIsExpected ||
+          !arraysAreEqual(inputVal, baseVal)
+        ) {
+          updateData[field] = inputVal;
+        }
+      } else {
+        if (JSON.stringify(inputVal) !== JSON.stringify(baseVal)) {
+          updateData[field] = inputVal;
+        }
       }
-      updateData.image = baseCourse.image || [];
     }
 
+    // Set image if base course has one
+    if (baseCourse.image) {
+      updateData.image = baseCourse.image;
+    }
+
+    // Update the course
     const updatedCourse = await PropertyCourse.findByIdAndUpdate(
       objectId,
       { $set: updateData },
@@ -196,14 +319,16 @@ export const updatePropertyCourse = async (req, res) => {
       return res.status(404).json({ error: "Course not found." });
     }
 
-    return res
-      .status(200)
-      .json({ message: "Course updated successfully.", updatedCourse });
+    return res.status(200).json({
+      message: "Course updated successfully.",
+      updatedCourse,
+    });
   } catch (error) {
     console.error("Error updating course:", error);
     return res.status(500).json({ error: "Internal Server Error." });
   }
 };
+
 export const deletePropertyCourse = async (req, res) => {
   try {
     const { objectId } = req.params;

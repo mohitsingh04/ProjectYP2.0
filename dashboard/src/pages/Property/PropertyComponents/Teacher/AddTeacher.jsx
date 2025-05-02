@@ -28,7 +28,7 @@ export default function AddTeacher({ property, setIsAdding, getTeachers }) {
       teacher_name: "",
       designation: "",
       experience_value: "",
-      experience_type: "years",
+      experience_type: "",
       profile: null,
     },
     enableReinitialize: true,
@@ -143,6 +143,7 @@ export default function AddTeacher({ property, setIsAdding, getTeachers }) {
                   {...formik.getFieldProps("experience_type")}
                   isInvalid={!!formik.errors.experience_type}
                 >
+                  <option value="">--select type--</option>
                   <option value="years">Years</option>
                   <option value="months">Months</option>
                 </Form.Select>

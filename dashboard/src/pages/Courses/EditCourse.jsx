@@ -391,7 +391,8 @@ export default function EditCourse() {
                               <option value="Hours">Hours</option>
                               <option value="Days">Days</option>
                               <option value="Weeks">Weeks</option>
-                              <option value="Month">Month</option>
+                              <option value="Months">Months</option>
+                              <option value="Years">Years</option>
                             </Form.Select>
                             <Form.Control.Feedback type="invalid">
                               {formik.errors.duration_type}

@@ -9,6 +9,7 @@ export default function ViewCourse({
   setIsViewing,
   setIsEditing,
   getPropertyCourses,
+  allCourse,
 }) {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [requirmentOptions, setRequirmentOptions] = useState([]);
@@ -78,6 +79,10 @@ export default function ViewCourse({
     }
   };
 
+  const courseFinder = (row) => {
+    const item = allCourse?.find((item) => item?.uniqueId === row.course_id);
+    return item;
+  };
   return (
     <div>
       <Row>
@@ -123,119 +128,146 @@ export default function ViewCourse({
                         objectFit: "cover",
                       }}
                     />
-                    <h5 className="mt-3 text-primary">{course?.course_name}</h5>
                   </div>
                 </Col>
 
                 <Col md={8}>
-                  <Row className="mt-4">
-                    <Col>
-                      <Table striped>
-                        <tbody>
-                          {Object.entries(course).map(([key, value]) => {
-                            if (
-                              [
-                                "userId",
-                                "uniqueId",
-                                "createdAt",
-                                "updatedAt",
-                                "_id",
-                                "__v",
-                                "image",
-                                "description",
-                              ].includes(key)
-                            )
-                              return null;
+                  <Table striped>
+                    <tbody>
+                      <tr>
+                        <th>Course Name</th>
+                        <td>{courseFinder(course)?.course_name}</td>
+                      </tr>
+                      <tr>
+                        <th>Course Short Name</th>
+                        <td>
+                          {course?.course_short_name ||
+                            courseFinder(course)?.course_short_name}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Course Type</th>
+                        <td>
+                          {course?.course_type ||
+                            courseFinder(course)?.course_type}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Course Level</th>
+                        <td>
+                          {course?.course_level ||
+                            courseFinder(course)?.course_level}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Course Duration</th>
+                        <td>
+                          {course?.duration || courseFinder(course)?.duration}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Course Certification Type</th>
+                        <td>
+                          {course?.certification_type ||
+                            courseFinder(course)?.certification_type}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Course Certification Info</th>
+                        <td>{course?.certification_info ? "true" : "false"}</td>
+                      </tr>
+                      <tr>
+                        <th>Course Requirments</th>
+                        <td>
+                          {(course?.requirements?.length
+                            ? course.requirements
+                            : courseFinder(course) || []
+                          )?.map((item, index) => (
+                            <p key={index}>{getRequirmentToRelatedId(item)}</p>
+                          ))}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Course Key Outcomes</th>
+                        <td>
+                          {" "}
+                          {(course?.key_outcomes?.length
+                            ? course.key_outcomes
+                            : courseFinder(course) || []
+                          )?.map((item, index) => (
+                            <p key={index}>{getKeyOutcomesToRelatedId(item)}</p>
+                          ))}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Course Best For</th>
+                        <td>
+                          {(course?.best_for?.length
+                            ? course.best_for
+                            : courseFinder(course) || []
+                          )?.map((item, index) => (
+                            <p key={index}>{item}</p>
+                          ))}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Course Languages</th>
+                        <td>
+                          {(course?.languages?.length
+                            ? course.languages
+                            : courseFinder(course) || []
+                          )?.map((item, index) => (
+                            <p key={index}>{item}</p>
+                          ))}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Course Prices</th>
+                        <td>
+                          {course?.prices?.length > 0 &&
+                            Object.entries(course.prices[0]).map(
+                              ([currency, amount]) => {
+                                const symbolMap = {
+                                  INR: "₹",
+                                  DOLLAR: "$",
+                                  EURO: "€",
+                                };
 
-                            const formatKey = key
-                              .replace(/_/g, " ")
-                              .replace(/\b\w/g, (c) => c.toUpperCase());
-
-                            let displayValue;
-
-                            if (
-                              key === "requirements" &&
-                              Array.isArray(value)
-                            ) {
-                              const items = value.map((id) =>
-                                getRequirmentToRelatedId(id)
-                              );
-                              displayValue = (
-                                <ul>
-                                  {items.map((item, index) => (
-                                    <li key={index}>{item}</li>
-                                  ))}
-                                </ul>
-                              );
-                            } else if (
-                              key === "key_outcomes" &&
-                              Array.isArray(value)
-                            ) {
-                              const items = value.map((id) =>
-                                getKeyOutcomesToRelatedId(id)
-                              );
-                              displayValue = (
-                                <ul>
-                                  {items.map((item, index) => (
-                                    <li key={index}>{item}</li>
-                                  ))}
-                                </ul>
-                              );
-                            } else if (Array.isArray(value)) {
-                              // Handle array of objects (like prices)
-                              if (
-                                value.length &&
-                                typeof value[0] === "object" &&
-                                value[0] !== null
-                              ) {
-                                displayValue = (
-                                  <ul>
-                                    {value.map((obj, idx) => (
-                                      <li key={idx}>
-                                        {Object.entries(obj).map(
-                                          ([k, v], i) => (
-                                            <div key={i}>
-                                              <strong>
-                                                {k.replace(/_/g, " ")}:
-                                              </strong>{" "}
-                                              {String(v || "N/A")}
-                                            </div>
-                                          )
-                                        )}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                );
-                              } else {
-                                displayValue = (
-                                  <ul>
-                                    {value.length ? (
-                                      value.map((item, idx) => (
-                                        <li key={idx}>{String(item)}</li>
-                                      ))
-                                    ) : (
-                                      <li>None</li>
-                                    )}
-                                  </ul>
-                                );
+                                return symbolMap[currency] ? (
+                                  <div key={currency}>
+                                    <strong>
+                                      {symbolMap[currency]}
+                                      {amount}
+                                    </strong>
+                                  </div>
+                                ) : null;
                               }
-                            } else if (typeof value === "boolean") {
-                              displayValue = value ? "true" : "false";
-                            } else {
-                              displayValue = value;
-                            }
+                            )}
+                        </td>
+                      </tr>
 
-                            return (
-                              <tr key={key}>
-                                <th className="align-content-start">{formatKey}</th>
-                                <td>{displayValue}</td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </Col>
-                  </Row>
+                      <tr>
+                        <th>Course Format</th>
+                        <td>{course?.course_format}</td>
+                      </tr>
+                      <tr>
+                        <th>Course Status</th>
+                        <td>
+                          <Badge
+                            bg={
+                              course.status === "Active"
+                                ? "success"
+                                : course.status === "Suspended"
+                                ? "danger"
+                                : "warning"
+                            }
+                          >
+                            {course?.status}
+                          </Badge>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </Table>
                 </Col>
               </Row>
             </Card.Body>

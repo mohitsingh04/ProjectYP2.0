@@ -133,8 +133,6 @@ export default function AddCourse({
         final_key_outcomes: values.key_outcomes.map((item) => item.value),
       };
 
-      console.log(data);
-
       try {
         const response = await API.post(`/property-course`, data);
         Swal.fire({
@@ -309,6 +307,7 @@ export default function AddCourse({
                   <option value="Days">Days</option>
                   <option value="Weeks">Weeks</option>
                   <option value="Months">Months</option>
+                  <option value="Years">Years</option>
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.duration_type}
@@ -625,6 +624,8 @@ export default function AddCourse({
                   </option>
                   <option value={`Online`}>Online</option>
                   <option value={`Offline`}>Offline</option>
+                  <option value={`Hybrid`}>Hybrid</option>
+                  <option value={`Recorded`}>Recorded</option>
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.course_format}
@@ -639,7 +640,7 @@ export default function AddCourse({
                 type="checkbox"
                 id="cerification_info"
                 name="cerification_info"
-                label="I agree to the terms"
+                label="Cerification"
                 onChange={formik.handleChange}
                 checked={formik.values.cerification_info}
                 isInvalid={formik.errors.cerification_info}
