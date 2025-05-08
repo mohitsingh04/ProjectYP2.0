@@ -14,29 +14,34 @@ interface Course {
   description?: string;
   image?: string[];
   uniqueId?: string;
+  course_id: string;
 }
 
 export default function page() {
-  const [courese, setCourse] = useState<Course | null>({});
-
-  const [allCourses, setAllCourses] = useState<Course[]>([]);
   const { uniqueId, course_name } = useParams();
+  const [courese, setCourse] = useState<Course | null>(null);
+  const [allCourses, setAllCourses] = useState<Course[]>([]);
+  const [merged, setMerged] = useState(false);
 
-  const name =
-    typeof course_name === "string" ? course_name?.replace(/-/g, " ") : "";
+  const name = typeof course_name === "string" ? course_name.toLowerCase() : "";
   useEffect(() => {
     if (courese?.course_name) {
-      const formattedName = courese.course_name.toLowerCase();
-      if (formattedName !== name.toLowerCase()) {
+      const formattedName = courese.course_name
+        ?.toLowerCase()
+        ?.replace(/[^a-z0-9]+/g, "-")
+        ?.replace(/-+/g, "-")
+        ?.replace(/^-|-$/g, "");
+
+      if (formattedName !== name) {
         notFound();
       }
     }
   }, [courese?.course_name]);
-
   const getCourse = async () => {
     const response = await API.get(`/property-course/uniqueId/${uniqueId}`);
     setCourse(response.data);
   };
+
   useEffect(() => {
     getCourse();
   }, []);
@@ -44,26 +49,37 @@ export default function page() {
   const getAllCourse = useCallback(async () => {
     try {
       const response = await API.get("/course");
-      let all = response.data;
-
-      if (courese) {
-        // Fix the typo here
-        all = all.filter(
-          (item: { uniqueId: string }) => item.uniqueId !== courese.uniqueId
-        );
-      }
-
-      const randomCourses = all.sort(() => 0.5 - Math.random()).slice(0, 5);
-
-      setAllCourses(randomCourses);
+      setAllCourses(response.data);
     } catch (error) {
       console.error((error as any)?.message);
     }
-  }, [courese]);
+  }, []);
 
   useEffect(() => {
     getAllCourse();
   }, [getAllCourse]);
+
+  useEffect(() => {
+    if (!merged && courese && allCourses.length > 0) {
+      const matchedCourse = allCourses.find(
+        (item) => item.uniqueId === courese.course_id
+      );
+
+      if (matchedCourse) {
+        setCourse((prev) => ({
+          ...matchedCourse,
+          ...prev,
+        }));
+      }
+
+      const filtered = allCourses.filter(
+        (item) => item.uniqueId !== courese.uniqueId
+      );
+      setAllCourses(filtered.sort(() => 0.5 - Math.random()).slice(0, 5));
+
+      setMerged(true);
+    }
+  }, [courese, allCourses, merged]);
 
   return (
     <>
@@ -101,7 +117,7 @@ export default function page() {
                       className="img-fluid"
                       src={
                         courese?.image?.[0]
-                          ? `${process.env.NEXT_PUBLIC_MEDIA_URL}/${
+                          ? `${process.env.NEXT_PUBLIC_MEDIA_URL}/course/${
                               courese?.image?.[0] || ""
                             }`
                           : "/Images/CourseBanner.webp"

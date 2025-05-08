@@ -184,12 +184,12 @@ export default function AddReview({ property, getReview }) {
                       <Form.Control
                         as="textarea"
                         rows={3}
-                        maxLength={500}
+                        maxLength={1500}
                         placeholder="Write your review..."
                         {...formik.getFieldProps("review")}
                       />
                       <div className="text-muted">
-                        {formik.values.review.length} / 500
+                        {formik.values.review.length} / 1500
                       </div>
                       {formik.errors.review && (
                         <div className="text-danger">

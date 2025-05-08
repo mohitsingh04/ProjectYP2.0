@@ -28,12 +28,12 @@ const LevelCard: React.FC<LevelCardProps> = ({
   const levels = ["Beginner", "Intermediate", "Advanced"];
 
   const levelCounts = levels.reduce<Record<string, number>>((acc, level) => {
-    const lowerCaseLevel = level.toLowerCase();
+    const lowerCaseLevel = level?.toLowerCase();
     const uniquePropertyIds = new Set<number>();
 
     const count = courses.filter((course) => {
       const isMatchingLevel =
-        course.course_level.toLowerCase() === lowerCaseLevel;
+        course?.course_level?.toLowerCase() === lowerCaseLevel;
       const isMatchingProperty = properties.some(
         (property) => property.uniqueId === course.property_id
       );

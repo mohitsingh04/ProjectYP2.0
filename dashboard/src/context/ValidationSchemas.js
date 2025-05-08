@@ -74,7 +74,7 @@ export const ChangePasswordValidation = Yup.object({
 export const EditUserValidation = Yup.object({
   name,
   email,
-  mobile_no: Yup.string().required("Phone number is required"),
+  mobile_no: Yup.string(),
   role,
   status,
 });

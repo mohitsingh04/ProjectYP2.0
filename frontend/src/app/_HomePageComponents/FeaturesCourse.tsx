@@ -81,10 +81,12 @@ export default function FeaturesCourse() {
                           href={`/course/${
                             course?.uniqueId
                           }/${course?.course_name
-                            .replace(/\s+/g, "-")
-                            .toLowerCase()}`}
+                            ?.toLowerCase()
+                            ?.replace(/[^a-z0-9]+/g, "-")
+                            ?.replace(/-+/g, "-")
+                            ?.replace(/^-|-$/g, "")}`}
                         >
-                          {course?.course_name}
+                          {course.course_name}
                         </Link>
                       </h3>
                       <div className="course-info d-flex align-items-center border-0">

@@ -1,4 +1,5 @@
 "use client";
+
 import API from "@/service/API/API";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -18,37 +19,79 @@ interface Course {
   duration: string;
 }
 
-export default function Courses({ property }: { property: Property | null }) {
-  const [courses, setCourses] = useState<Course[]>([]);
+interface PropertyCourseOverrides extends Partial<Course> {
+  course_id: string;
+}
 
-  const getCourses = async () => {
+type MergedCourse = Course & Partial<PropertyCourseOverrides>;
+
+export default function Courses({ property }: { property: Property | null }) {
+  const [allCourses, setAllCourses] = useState<Course[]>([]);
+  const [propertyCoursesRaw, setPropertyCoursesRaw] = useState<
+    PropertyCourseOverrides[]
+  >([]);
+  const [propertyCourses, setPropertyCourses] = useState<MergedCourse[]>([]);
+
+  const getAllCourses = async () => {
+    try {
+      const response = await API.get(`/course`);
+      setAllCourses(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getPropertyCourses = async () => {
     try {
       const response = await API.get(
         `/property/property-course/${property?.uniqueId}`
       );
-      setCourses(response.data);
+      setPropertyCoursesRaw(response.data);
     } catch (error) {
       console.error((error as any)?.message);
     }
   };
 
   useEffect(() => {
+    getAllCourses();
+  }, []);
+
+  useEffect(() => {
     if (property) {
-      getCourses();
+      getPropertyCourses();
     }
   }, [property]);
+
+  useEffect(() => {
+    if (!allCourses.length || !propertyCoursesRaw.length) return;
+
+    const merged = propertyCoursesRaw.map((propertyCourse) => {
+      const matchedCourse = allCourses.find(
+        (course) => course.uniqueId === propertyCourse.course_id
+      );
+      if (matchedCourse) {
+        return {
+          ...matchedCourse,
+          ...propertyCourse, // propertyCourse fields override matchedCourse
+        };
+      }
+      return propertyCourse as MergedCourse; // fallback
+    });
+
+    setPropertyCourses(merged);
+  }, [allCourses, propertyCoursesRaw]);
 
   return (
     <div className="card">
       <div className="card-body">
         <h5 className="subs-title">Courses</h5>
         <div className="row">
-          {courses.map((course, index) => (
+          {propertyCourses.map((course, index) => (
             <div className="col-md-6 d-flex" key={index}>
               <div className="course-box d-flex aos" data-aos="fade-up">
                 <div className="product">
                   <div className="product-img">
-                    <Link href={`/course/${course.uniqueId}`}>
+                    <Link href={`/course/${course?.uniqueId}`}>
                       <img
                         className="img-fluid"
                         alt="Course"
@@ -69,19 +112,16 @@ export default function Courses({ property }: { property: Property | null }) {
                           <p>{course.course_type}</p>
                         </div>
                       </div>
-                      {/* <div className="course-share d-flex align-items-center justify-content-center">
-                        <a href="#">
-                          <FaRegHeart className="icon" />
-                        </a>
-                      </div> */}
                     </div>
                     <h3 className="title instructor-text">
                       <Link
                         href={`/property-course/${
                           course?.uniqueId
                         }/${course?.course_name
-                          .replace(/\s+/g, "-")
-                          .toLowerCase()}`}
+                          ?.toLowerCase()
+                          ?.replace(/[^a-z0-9]+/g, "-")
+                          ?.replace(/-+/g, "-")
+                          ?.replace(/^-|-$/g, "")}`}
                       >
                         {course.course_name}
                       </Link>

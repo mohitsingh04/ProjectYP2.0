@@ -2,7 +2,7 @@ import { addPropertyScore } from "../AnalyticController/PropertyScoreController.
 import { AccomodationImageMover } from "../helper/FolderCleaners/PropertyImageMover.js";
 import path from "path";
 import Accomodation from "../models/Accomodation.js";
-import {downloadImageAndReplaceSrc} from "../helper/FolderCleaners/EditorImagesController.js";
+import { downloadImageAndReplaceSrc } from "../helper/FolderCleaners/EditorImagesController.js";
 
 export const AddAccomodation = async (req, res) => {
   try {
@@ -84,7 +84,6 @@ export const getAccomodationByPropertyId = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 export const EditAccomodation = async (req, res) => {
   try {
     const { uniqueId } = req.params;
@@ -95,17 +94,9 @@ export const EditAccomodation = async (req, res) => {
       accomodation_description,
     } = req.body;
 
-    const accomodation = await Accomodation.findOne({ uniqueId });
-    if (!accomodation) {
+    const existingAccomodation = await Accomodation.findOne({ uniqueId });
+    if (!existingAccomodation) {
       return res.status(404).json({ error: "Accomodation not found." });
-    }
-
-    let updatedDescription = accomodation_description;
-    if (accomodation_description) {
-      updatedDescription = await downloadImageAndReplaceSrc(
-        accomodation_description,
-        property_id
-      );
     }
 
     const duplicateAccomodation = await Accomodation.findOne({
@@ -121,17 +112,30 @@ export const EditAccomodation = async (req, res) => {
       });
     }
 
-    accomodation.property_id = property_id;
-    accomodation.accomodation_name = accomodation_name;
-    accomodation.accomodation_price = accomodation_price;
-    accomodation.accomodation_description = updatedDescription;
+    let updatedDescription = accomodation_description;
+    if (accomodation_description) {
+      updatedDescription = await downloadImageAndReplaceSrc(
+        accomodation_description,
+        property_id
+      );
+    }
 
-    await accomodation.save();
+    await Accomodation.findOneAndUpdate(
+      { uniqueId },
+      {
+        $set: {
+          property_id,
+          accomodation_name,
+          accomodation_price,
+          accomodation_description: updatedDescription,
+        },
+      },
+      { new: true }
+    );
 
-    return res.status(200).json({
-      message: "Accomodation updated successfully",
-      accomodation,
-    });
+    return res
+      .status(200)
+      .json({ message: "Accomodation updated successfully" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -185,16 +189,17 @@ export const AddAccomodationImages = async (req, res) => {
       });
     }
 
-    existingAccomodation.accomodation_images.push(...newImages);
+    const updatedAccomodation = await Accomodation.findOneAndUpdate(
+      { uniqueId },
+      { $push: { accomodation_images: { $each: newImages } } },
+      { new: true }
+    );
 
-    const updateAccomodation = await existingAccomodation.save();
-
-    // Move images using property_id
-    await AccomodationImageMover(req, res, existingAccomodation.property_id);
+    await AccomodationImageMover(req, res, existingAccomodation?.property_id);
 
     return res.status(200).json({
       message: "Accomodation images added successfully.",
-      data: updateAccomodation,
+      data: updatedAccomodation,
     });
   } catch (error) {
     console.error("Error adding accomodation images:", error);

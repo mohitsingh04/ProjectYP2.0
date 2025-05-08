@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import API from "@/service/API/API";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaAngleDown } from "react-icons/fa";
 
 interface Property {
@@ -18,12 +19,33 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   selectedCategory,
   setSelectedCategory,
 }) => {
+  const [allCategories, setAllCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const categoryMap: Record<string, string> = property.reduce((acc, item) => {
     acc[item.category.toLowerCase()] = item.category;
     return acc;
   }, {} as Record<string, string>);
+
+  const getAllCategories = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setAllCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getAllCategories();
+  }, [getAllCategories]);
+
+  const getCategoryToRelatedId = (id: any) => {
+    const category: any = allCategories.find(
+      (item: any) => item.uniqueId === Number(id)
+    );
+    return category ? category?.category_name : "Unknown";
+  };
 
   const categoryCounts: Record<string, number> = filteredProperty.reduce(
     (acc, item) => {
@@ -87,8 +109,9 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                       checked={selectedCategory?.includes(category)}
                       onChange={handleCategoryChange}
                     />
-                    <span className="checkmark"></span> {categoryMap[category]}{" "}
-                    ({categoryCounts[category]})
+                    <span className="checkmark"></span>{" "}
+                    {getCategoryToRelatedId(categoryMap[category])} (
+                    {categoryCounts[category]})
                   </label>
                 </div>
               ))

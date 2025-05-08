@@ -28,15 +28,15 @@ const CourseTypeCard: React.FC<CourseTypeCardProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const types = [...new Set(allCourses.map((item) => item.course_type))];
-  const typeCounts: Record<string, number> = types.reduce((acc, type) => {
-    acc[type.toLowerCase()] = 0;
+  const typeCounts: Record<string, number> = types?.reduce((acc, type) => {
+    acc[type?.toLowerCase()] = 0;
     return acc;
   }, {} as Record<string, number>);
 
   courses.forEach((course) => {
-    const lowerCaseType = course.course_type.toLowerCase();
+    const lowerCaseType = course?.course_type?.toLowerCase();
     const isMatchingProperty = properties.some(
-      (property) => Number(property.uniqueId) === course.property_id
+      (property) => Number(property?.uniqueId) === course?.property_id
     );
 
     if (isMatchingProperty && typeCounts.hasOwnProperty(lowerCaseType)) {
@@ -54,7 +54,7 @@ const CourseTypeCard: React.FC<CourseTypeCardProps> = ({
   };
 
   const filteredTypes = types.filter((type) =>
-    type.toLowerCase().includes(searchQuery.toLowerCase())
+    type?.toLowerCase()?.includes(searchQuery?.toLowerCase())
   );
 
   return (

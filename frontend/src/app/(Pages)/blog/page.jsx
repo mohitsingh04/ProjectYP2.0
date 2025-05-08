@@ -92,9 +92,10 @@ export default function AllBlogs() {
                         </div>
                         <h3 className="title instructor-text">
                           <Link
-                            href={`/blog/${blog?.uniqueId}/${blog?.title
-                              ?.replace(/\s+/g, "-")
-                              ?.toLowerCase()}`}
+                            href={`/blog/${blog?.title
+                              ?.toLowerCase()
+                              ?.replace(/[^a-z0-9\s]/gi, "")
+                              ?.replace(/\s+/g, "-")}`}
                           >
                             {blog?.title}
                           </Link>

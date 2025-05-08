@@ -1,4 +1,5 @@
-import React from "react";
+import API from "@/service/API/API";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaX } from "react-icons/fa6";
 
 interface FilterTagsProps {
@@ -35,6 +36,27 @@ const FilterTags: React.FC<FilterTagsProps> = ({
   const closeBtnStyle =
     "btn btn-sm border-0 btn-light ms-2 me-0 d-flex align-items-center justify-content-center";
 
+  const [allCategories, setAllCategories] = useState([]);
+
+  const getAllCategories = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setAllCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getAllCategories();
+  }, [getAllCategories]);
+
+  const getCategoryToRelatedId = (id: any) => {
+    const category: any = allCategories.find(
+      (item: any) => item.uniqueId === Number(id)
+    );
+    return category ? category?.category_name : "Unknown";
+  };
   return (
     <div
       className="d-flex w-100 gap-2 overflow-auto flex-nowrap pb-2 flex-grow"
@@ -42,7 +64,7 @@ const FilterTags: React.FC<FilterTagsProps> = ({
     >
       {selectedCategory.map((item, index) => (
         <div key={index} className={tagStyle}>
-          <span className="text-truncate">{item}</span>
+          <span className="text-truncate">{getCategoryToRelatedId(item)}</span>
           <button
             className={closeBtnStyle}
             onClick={() =>

@@ -22,12 +22,16 @@ export default function page() {
   const [allCourses, setAllCourses] = useState<Course[]>([]);
   const { uniqueId, course_name } = useParams();
 
-  const name =
-    typeof course_name === "string" ? course_name.replace(/-/g, " ") : "";
+  const name = typeof course_name === "string" ? course_name.toLowerCase() : "";
   useEffect(() => {
     if (courese?.course_name) {
-      const formattedName = courese.course_name.toLowerCase();
-      if (formattedName !== name.toLowerCase()) {
+      const formattedName = courese.course_name
+        ?.toLowerCase()
+        ?.replace(/[^a-z0-9]+/g, "-")
+        ?.replace(/-+/g, "-")
+        ?.replace(/^-|-$/g, "");
+
+      if (formattedName !== name) {
         notFound();
       }
     }

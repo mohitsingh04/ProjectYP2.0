@@ -144,7 +144,6 @@ export const GalleryImageMover = async (req, res, propertyId) => {
     console.error("Error in GalleryImageMover:", error);
   }
 };
-
 export const AccomodationImageMover = async (req, res, propertyId) => {
   try {
     const __filename = fileURLToPath(import.meta.url);
@@ -163,18 +162,20 @@ export const AccomodationImageMover = async (req, res, propertyId) => {
       return;
     }
 
-    const accomodations = await Accomodation.find({ property_id: propertyId });
+    const AccomodationEntries = await Accomodation.find({
+      property_id: propertyId,
+    });
 
-    for (const accomodation of accomodations) {
-      if (!Array.isArray(accomodation.accomodation_images)) continue;
+    for (const accomodaion of AccomodationEntries) {
+      if (!Array.isArray(accomodaion.accomodation_images)) continue;
 
-      const updatedImagePaths = [];
+      const updatedAccomodationPaths = [];
 
-      for (const imgPath of accomodation.accomodation_images) {
+      for (const imgPath of accomodaion.accomodation_images) {
         const imgName = imgPath.split(/\\|\//).pop();
 
         if (imgPath.startsWith(`${propertyId}/accomodation/`)) {
-          updatedImagePaths.push(imgPath);
+          updatedAccomodationPaths.push(imgPath);
           continue;
         }
 
@@ -184,7 +185,9 @@ export const AccomodationImageMover = async (req, res, propertyId) => {
         if (await fileExists(oldPath)) {
           try {
             await fs.rename(oldPath, newPath);
-            updatedImagePaths.push(`${propertyId}/accomodation/${imgName}`);
+            updatedAccomodationPaths.push(
+              `${propertyId}/accomodation/${imgName}`
+            );
           } catch (moveErr) {
             console.warn(`Failed to move ${imgName}: ${moveErr.message}`);
           }
@@ -194,18 +197,19 @@ export const AccomodationImageMover = async (req, res, propertyId) => {
       }
 
       if (
-        updatedImagePaths.length === accomodation.accomodation_images.length
+        updatedAccomodationPaths.length ===
+        accomodaion.accomodation_images.length
       ) {
-        accomodation.accomodation_images = updatedImagePaths;
-        await accomodation.save();
+        accomodaion.accomodation_images = updatedAccomodationPaths;
+        await accomodaion.save();
       }
     }
 
     console.log(
-      `Accomodation images for property ${propertyId} moved successfully.`
+      `Accomodaion images for property ${propertyId} moved successfully.`
     );
   } catch (error) {
-    console.error("Error in AccomodationImageMover:", error);
+    console.error("Error in AccomodaionImageMover:", error);
   }
 };
 

@@ -15,6 +15,19 @@ const Analytics = () => {
   const [currentProperty, setCurrentProeprty] = useState("");
   const navigator = useNavigate();
 
+  const getRank = useCallback(async () => {
+    try {
+      const response = await API.get(`/analytics/rank/all`);
+      console.log(response.data.message);
+    } catch (error) {
+      console.log(error.response.data.error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getRank();
+  }, [getRank]);
+
   const getAllProperties = useCallback(async () => {
     try {
       const response = await API.get(`/property`);

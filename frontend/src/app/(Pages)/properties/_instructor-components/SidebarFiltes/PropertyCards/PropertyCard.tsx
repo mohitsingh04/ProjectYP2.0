@@ -1,6 +1,6 @@
 import API from "@/service/API/API";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaRegHeart, FaStar } from "react-icons/fa";
 
 interface Property {
@@ -18,6 +18,27 @@ export default function PropertyCard({ property }: { property: Property }) {
   const [rating, setRating] = useState<number>(0);
   const [ratingLength, setRatingLength] = useState<number>(0);
   const [coursesLength, setCoursesLength] = useState<number>(0);
+  const [allCategories, setAllCategories] = useState([]);
+
+  const getAllCategories = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setAllCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getAllCategories();
+  }, [getAllCategories]);
+
+  const getCategoryToRelatedId = (id: any) => {
+    const category: any = allCategories.find(
+      (item: any) => item.uniqueId === Number(id)
+    );
+    return category ? category?.category_name : "Unknown";
+  };
 
   useEffect(() => {
     if (!property?.uniqueId) return;
@@ -104,7 +125,7 @@ export default function PropertyCard({ property }: { property: Property }) {
                   {property?.property_name}
                 </Link>
               </h5>
-              <h6 className="m-0">{property?.category}</h6>
+              <h6 className="m-0">{getCategoryToRelatedId(property?.category)}</h6>
             </div>
           </div>
           <div className="instructor-info">

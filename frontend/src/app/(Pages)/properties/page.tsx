@@ -1,11 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BreadCrumbs from "./_instructor-components/BreadCrumbs";
 import { FaFilter } from "react-icons/fa";
 import PropertyCard from "./_instructor-components/SidebarFiltes/PropertyCards/PropertyCard";
 import Pagination from "./_instructor-components/Pagination/Pagination";
 import Serachbar from "./_instructor-components/SeachBar/Serachbar";
-// import CategoryCard from "./_instructor-components/SidebarFiltes/CategoryCard/CategoryCard";
 import StatesCard from "./_instructor-components/SidebarFiltes/StatesCard/StatesCard";
 import CityCard from "./_instructor-components/SidebarFiltes/CityCard/CityCard";
 import CourseCard from "./_instructor-components/SidebarFiltes/CourseCard/CourseCard";
@@ -55,50 +54,12 @@ export default function InstructorList() {
   const [cityData, setCityData] = useState<Property[]>([]);
   const [selectedCourses, setSelectedCourses] = useState<Set<any>>(new Set());
   const itemsPerPage = 10;
+  const [allcourse, setAllCourse] = useState([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [selectedLevel, setSelectedLevel] = useState<any[]>([]);
   const [selectedType, setSelectedType] = useState<any[]>([]);
 
-  const getCourses = async () => {
-    try {
-      const response = await API.get("/property-course");
-      const data = response.data;
-      const activeCourses = data.filter(
-        (course: { status: string }) => course.status === "Active"
-      );
-      setCourses(activeCourses);
-      setFilteredCourses(activeCourses);
-    } catch (error) {
-      console.error((error as any)?.message);
-    }
-  };
-
-  useEffect(() => {
-    getCourses();
-  }, []);
-
-  useEffect(() => {
-    let filtered = courses;
-    if (selectedLevel.length > 0) {
-      filtered = courses.filter((item) =>
-        selectedLevel.some(
-          (level: string) =>
-            level.toLowerCase() === item.course_level.toLowerCase()
-        )
-      );
-    }
-    if (selectedType.length > 0) {
-      filtered = courses.filter((item) =>
-        selectedType.some(
-          (type: string) =>
-            type.toLowerCase() === item.course_type.toLowerCase()
-        )
-      );
-    }
-
-    setFilteredCourses(filtered);
-  }, [selectedLevel, selectedType]);
   const getProperty = async () => {
     try {
       const response = await API.get(`/property`);
@@ -156,7 +117,6 @@ export default function InstructorList() {
         };
       });
 
-      // Set all states with merged active properties
       setProperty(mergedData);
       setFilteredProperty(mergedData);
       setCategoryData(mergedData);
@@ -167,7 +127,73 @@ export default function InstructorList() {
     }
   };
 
-  console.log(property);
+  const getCourses = async () => {
+    try {
+      const response = await API.get("/course");
+      const data = response.data;
+      const activeCourses = data;
+      setAllCourse(activeCourses);
+    } catch (error) {
+      console.error((error as any)?.message);
+    }
+  };
+
+  useEffect(() => {
+    getCourses();
+  }, []);
+
+  const getPropertyCourses = useCallback(async () => {
+    try {
+      const response = await API.get("/property-course");
+      const data = response.data;
+      const activeCourses = data.filter(
+        (course: { status: string }) => course.status === "Active"
+      );
+      setCourses(activeCourses);
+      setFilteredCourses(activeCourses);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+  useEffect(() => {
+    getPropertyCourses();
+  }, [getPropertyCourses]);
+
+  useEffect(() => {
+    if (courses && allcourse) {
+      const mergedCourses = courses.map((cour: any) => {
+        const matched: any = allcourse.find(
+          (item: any) => item?.uniqueId === cour?.course_id
+        );
+        return matched ? { ...matched, ...cour } : cour;
+      });
+      setFilteredCourses(mergedCourses);
+      setCourses(mergedCourses);
+    }
+  }, [courses, allcourse]);
+
+  useEffect(() => {
+    let filtered = courses;
+    if (selectedLevel.length > 0) {
+      filtered = courses.filter((item) =>
+        selectedLevel.some((level: string) => {
+          console.log(level, item);
+          level.toLowerCase() === item?.course_level?.toLowerCase();
+        })
+      );
+    }
+    if (selectedType.length > 0) {
+      filtered = courses.filter((item) =>
+        selectedType.some(
+          (type: string) =>
+            type.toLowerCase() === item?.course_type?.toLowerCase()
+        )
+      );
+    }
+
+    setFilteredCourses(filtered);
+  }, [selectedLevel, selectedType]);
+
   useEffect(() => {
     getProperty();
   }, []);
@@ -293,7 +319,7 @@ export default function InstructorList() {
           selectedCourses.size > 0
             ? courses.some(
                 (course: { property_id: any; course_name: string }) =>
-                  selectedCourses.has(course.course_name.toLowerCase()) &&
+                  selectedCourses.has(course?.course_name?.toLowerCase()) &&
                   course.property_id === item.uniqueId
               )
             : true;
@@ -460,12 +486,12 @@ export default function InstructorList() {
                     setSelectedState={setSelectedState}
                   />
 
-                  {/* <CategoryCard
+                  <CategoryCard
                     filteredProperty={filteredProperty}
                     property={categoryData}
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
-                  /> */}
+                  />
                   <CourseCard
                     properties={filteredProperty}
                     selectedCourses={selectedCourses}

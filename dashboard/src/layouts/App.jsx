@@ -23,18 +23,7 @@ const App = () => {
       console.log(error.response.data.error);
     }
   }, []);
-  const getRank = useCallback(async () => {
-    try {
-      const response = await API.get(`/analytics/rank/all`);
-      console.log(response.data.message);
-    } catch (error) {
-      console.log(error.response.data.error);
-    }
-  }, []);
 
-  useEffect(() => {
-    getRank();
-  }, [getRank]);
   useEffect(() => {
     getExpriy();
   }, [getExpriy]);
