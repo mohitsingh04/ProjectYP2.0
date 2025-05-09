@@ -1,28 +1,53 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Card, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
-import { useFormik } from "formik";
-import JoditEditor from "jodit-react";
-import { API } from "../../../../context/API";
-import Swal from "sweetalert2";
-import { accomodationValidation } from "../../../../context/ValidationSchemas";
+import React, { useEffect, useMemo, useState } from "react";
+import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { getEditorConfig } from "../../../../context/getEditorConfig";
+import JoditEditor from "jodit-react";
+import Swal from "sweetalert2";
+import { useFormik } from "formik";
+import { accomodationValidation } from "../../../../context/ValidationSchemas";
+import { API } from "../../../../context/API";
 
 export default function EditAccomodation({
   accomodation,
   getAccomodation,
   setIsUpdating,
 }) {
-  const [prices, setPrices] = useState({});
+  const editorConfig = useMemo(() => getEditorConfig(), []);
   const [currency, setCurrency] = useState("");
   const [priceInput, setPriceInput] = useState("");
-
-  const editorConfig = useMemo(() => getEditorConfig(), []);
+  const [prices, setPrices] = useState({});
 
   useEffect(() => {
     if (accomodation?.accomodation_price) {
-      setPrices(accomodation.accomodation_price[0]);
+      setPrices(accomodation?.accomodation_price?.[0]);
     }
   }, [accomodation]);
+
+  const addPrice = () => {
+    if (!currency || !priceInput) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: !currency
+          ? "Please select a currency."
+          : "Please enter a price value.",
+      });
+      return;
+    }
+
+    setPrices((prev) => ({
+      ...prev,
+      [currency]: Number(priceInput),
+    }));
+    setPriceInput("");
+    setCurrency("");
+  };
+
+  const removePrice = (key) => {
+    const newPrices = { ...prices };
+    delete newPrices[key];
+    setPrices(newPrices);
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -35,7 +60,7 @@ export default function EditAccomodation({
     onSubmit: async (values) => {
       const updatedData = {
         ...values,
-        ...(Object.keys(prices).length > 0 && { accomodation_price: prices }), // Only include prices if not empty
+        accomodation_price: prices,
       };
 
       try {
@@ -43,7 +68,6 @@ export default function EditAccomodation({
           `/accomodation/${accomodation?.uniqueId}`,
           updatedData
         );
-
         Swal.fire({
           icon: "success",
           title: "Accomodation Updated",
@@ -65,113 +89,84 @@ export default function EditAccomodation({
       }
     },
   });
-
-  const addPrice = () => {
-    if (currency && priceInput) {
-      setPrices((prev) => ({
-        ...prev,
-        [currency]: Number(priceInput),
-      }));
-      setPriceInput("");
-      setCurrency("");
-    }
-  };
-
-  const removePrice = (key) => {
-    const newPrices = { ...prices };
-    delete newPrices[key];
-    setPrices(newPrices);
-  };
-
   return (
     <div>
       <Row>
         <Col md={12}>
           <Card>
-            <Card.Header className="d-flex justify-content-between">
+            <Card.Header>
               <Card.Title>Edit Accomodation</Card.Title>
-              <div>
-                <Button
-                  size="sm"
-                  variant="danger"
-                  onClick={() => setIsUpdating("")}
-                >
-                  <i className="fe fe-x me-1"></i>Cancel
-                </Button>
-              </div>
             </Card.Header>
             <Card.Body>
               <Form onSubmit={formik.handleSubmit}>
-                {/* Accomodation Name */}
-                <Form.Group className="mb-3">
+                <Form.Group>
                   <Form.Label>Accomodation Name</Form.Label>
                   <Form.Select
                     name="accomodation_name"
                     onChange={formik.handleChange}
                     value={formik.values.accomodation_name}
-                    isInvalid={!!formik.errors.accomodation_name}
                     disabled
                   >
                     <option value="">Select Accomodation</option>
                     <option value="Co. Ed.">Co. Ed.</option>
                   </Form.Select>
-                  <Form.Control.Feedback type="invalid">
-                    {formik.errors.accomodation_name}
-                  </Form.Control.Feedback>
+                  {formik.errors.accomodation_name && (
+                    <p>{formik.errors?.accomodation_name}</p>
+                  )}
+                  {formik.errors.accomodation_description && (
+                    <p>{formik.errors?.accomodation_description}</p>
+                  )}
                 </Form.Group>
-
-                {/* Accomodation Price */}
                 <Row>
                   <Col md={6}>
-                    <Form.Label>Accomodation Price</Form.Label>
-                    <InputGroup className="mb-3">
-                      <Form.Select
-                        value={currency}
-                        onChange={(e) => setCurrency(e.target.value)}
-                        style={{ maxWidth: "200px" }}
-                      >
-                        <option value="">--select currency--</option>
-                        <option value="INR">₹ INR</option>
-                        <option value="DOLLAR">$ DOLLAR</option>
-                        <option value="EURO">€ EURO</option>
-                      </Form.Select>
-                      <Form.Control
-                        type="number"
-                        placeholder="Enter price"
-                        value={priceInput}
-                        onChange={(e) => setPriceInput(e.target.value)}
-                      />
-                      <Button variant="primary" onClick={addPrice}>
-                        <i className="fe fe-plus me-1"></i>Add
-                      </Button>
-                    </InputGroup>
-                  </Col>{" "}
-                  <Col md={6} className="align-content-center">
-                    {prices && Object.keys(prices).length > 0 && (
-                      <div className="tags">
-                        {Object.entries(prices).map(([currency, value]) => (
-                          <div
-                            key={currency}
-                            className="tag shadow-sm"
-                            style={{ fontSize: "0.9rem" }}
+                    <Row>
+                      <Col>
+                        <Form.Label>Prices</Form.Label>
+                        <InputGroup>
+                          <Form.Select
+                            value={currency}
+                            onChange={(e) => setCurrency(e.target.value)}
                           >
-                            <span>
-                              {currency === "INR" && "₹"}
-                              {currency === "DOLLAR" && "$"}
-                              {currency === "EURO" && "€"}
-                              {value}
-                            </span>
-                            <button
-                              type="button"
-                              className="tag-addon btn"
-                              onClick={() => removePrice(currency)}
-                            >
-                              <i className="fe fe-x"></i>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                            <option value="">--select currency--</option>
+                            <option value="INR">₹ INR</option>
+                            <option value="DOLLAR">$ DOLLAR</option>
+                            <option value="EURO">€ EURO</option>
+                          </Form.Select>
+                          <Form.Control
+                            type="number"
+                            placeholder="Enter price"
+                            value={priceInput}
+                            onChange={(e) => setPriceInput(e.target.value)}
+                          />
+                          <Button onClick={addPrice}>Add Price</Button>
+                        </InputGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <div className="tags py-2">
+                          {Object.entries(prices).map(([key, value]) => (
+                            <div className="tag" key={key}>
+                              <span>
+                                {key === "DOLLAR"
+                                  ? "$"
+                                  : key === "INR"
+                                  ? "₹"
+                                  : key === "EURO" && "€"}
+                                {value}
+                              </span>
+                              <button
+                                type="button"
+                                className="tag-addon btn"
+                                onClick={() => removePrice(key)}
+                              >
+                                <i className="fe fe-x"></i>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </Col>
+                    </Row>
                   </Col>
                 </Row>
 
@@ -179,6 +174,7 @@ export default function EditAccomodation({
                   <Form.Label>Accomodation Description</Form.Label>
                   <JoditEditor
                     value={formik.values.accomodation_description}
+                    name="accomodation_description"
                     onBlur={() =>
                       formik.setFieldTouched("accomodation_description", true)
                     }
@@ -190,16 +186,15 @@ export default function EditAccomodation({
                     }
                     config={editorConfig}
                   />
-                  {formik.touched.accomodation_description &&
-                    formik.errors.accomodation_description && (
-                      <div className="text-danger mt-1">
-                        {formik.errors.accomodation_description}
-                      </div>
-                    )}
                 </Form.Group>
 
-                <Button type="submit" variant="warning">
-                  <i className="fe fe-check-circle me-1"></i>Update Accomodation
+                <Button type="submit">Submit</Button>
+                <Button
+                  variant="danger"
+                  className="ms-1"
+                  onClick={() => setIsUpdating("")}
+                >
+                  Cancel
                 </Button>
               </Form>
             </Card.Body>

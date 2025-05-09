@@ -8,10 +8,19 @@ export default function MainRoles({ authUser, properties }) {
   const [users, setUsers] = useState([]);
   const [category, setCategory] = useState([]);
   const [course, setCourse] = useState([]);
- 
+  const [profile, setProfile] = useState("");
+
+  const getProfile = useCallback(async () => {
+    try {
+      const response = await API.get(`/profile`);
+      setProfile(response.data);
+    } catch (error) {
+      console.log(error.response.data.error);
+    }
+  }, []);
   const getUsers = useCallback(async () => {
     try {
-      const response = await API.get(`users`);
+      const response = await API.get(`/users`);
       setUsers(response.data);
     } catch (error) {
       console.log(error.response.data.error);
@@ -35,6 +44,9 @@ export default function MainRoles({ authUser, properties }) {
     }
   });
 
+  useEffect(() => {
+    getProfile();
+  }, [getProfile]);
   useEffect(() => {
     getUsers();
   }, [getUsers]);
@@ -87,6 +99,15 @@ export default function MainRoles({ authUser, properties }) {
       count: properties?.length || 0,
       icon: "fe-layers",
       color: "info",
+      roles: ["Super Admin", "Editor"],
+    },
+    {
+      title: "Your Properties",
+      count:
+        properties.filter((item) => item?.userId === profile?.uniqueId)
+          ?.length || 0,
+      icon: "fe-briefcase",
+      color: "primary",
       roles: ["Super Admin", "Editor"],
     },
     {

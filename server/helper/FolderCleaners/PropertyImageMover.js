@@ -144,6 +144,7 @@ export const GalleryImageMover = async (req, res, propertyId) => {
     console.error("Error in GalleryImageMover:", error);
   }
 };
+
 export const AccomodationImageMover = async (req, res, propertyId) => {
   try {
     const __filename = fileURLToPath(import.meta.url);

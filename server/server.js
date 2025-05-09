@@ -19,10 +19,6 @@ app.use(
 app.use("/api/", router);
 app.use("/api/", analyticRouter);
 
-app.use(express.static("public"));
-app.use("/images", express.static("images"));
-app.use("/media", express.static("media"));
-
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on PORT ${process.env.PORT}`);
 });

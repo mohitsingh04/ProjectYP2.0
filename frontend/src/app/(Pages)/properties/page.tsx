@@ -57,6 +57,7 @@ export default function InstructorList() {
   const [allcourse, setAllCourse] = useState([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const [rawCourses, setRawCourses] = useState<Course[]>([]);
   const [selectedLevel, setSelectedLevel] = useState<any[]>([]);
   const [selectedType, setSelectedType] = useState<any[]>([]);
 
@@ -149,7 +150,7 @@ export default function InstructorList() {
       const activeCourses = data.filter(
         (course: { status: string }) => course.status === "Active"
       );
-      setCourses(activeCourses);
+      setRawCourses(activeCourses);
       setFilteredCourses(activeCourses);
     } catch (error) {
       console.log(error);
@@ -160,8 +161,8 @@ export default function InstructorList() {
   }, [getPropertyCourses]);
 
   useEffect(() => {
-    if (courses && allcourse) {
-      const mergedCourses = courses.map((cour: any) => {
+    if (rawCourses && allcourse) {
+      const mergedCourses = rawCourses.map((cour: any) => {
         const matched: any = allcourse.find(
           (item: any) => item?.uniqueId === cour?.course_id
         );
@@ -170,7 +171,7 @@ export default function InstructorList() {
       setFilteredCourses(mergedCourses);
       setCourses(mergedCourses);
     }
-  }, [courses, allcourse]);
+  }, [rawCourses, allcourse]);
 
   useEffect(() => {
     let filtered = courses;

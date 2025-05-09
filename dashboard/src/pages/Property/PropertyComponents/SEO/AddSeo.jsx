@@ -13,12 +13,18 @@ export default function AddSeo({ property, getSeo }) {
   const [jsonSchema, setJsonSchema] = useState("");
   const editorConfig = useMemo(() => getEditorConfig(), []);
 
+  function stripHtml(html) {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || "";
+  }
+
   useEffect(() => {
-    if (property) {
-      setMetaDescription(property?.property_description?.slice(0, 200));
+    if (property?.property_description) {
+      const plainText = stripHtml(property.property_description);
+      setMetaDescription(plainText.slice(0, 160));
     }
   }, [property]);
-
   const formik = useFormik({
     initialValues: {
       property_id: property?.uniqueId || "",

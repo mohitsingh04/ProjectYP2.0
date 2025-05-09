@@ -59,7 +59,12 @@ const amenitiesData = {
     "Bonfire or Cultural Evenings",
     "Eco-Farming Experience",
   ],
-  "Food and Drink": ["Restaurant", "Cafe", "Community Dining Area"],
+  "Food and Drink": [
+    "Restaurant",
+    "Cafe",
+    "Community Dining Area",
+    "Meals Provided",
+  ],
   Transportation: [
     "Parking",
     "Pickup & Drop Service",

@@ -16,6 +16,22 @@
       "static/chunks/main-app.js",
       "static/css/app/page.css",
       "static/chunks/app/page.js"
+    ],
+    "/(Pages)/properties/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(Pages)/properties/page.js"
+    ],
+    "/(Pages)/property/[uniqueId]/[property_name]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/(Pages)/property/[uniqueId]/[property_name]/page.css",
+      "static/chunks/app/(Pages)/property/[uniqueId]/[property_name]/page.js"
+    ],
+    "/_not-found/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

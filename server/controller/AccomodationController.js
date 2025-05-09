@@ -14,18 +14,6 @@ export const AddAccomodation = async (req, res) => {
       accomodation_description,
     } = req.body;
 
-    const existingAccomodation = await Accomodation.findOne({
-      property_id,
-      accomodation_name: { $regex: new RegExp(`^${accomodation_name}$`, "i") },
-    });
-
-    if (existingAccomodation) {
-      return res.status(400).json({
-        error:
-          "A accomodation with the same name already exists for this property.",
-      });
-    }
-
     let updatedDescription = accomodation_description;
     if (accomodation_description) {
       updatedDescription = await downloadImageAndReplaceSrc(
@@ -33,10 +21,13 @@ export const AddAccomodation = async (req, res) => {
         property_id
       );
     }
-    const lastAccomdation = await Accomodation.findOne().sort({ uniqueId: -1 });
+
+    const lastAccomodation = await Accomodation.findOne().sort({
+      uniqueId: -1,
+    });
     let newUniqueId = "1";
-    if (lastAccomdation && lastAccomdation.uniqueId) {
-      newUniqueId = String(Number(lastAccomdation.uniqueId) + 1);
+    if (lastAccomodation && lastAccomodation.uniqueId) {
+      newUniqueId = String(Number(lastAccomodation.uniqueId) + 1);
     }
 
     const newAccomodation = new Accomodation({
@@ -51,10 +42,10 @@ export const AddAccomodation = async (req, res) => {
 
     await newAccomodation.save();
 
-    const accomodationCount = await Accomodation.countDocuments({
-      property_id,
+    const accomodationCount = await Accomodation.find({
+      property_id: property_id,
     });
-    if (accomodationCount === 1) {
+    if (accomodationCount.length === 1) {
       await addPropertyScore({
         property_id,
         property_score: 10,
@@ -66,7 +57,7 @@ export const AddAccomodation = async (req, res) => {
       accomodation: newAccomodation,
     });
   } catch (error) {
-    console.error(error);
+    console.error("AddAccomodation Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -84,6 +75,7 @@ export const getAccomodationByPropertyId = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 export const EditAccomodation = async (req, res) => {
   try {
     const { uniqueId } = req.params;
@@ -102,7 +94,7 @@ export const EditAccomodation = async (req, res) => {
     const duplicateAccomodation = await Accomodation.findOne({
       uniqueId: { $ne: uniqueId },
       property_id,
-      accomodation_name: { $regex: new RegExp(`^${accomodation_name}$`, "i") },
+      accomodation_name: accomodation_name,
     });
 
     if (duplicateAccomodation) {
@@ -120,11 +112,10 @@ export const EditAccomodation = async (req, res) => {
       );
     }
 
-    await Accomodation.findOneAndUpdate(
+    const updatedAccomodation = await Accomodation.findOneAndUpdate(
       { uniqueId },
       {
         $set: {
-          property_id,
           accomodation_name,
           accomodation_price,
           accomodation_description: updatedDescription,
@@ -133,11 +124,12 @@ export const EditAccomodation = async (req, res) => {
       { new: true }
     );
 
-    return res
-      .status(200)
-      .json({ message: "Accomodation updated successfully" });
+    return res.status(200).json({
+      message: "Accomodation updated successfully",
+      accomodation: updatedAccomodation,
+    });
   } catch (error) {
-    console.error(error);
+    console.error("EditAccomodation Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -145,13 +137,12 @@ export const EditAccomodation = async (req, res) => {
 export const AddAccomodationImages = async (req, res) => {
   try {
     const { uniqueId } = req.params;
-
     let newImages = [];
 
     if (req?.files?.images && req.files.images.length > 0) {
       for (const file of req.files.images) {
-        if (file?.filename && file?.webpFilename) {
-          newImages.push(file.filename);
+        if (file?.originalFilename && file?.webpFilename) {
+          newImages.push(file.originalFilename);
           newImages.push(file.webpFilename);
         } else {
           console.warn("Skipping incomplete image pair:", file);
@@ -183,9 +174,9 @@ export const AddAccomodationImages = async (req, res) => {
 
     if (total > 16) {
       return res.status(400).json({
-        message: `Cannot add more than 8 image pairs (16 files). Currently have ${
+        error: `Cannot add more than 8 image. Currently have ${
           currentCount / 2
-        } pairs.`,
+        } images.`,
       });
     }
 

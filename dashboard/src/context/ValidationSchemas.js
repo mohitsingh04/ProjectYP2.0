@@ -157,7 +157,7 @@ export const reviewValidation = Yup.object({
   phone_number: mobile_no,
   gender: Yup.string().required("Gender is required"),
   review: Yup.string()
-    .max(500, "Review must be 500 characters or less")
+    .max(1500, "Review must be 1500 characters or less")
     .required("Review is required"),
   rating: Yup.number()
     .min(1, "Rating is required")
