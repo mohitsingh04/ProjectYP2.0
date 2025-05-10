@@ -102,7 +102,7 @@ export const UpdateBlog = async (req, res) => {
 
 export const getAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find();
+    const blogs = await Blog.find().sort({ uniqueId: -1 });
 
     if (!blogs) {
       return res.status(404).json({ error: "Blog Not Found" });
@@ -118,7 +118,7 @@ export const getBlogById = async (req, res) => {
   try {
     const { objectId } = req.params;
 
-    const blogs = await Blog.findOne({ _id: objectId });
+    const blogs = await Blog.findOne({ _id: objectId }).sort({ uniqueId: -1 });
 
     if (!blogs) {
       return res.status(404).json({ error: "Blog Not Found" });
@@ -133,7 +133,9 @@ export const getBlogByUniqueId = async (req, res) => {
   try {
     const { uniqueId } = req.params;
 
-    const blogs = await Blog.findOne({ uniqueId: uniqueId });
+    const blogs = await Blog.findOne({ uniqueId: uniqueId }).sort({
+      uniqueId: -1,
+    });
     if (!blogs) {
       return res.status(404).json({ error: "Blog Not Found" });
     }

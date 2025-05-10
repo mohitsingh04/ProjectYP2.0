@@ -51,7 +51,13 @@ export const blogStorage = multer.diskStorage({
     cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
   },
 });
-export const blogUploadMulter = multer({ storage: blogStorage });
+export const blogUploadMulter = multer({
+  storage: blogStorage,
+  limits: {
+    fileSize: 100 * 1024 * 1024,
+    fieldSize: 100 * 1024 * 1024,
+  },
+});
 
 export const processImage = async (req, res, next) => {
   const files = req.files;

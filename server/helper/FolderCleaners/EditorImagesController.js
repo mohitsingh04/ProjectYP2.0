@@ -136,34 +136,40 @@ export const downloadImageAndReplaceSrcNonProperty = async (
       const downloadPromise = (async () => {
         await delay(1);
         const timestamp = Date.now();
-        return axios({
-          method: "GET",
-          url: src,
-          responseType: "arraybuffer",
-        })
-          .then(async (response) => {
-            const contentType = response.headers["content-type"];
-            const ext = contentType?.split("/")[1]?.split(";")[0] || "jpg";
-            const originalFile = `img-editor-${timestamp}.${ext}`;
-            const webpFile = `img-editor-${timestamp}-compressed.webp`;
 
-            const originalPath = path.join(propertyMediaDir, originalFile);
-            const webpPath = path.join(propertyMediaDir, webpFile);
+        try {
+          const response = await axios({
+            method: "GET",
+            url: src,
+            responseType: "arraybuffer",
+          });
 
-            fs.writeFileSync(originalPath, response.data);
-            await sharp(response.data).webp({ quality: 40 }).toFile(webpPath);
+          const contentType = response.headers["content-type"];
+          const ext = contentType?.split("/")[1]?.split(";")[0] || "jpg";
+          const originalFile = `img-editor-${timestamp}.${ext}`;
+          const webpFile = `img-editor-${timestamp}-compressed.webp`;
 
-            img.attr(
-              "src",
-              `${process.env.MEDIA_URL}/${folder_name}/editor/${webpFile}`
-            );
-          })
-          .catch((error) => {
+          const originalPath = path.join(propertyMediaDir, originalFile);
+          const webpPath = path.join(propertyMediaDir, webpFile);
+
+          fs.writeFileSync(originalPath, response.data);
+          await sharp(response.data).webp({ quality: 40 }).toFile(webpPath);
+
+          img.attr(
+            "src",
+            `${process.env.MEDIA_URL}/${folder_name}/editor/${webpFile}`
+          );
+        } catch (error) {
+          if (error.response?.status === 404) {
+            console.warn(`Image not found (404): ${src}`);
+            img.remove();
+          } else {
             console.error(
               `Failed to download image from ${src}:`,
               error.message
             );
-          });
+          }
+        }
       })();
 
       downloadPromises.push(downloadPromise);
@@ -171,9 +177,11 @@ export const downloadImageAndReplaceSrcNonProperty = async (
       const downloadPromise = (async () => {
         await delay(1);
         const timestamp = Date.now();
+
         try {
           const [, format, base64] =
             src.match(/data:image\/(png|jpg|jpeg|gif);base64,(.+)/) || [];
+
           if (!format || !base64) {
             console.error("Invalid Base64 image format:", src.slice(0, 50));
             return;
