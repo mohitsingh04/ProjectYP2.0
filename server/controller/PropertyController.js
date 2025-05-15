@@ -47,10 +47,8 @@ export const addProperty = async (req, res) => {
 
     if (currentCategory?.[0]?.category_name === "Online Yoga Studio") {
       score += 39;
-      console.log("39");
     } else if (category) {
       score += 1;
-      console.log("`1`");
     }
 
     if (property_description) score += 1;
@@ -114,10 +112,12 @@ export const addProperty = async (req, res) => {
       property_slug: slug,
     });
 
-    await newProperty.save();
+    const property = await newProperty.save();
     await addPropertyScore({ property_id: uniqueId, property_score: score });
 
-    return res.status(200).json({ message: "Property added successfully." });
+    return res
+      .status(200)
+      .json({ message: "Property added successfully.", property: property });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Internal Server Error." });

@@ -110,7 +110,7 @@ export default function CreateProperty() {
             title: "Success",
             text: response.data.message || "Property Added Successfully",
           });
-          navigator("/dashboard/property");
+          navigator(`/dashboard/property/view/${response.data.property._id}`);
           window.location.reload();
         }
       } catch (error) {

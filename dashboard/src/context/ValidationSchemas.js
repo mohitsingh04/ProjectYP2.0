@@ -249,3 +249,24 @@ export const BlogCategoryValidation = Yup.object({
     .min(3, "Must be at least 3 characters"),
   parent_category: Yup.string().required("Parent Category is required"),
 });
+export const HiringValidation = Yup.object({
+  title: Yup.string()
+    .trim()
+    .min(3, "Title must be at least 3 characters")
+    .matches(/^\S.*\S$/, "Title cannot start or end with a space")
+    .required("Title is required"),
+
+  job_description: Yup.string().required("Job Description is Required"),
+
+  experience: Yup.string().required("Experience is Required"),
+
+  job_type: Yup.string().required("Job Type is Required"),
+
+  start_date: Yup.date()
+    .optional("Required")
+    .min(today, "Start date must be today or in the future"),
+
+  end_date: Yup.date()
+    .optional("Required")
+    .min(Yup.ref("start_date"), "Must be after start date"),
+});

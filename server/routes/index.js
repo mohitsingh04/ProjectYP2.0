@@ -210,6 +210,12 @@ import {
   getAllRequirments,
   getRequirmentById,
 } from "../controller/RequirmentsController.js";
+import {
+  addHiring,
+  deleteHiring,
+  getHiringByPropertyId,
+  updateHiring,
+} from "../controller/HiringController.js";
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -408,7 +414,7 @@ router.get(
 );
 router.delete("/property-course/:objectId", deletePropertyCourse);
 
-//! Business Hours
+//? Business Hours
 router.get("/business-hours", getBusinessHours);
 router.get("/business-hours/:property_id", getBusinessHoursByPropertyId);
 router.post("/business-hours", addBusinessHours);
@@ -444,7 +450,6 @@ router.get("/legal", getLegal);
 router.patch("/legal", addOrUpdateLegal);
 
 //Blog Routes
-
 const blogUpload = blogUploadMulter.fields([
   { name: "featured_image", maxCount: 1 },
 ]);
@@ -476,5 +481,11 @@ router.post(`/requirment`, CreateRequirmentController);
 router.get(`/requirment/all`, getAllRequirments);
 router.get(`/requirment/id/:objectId`, getRequirmentById);
 router.delete(`/requirment/:objectId`, deleteRequirment);
+
+//? Hiring Routes
+router.post(`/hiring`, addHiring);
+router.get(`/hiring/:property_id`, getHiringByPropertyId);
+router.delete(`/hiring/:uniqueId`, deleteHiring);
+router.patch(`/hiring/:uniqueId`, updateHiring);
 
 export default router;

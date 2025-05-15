@@ -25,6 +25,7 @@ import Amenities from "./PropertyComponents/Amenities/Amenities";
 import Coupon from "./PropertyComponents/Coupon/Coupon";
 import Certifications from "./PropertyComponents/Certifications/Certifications";
 import Accomodation from "./PropertyComponents/Accomodation/Accomodation";
+import Hiring from "./PropertyComponents/Hiring/Hiring";
 
 const tabsData = [
   {
@@ -111,12 +112,12 @@ const tabsData = [
     component: <Certifications />,
     online: true,
   },
-  // {
-  //   key: "additional-details",
-  //   label: "Additional Details",
-  //   icon: "ri-file-info-line",
-  //   component: <AdditionalDetails />,
-  // },
+  {
+    key: "hiring",
+    label: "Hiring",
+    icon: "ri-briefcase-line ",
+    component: <Hiring />,
+  },
   {
     key: "seo",
     label: "SEO",
