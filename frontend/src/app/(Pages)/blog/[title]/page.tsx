@@ -2,6 +2,8 @@
 import API from "@/service/API/API";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+// import "bootstrap/dist/js/bootstrap.js";
+
 import React, { useCallback, useEffect, useState } from "react";
 interface BlogType {
   uniqueId: number;
@@ -36,6 +38,10 @@ export default function Blog() {
   const [users, setUsers] = useState<UserType[]>([]);
   const [tags, setTags] = useState<TagType[]>([]);
   const [allBlogs, setAllBlogs] = useState([]);
+
+  useEffect(() => {
+    import("bootstrap/dist/js/bootstrap.js");
+  }, []);
 
   const getAllBlogs = useCallback(async () => {
     try {

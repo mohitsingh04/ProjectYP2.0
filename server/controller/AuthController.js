@@ -140,13 +140,20 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User does not exist!" });
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ error: "Incorrect password!" });
+    if (!user.isGoogleLogin) {
+      const isMatch = await bcrypt.compare(password, user?.password);
+      if (!isMatch) {
+        return res.status(401).json({ error: "Incorrect password!" });
+      }
     }
 
-    if (!user.verified) {
+    if (user.isGoogleLogin) {
+      return res
+        .status(401)
+        .json({ error: "Your Account is Signed Up with Google" });
+    }
+
+    if (!user?.verified) {
       await sendEmailVerification({
         uniqueId: user.uniqueId,
         email,
@@ -175,6 +182,9 @@ export const login = async (req, res) => {
       message: "Logged in successfully.",
       accessToken,
       user: userData,
+      sameSite: "lax",
+      domain: ".yoprerna.com",
+      path: "/",
     });
   } catch (error) {
     console.log(error);
@@ -365,7 +375,6 @@ export const getToken = async (req, res) => {
     });
   }
 };
-
 
 //? Checked Aboveimport bcrypt from "bcrypt";
 

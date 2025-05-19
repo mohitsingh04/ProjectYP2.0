@@ -25,7 +25,7 @@ export default function EditBlog() {
   const { objectId } = useParams();
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [tagOptions, setTagOptions] = useState([]);
-  const [imagePreview, setImagePreview] = useState(fallbackImage);
+  const [imagePreview, setImagePreview] = useState("");
   const editorConfig = useMemo(() => getEditorConfig(), []);
   const [authUser, setAuthUser] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
@@ -319,8 +319,8 @@ export default function EditBlog() {
                     onBlur={formik.handleBlur}
                   >
                     <option value="">--Select Status--</option>
-                    {status.map((item) => (
-                      <option value={item.parent_status}>
+                    {status.map((item, index) => (
+                      <option key={index} value={item.parent_status}>
                         {item.parent_status}
                       </option>
                     ))}
@@ -340,7 +340,7 @@ export default function EditBlog() {
                         reader.onload = () => setImagePreview(reader.result);
                         reader.readAsDataURL(file);
                       } else {
-                        setImagePreview(fallbackImage);
+                        setImagePreview("");
                       }
                     }}
                     isInvalid={
@@ -353,7 +353,15 @@ export default function EditBlog() {
                   </Form.Control.Feedback>
                   <div className="mt-3">
                     <Image
-                      src={imagePreview}
+                      src={
+                        imagePreview
+                          ? imagePreview
+                          : currentBlog?.featured_image?.[0]
+                          ? `${import.meta.env.VITE_MEDIA_URL}/blogs/${
+                              currentBlog?.featured_image?.[0]
+                            }`
+                          : fallbackImage
+                      }
                       thumbnail
                       width={150}
                       height={150}

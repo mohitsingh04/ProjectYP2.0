@@ -695,7 +695,7 @@ const Header = ({ ThemeChanger }) => {
               >
                 <i className="ri-hand-coin-line header-link-icon me-2"></i>
                 Sponser
-                <i class=""></i>
+                <i className=""></i>
               </Link>
             </div>
             {/* <!-- Profile --> */}

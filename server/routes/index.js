@@ -213,9 +213,12 @@ import {
 import {
   addHiring,
   deleteHiring,
+  getHiring,
+  getHiringByObjectId,
   getHiringByPropertyId,
   updateHiring,
 } from "../controller/HiringController.js";
+import { applyForHiring } from "../controller/ApplyHiringController.js";
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -484,8 +487,13 @@ router.delete(`/requirment/:objectId`, deleteRequirment);
 
 //? Hiring Routes
 router.post(`/hiring`, addHiring);
+router.get(`/hiring`, getHiring);
 router.get(`/hiring/:property_id`, getHiringByPropertyId);
 router.delete(`/hiring/:uniqueId`, deleteHiring);
 router.patch(`/hiring/:uniqueId`, updateHiring);
+router.get(`/hiring/:objectId`, getHiringByObjectId);
+
+//? Apply Hiring
+router.post(`/apply/hiring`, applyForHiring);
 
 export default router;

@@ -149,10 +149,9 @@ export default function Blogs() {
     },
     {
       name: "Category",
-      selector: (row) => row.category,
+      selector: (row) => row?.category?.[0],
       sortable: true,
-      cell: (row) => getCategoryToRelatedId(row.category),
-      // blogCategory.filter((item) => item.uniqueId === row.category),
+      cell: (row) => getCategoryToRelatedId(row?.category?.[0]),
     },
     {
       name: "Status",

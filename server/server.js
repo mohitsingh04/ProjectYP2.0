@@ -12,7 +12,11 @@ const app = express();
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_DASHBOARD_URL],
+    origin: [
+      process.env.FRONTEND_URL,
+      process.env.FRONTEND_DASHBOARD_URL,
+      process.env.FRONTEND_CARRIER_URL,
+    ],
     credentials: true,
   })
 );

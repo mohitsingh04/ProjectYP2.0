@@ -79,6 +79,34 @@ export const getHiringByPropertyId = async (req, res) => {
   }
 };
 
+export const getHiringByObjectId = async (req, res) => {
+  try {
+    const { objectId } = req.params;
+
+    const hirings = await Hiring.findOne({ _id: objectId });
+    if (!hirings) {
+      return res.status(404).json({ error: "Hirings Not Found" });
+    }
+
+    return res.status(200).json(hirings);
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getHiring = async (req, res) => {
+  try {
+    const hirings = await Hiring.find();
+    if (!hirings) {
+      return res.status(404).json({ error: "Hirings Not Found" });
+    }
+
+    return res.status(200).json(hirings);
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 export const deleteHiring = async (req, res) => {
   try {
     const { uniqueId } = req.params;

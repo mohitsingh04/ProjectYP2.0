@@ -3,6 +3,23 @@ import Swal from "sweetalert2";
 
 export const getEditorConfig = () => ({
   readonly: false,
+  iframe: false,
+  allowTags: ["div", "h2", "button", "a", "p", "span"],
+  allowAttributes: {
+    "*": [
+      "id",
+      "class",
+      "style",
+      "role",
+      "data-bs-toggle",
+      "data-bs-target",
+      "aria-expanded",
+      "aria-controls",
+      "aria-labelledby",
+      "data-bs-parent",
+      "href",
+    ],
+  },
   uploader: {
     insertImageAsBase64URI: true,
     files: (files) => {

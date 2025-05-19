@@ -5,6 +5,7 @@ import "./index.scss";
 import "react-phone-input-2/lib/style.css";
 import "react-phone-input-2/lib/bootstrap.css";
 import "react-loading-skeleton/dist/skeleton.css";
+import "bootstrap/dist/js/bootstrap.js"
 
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
