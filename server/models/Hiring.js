@@ -28,7 +28,7 @@ const HiringSchema = mongoose.Schema(
     qualification: { type: Array },
     status: {
       type: String,
-      default: "Pending",
+      default: "Active",
     },
     isExpired: {
       type: Boolean,

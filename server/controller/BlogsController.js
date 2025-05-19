@@ -5,7 +5,6 @@ export const CreateBlog = async (req, res) => {
   try {
     const { title, author, status, category, tags, blog } = req.body;
 
-    console.log(blog);
     const featuredFileWebp = req.files?.["featured_image"]?.[0]?.webpFilename;
     const featuredFilOriginal =
       req.files?.["featured_image"]?.[0]?.originalFilename;

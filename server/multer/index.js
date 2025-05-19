@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 
 // 1. Generic storage (images folder)
-export const storage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "./images"),
   filename: (req, file, cb) => {
     cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
@@ -18,7 +18,7 @@ export const upload = multer({
 });
 
 // 2. User images
-export const userStorage = multer.diskStorage({
+const userStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "../media/user"),
   filename: (req, file, cb) => {
     cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
@@ -27,7 +27,7 @@ export const userStorage = multer.diskStorage({
 export const userUpload = multer({ storage: userStorage });
 
 // 3. Course images
-export const courseStorage = multer.diskStorage({
+const courseStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "../media/course"),
   filename: (req, file, cb) => {
     cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
@@ -36,7 +36,7 @@ export const courseStorage = multer.diskStorage({
 export const courseUploadMulter = multer({ storage: courseStorage });
 
 // 4. Category images
-export const categoryStorage = multer.diskStorage({
+const categoryStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "../media/category"),
   filename: (req, file, cb) => {
     cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
@@ -45,7 +45,7 @@ export const categoryStorage = multer.diskStorage({
 export const categoryUploadMulter = multer({ storage: categoryStorage });
 
 // 5. Course images
-export const blogStorage = multer.diskStorage({
+const blogStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "../media/blogs"),
   filename: (req, file, cb) => {
     cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
@@ -53,6 +53,21 @@ export const blogStorage = multer.diskStorage({
 });
 export const blogUploadMulter = multer({
   storage: blogStorage,
+  limits: {
+    fileSize: 100 * 1024 * 1024,
+    fieldSize: 100 * 1024 * 1024,
+  },
+});
+
+// 6. resume images
+const ResumeStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "../media/resume"),
+  filename: (req, file, cb) => {
+    cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
+  },
+});
+export const ResuemUploadMulter = multer({
+  storage: ResumeStorage,
   limits: {
     fileSize: 100 * 1024 * 1024,
     fieldSize: 100 * 1024 * 1024,

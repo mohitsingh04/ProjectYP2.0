@@ -317,6 +317,7 @@ export default function EditBlog() {
                     name="status"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
+                    value={formik?.values?.status}
                   >
                     <option value="">--Select Status--</option>
                     {status.map((item, index) => (

@@ -5,6 +5,7 @@ import {
   categoryUploadMulter,
   courseUploadMulter,
   processImage,
+  ResuemUploadMulter,
   upload,
   userUpload,
 } from "../multer/index.js";
@@ -218,7 +219,11 @@ import {
   getHiringByPropertyId,
   updateHiring,
 } from "../controller/HiringController.js";
-import { applyForHiring } from "../controller/ApplyHiringController.js";
+import {
+  applyForHiring,
+  getApplyHiringByUserId,
+} from "../controller/ApplyHiringController.js";
+import { getResumeByUserId } from "../controller/UserDocController.js";
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -494,6 +499,13 @@ router.patch(`/hiring/:uniqueId`, updateHiring);
 router.get(`/hiring/:objectId`, getHiringByObjectId);
 
 //? Apply Hiring
-router.post(`/apply/hiring`, applyForHiring);
+const resumeUpload = ResuemUploadMulter.fields([
+  { name: "resume", maxCount: 1 },
+]);
+router.post(`/apply/hiring`, resumeUpload, applyForHiring);
+router.get(`/apply/hiring/:userId`, getApplyHiringByUserId);
+
+//? User Doc Routes
+router.get(`/user/doc/:userId`,getResumeByUserId)
 
 export default router;
