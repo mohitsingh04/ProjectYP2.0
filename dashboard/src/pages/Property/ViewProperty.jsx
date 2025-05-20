@@ -26,6 +26,7 @@ import Coupon from "./PropertyComponents/Coupon/Coupon";
 import Certifications from "./PropertyComponents/Certifications/Certifications";
 import Accomodation from "./PropertyComponents/Accomodation/Accomodation";
 import Hiring from "./PropertyComponents/Hiring/Hiring";
+import Applications from "./PropertyComponents/Applications/Applications";
 
 const tabsData = [
   {
@@ -117,6 +118,12 @@ const tabsData = [
     label: "Hiring",
     icon: "ri-briefcase-line ",
     component: <Hiring />,
+  },
+  {
+    key: "applications",
+    label: "Applications",
+    icon: "ri-file-text-line",
+    component: <Applications />,
   },
   {
     key: "seo",

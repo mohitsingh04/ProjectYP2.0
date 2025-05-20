@@ -8,16 +8,17 @@ export const stripHtmlAndLimit = (html, limit = 500000000) => {
   return text.length > limit ? text.slice(0, limit) + "..." : text;
 };
 
-export const handleApply = async (userId, hiringId, file, finallize) => {
+export const handleApply = async (userId, job, file, finallize) => {
   try {
     const formData = new FormData();
     formData.append("userId", userId);
-    formData.append("hiringId", hiringId);
+    formData.append("hiringId", job?.uniqueId);
+    formData.append("property_id", job?.property_id);
+
     if (file) {
       formData.append("resume", file);
     }
     const response = await API.post(`/apply/hiring`, formData);
-    console.log(response);
     Swal.fire({
       title: "Applied",
       text: response.data.message,

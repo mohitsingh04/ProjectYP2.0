@@ -156,6 +156,15 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
+    tab: `applications`,
+    title: "Applications",
+    icon: "fe-file-text",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
+  {
     tab: `seo`,
     title: "SEO",
     icon: "fe-bar-chart",

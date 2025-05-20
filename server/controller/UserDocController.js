@@ -37,6 +37,7 @@ export const SaveResume = async (req, res) => {
 export const getResumeByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
+    console.log(userId)
 
     const resume = await UserDoc.findOne({ userId });
 
@@ -44,6 +45,17 @@ export const getResumeByUserId = async (req, res) => {
       return res.status(404).json({ error: "Resume Not Found" });
     }
 
+    return res.status(200).json(resume);
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getAllResume = async (req, res) => {
+  try {
+    const resume = await UserDoc.find();
+    if (!resume) {
+      return res.status(404).json({ error: "Resume Not Found" });
+    }
     return res.status(200).json(resume);
   } catch (error) {
     console.log(error);

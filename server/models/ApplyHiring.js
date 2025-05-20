@@ -6,9 +6,10 @@ const applySchema = mongoose.Schema(
     uniqueId: { type: Number, required: true },
     userId: { type: Number, required: true },
     hiringId: { type: Number, required: true },
+    property_id: { type: Number },
     status: { type: String, default: "Pending" },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 const ApplyHiring = regularDatabase.model("apply-hiring", applySchema);

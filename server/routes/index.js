@@ -221,9 +221,13 @@ import {
 } from "../controller/HiringController.js";
 import {
   applyForHiring,
+  getApplyHiringByPropertyId,
   getApplyHiringByUserId,
 } from "../controller/ApplyHiringController.js";
-import { getResumeByUserId } from "../controller/UserDocController.js";
+import {
+  getAllResume,
+  getResumeByUserId,
+} from "../controller/UserDocController.js";
 import {
   CreateBlogSeo,
   deleteBlogSeo,
@@ -516,8 +520,10 @@ const resumeUpload = ResuemUploadMulter.fields([
 ]);
 router.post(`/apply/hiring`, resumeUpload, applyForHiring);
 router.get(`/apply/hiring/:userId`, getApplyHiringByUserId);
+router.get(`/apply/applications/:property_id`, getApplyHiringByPropertyId);
 
 //? User Doc Routes
+router.get(`/user/doc/all`, getAllResume);
 router.get(`/user/doc/:userId`, getResumeByUserId);
 
 export default router;

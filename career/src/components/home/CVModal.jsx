@@ -160,7 +160,7 @@ const CVModal = ({ setIsOpen, profile, job, getApplications }) => {
             onClick={async () => {
               handleApply(
                 profile?.uniqueId,
-                job?.uniqueId,
+                job,
                 selectedFile,
                 getApplications
               );
