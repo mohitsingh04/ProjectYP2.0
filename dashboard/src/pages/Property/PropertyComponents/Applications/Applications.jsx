@@ -97,51 +97,64 @@ export default function Applications() {
 
   return (
     <div>
-      {applications?.map((item, index) => (
-        <Row key={index}>
-          <Col md={12}>
-            <Card>
-              <Card.Header>
-                <Card.Title>
-                  {getHiringDetail(item?.hiringId)?.title}
-                </Card.Title>
-              </Card.Header>
-              <Card.Body>
-                <Row>
-                  <Col md={8}>
-                    <h5>
-                      <strong>Name:</strong> {getUserDetail(item?.userId)?.name}
-                    </h5>
-                    <p>
-                      <strong>Email:</strong>{" "}
-                      {getUserDetail(item?.userId)?.email}
-                    </p>
-                    <p>
-                      <strong>Mobile No:</strong>{" "}
-                      {getUserDetail(item?.userId)?.mobile_no}
-                    </p>
-                  </Col>
-                  <Col
-                    md={4}
-                    className="d-flex align-items-center justify-content-end"
-                  >
-                    <a
-                      href={`${import.meta.env?.VITE_MEDIA_URL}/resume/${
-                        getResumeDetail(item?.userId)?.resume
-                      }`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-primary"
+      {applications?.length > 0 ? (
+        applications.map((item, index) => (
+          <Row key={index} className="mb-3">
+            <Col md={12}>
+              <Card>
+                <Card.Header>
+                  <Card.Title>
+                    {getHiringDetail(item?.hiringId)?.title}
+                  </Card.Title>
+                </Card.Header>
+                <Card.Body>
+                  <Row>
+                    <Col md={8}>
+                      <h5>
+                        <strong>Name:</strong>{" "}
+                        {getUserDetail(item?.userId)?.name}
+                      </h5>
+                      <p>
+                        <strong>Email:</strong>{" "}
+                        {getUserDetail(item?.userId)?.email}
+                      </p>
+                      <p>
+                        <strong>Mobile No:</strong>{" "}
+                        {getUserDetail(item?.userId)?.mobile_no}
+                      </p>
+                    </Col>
+                    <Col
+                      md={4}
+                      className="d-flex align-items-center justify-content-end"
                     >
-                      View CV
-                    </a>
-                  </Col>
-                </Row>
+                      <a
+                        href={`${import.meta.env?.VITE_MEDIA_URL}/resume/${
+                          getResumeDetail(item?.userId)?.resume
+                        }`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-primary"
+                      >
+                        View CV
+                      </a>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        ))
+      ) : (
+        <Row className="mt-4">
+          <Col md={12}>
+            <Card className="text-center">
+              <Card.Body>
+                <h5 className="mb-0 text-muted">No applications yet.</h5>
               </Card.Body>
             </Card>
           </Col>
         </Row>
-      ))}
+      )}
     </div>
   );
 }

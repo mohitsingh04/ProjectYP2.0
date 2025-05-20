@@ -6,6 +6,14 @@ import EditAccomodation from "./EditAccomodation";
 import AddAccomodation from "./AddAccomodation";
 import AddAccomodationImages from "./AddAccomodationImages";
 
+import Lightbox from "yet-another-react-lightbox";
+
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Slideshow from "yet-another-react-lightbox/plugins/slideshow";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import RemoveAccomodationImages from "./RemoveAccomodationImages";
+
 export default function Accomodation() {
   const { objectId } = useParams();
   const [property, setProperty] = useState("");
@@ -14,6 +22,9 @@ export default function Accomodation() {
   const [isUpdating, setIsUpdating] = useState("");
   const [isAddingImages, setIsAddingImages] = useState("");
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [removing, setRemoving] = useState("");
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [lightboxImages, setLightboxImages] = useState([]);
 
   const getProperty = useCallback(async () => {
     try {
@@ -64,38 +75,49 @@ export default function Accomodation() {
     <div>
       {accomodation.length > 0 ? (
         !isUpdating ? (
-          !isAddingImages ? (
-            <Row>
-              <Col md={12}>
-                {accomodation?.map((item, index) => (
-                  <Card key={index}>
-                    <Card.Header className="d-flex justify-content-between">
-                      <Card.Title>{item?.accomodation_name}</Card.Title>
-                      <div className="d-flex gap-1">
-                        {/* <Button
-                          size="sm"
-                          onClick={() => setIsAddingImages(item)}
-                        >
-                          Add Images
-                        </Button>
-                        <Button size="sm" variant="danger">
-                          Remove Images
-                        </Button> */}
-                        <Button
-                          size="sm"
-                          variant="success"
-                          onClick={() => setIsUpdating(item)}
-                        >
-                          Edit Accomodation
-                        </Button>
-                      </div>
-                    </Card.Header>
-                    <Card.Body>
-                      <Row>
-                        <Col>
-                          <div className="tags py-2">
-                            {Object.entries(item?.accomodation_price?.[0]).map(
-                              ([key, value]) => (
+          !removing ? (
+            !isAddingImages ? (
+              <Row>
+                <Col md={12}>
+                  {accomodation?.map((item, index) => (
+                    <Card key={index}>
+                      <Card.Header className="d-flex justify-content-between">
+                        <Card.Title>{item?.accomodation_name}</Card.Title>
+                        <div className="d-flex gap-1">
+                          {item.accomodation_images.length < 16 && (
+                            <Button
+                              size="sm"
+                              onClick={() => setIsAddingImages(item)}
+                            >
+                              Add Images
+                            </Button>
+                          )}
+                          {item.accomodation_images.length > 0 && (
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              className="ms-1"
+                              onClick={() => setRemoving(item)}
+                            >
+                              <i className="fe fe-x me-1"></i>Remove Images
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="success"
+                            onClick={() => setIsUpdating(item)}
+                          >
+                            Edit Accomodation
+                          </Button>
+                        </div>
+                      </Card.Header>
+                      <Card.Body>
+                        <Row>
+                          <Col>
+                            <div className="tags py-2">
+                              {Object.entries(
+                                item?.accomodation_price?.[0]
+                              ).map(([key, value]) => (
                                 <div className="tag" key={key}>
                                   <span>
                                     {key === "DOLLAR"
@@ -106,72 +128,111 @@ export default function Accomodation() {
                                     {value}
                                   </span>
                                 </div>
-                              )
-                            )}
-                          </div>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <div>
-                            <div
-                              className="description-text"
-                              dangerouslySetInnerHTML={{
-                                __html: showFullDescription
-                                  ? item?.accomodation_description
-                                  : item?.accomodation_description
-                                      ?.split(" ")
-                                      .slice(0, 300)
-                                      .join(" ") +
-                                    (item?.accomodation_description?.split(" ")
-                                      .length > 300
-                                      ? "..."
-                                      : ""),
-                              }}
-                            />
-                            {item?.accomodation_description?.split(" ").length >
-                              300 &&
-                              !showFullDescription && (
-                                <Button
-                                  variant="link"
-                                  size="sm"
-                                  className="mt-2"
-                                  onClick={() => setShowFullDescription(true)}
-                                >
-                                  Show More
-                                </Button>
-                              )}
-                          </div>
-                        </Col>
-                      </Row>
-                    </Card.Body>
-                    {item?.accomodation_images?.length > 0 && (
-                      <Card.Footer>
-                        <Row>
-                          {item.accomodation_images
-                            .filter((item) => item.endsWith(".webp"))
-                            .map((item, index) => (
-                              <Col md={3} key={index}>
-                                <img
-                                  src={`${
-                                    import.meta.env.VITE_MEDIA_URL
-                                  }/${item}`}
-                                  alt={item}
-                                />
-                              </Col>
-                            ))}
+                              ))}
+                            </div>
+                          </Col>
                         </Row>
-                      </Card.Footer>
-                    )}
-                  </Card>
-                ))}
-              </Col>
-            </Row>
+                        <Row>
+                          <Col>
+                            <div>
+                              <div
+                                className="description-text"
+                                dangerouslySetInnerHTML={{
+                                  __html: showFullDescription
+                                    ? item?.accomodation_description
+                                    : item?.accomodation_description
+                                        ?.split(" ")
+                                        .slice(0, 300)
+                                        .join(" ") +
+                                      (item?.accomodation_description?.split(
+                                        " "
+                                      ).length > 300
+                                        ? "..."
+                                        : ""),
+                                }}
+                              />
+                              {item?.accomodation_description?.split(" ")
+                                .length > 300 &&
+                                !showFullDescription && (
+                                  <Button
+                                    variant="link"
+                                    size="sm"
+                                    className="mt-2"
+                                    onClick={() => setShowFullDescription(true)}
+                                  >
+                                    Show More
+                                  </Button>
+                                )}
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                      {item?.accomodation_images?.length > 0 && (
+                        <Card.Footer>
+                          <Row>
+                            {item.accomodation_images
+                              .filter((item) => item.endsWith(".webp"))
+                              .map((img, index) => (
+                                <Col
+                                  key={index}
+                                  xs={6}
+                                  md={3}
+                                  className="mb-2 position-relative"
+                                >
+                                  <img
+                                    src={`${
+                                      import.meta.env.VITE_MEDIA_URL
+                                    }/${img}`}
+                                    alt={`Accomodation Image ${index + 1}`}
+                                    className="w-100 rounded profile-ratio"
+                                    onClick={() => {
+                                      setLightboxImages(
+                                        item?.accomodation_images
+                                          ?.filter((item) =>
+                                            item.endsWith(".webp")
+                                          )
+                                          .map((src) => ({
+                                            src: `${
+                                              import.meta.env.VITE_MEDIA_URL
+                                            }/${src}`,
+                                          }))
+                                      );
+                                      setLightboxIndex(index);
+                                    }}
+                                  />
+                                </Col>
+                              ))}
+                            <Lightbox
+                              open={lightboxIndex !== null}
+                              close={() => setLightboxIndex(null)}
+                              index={lightboxIndex}
+                              slides={lightboxImages}
+                              plugins={[
+                                Fullscreen,
+                                Slideshow,
+                                Thumbnails,
+                                Zoom,
+                              ]}
+                            />
+                          </Row>
+                        </Card.Footer>
+                      )}
+                    </Card>
+                  ))}
+                </Col>
+              </Row>
+            ) : (
+              <AddAccomodationImages
+                setAddingImages={setIsAddingImages}
+                accomodation={isAddingImages}
+                getAccomodation={getAccomodation}
+              />
+            )
           ) : (
-            <AddAccomodationImages
-              setAddingImages={setIsAddingImages}
-              accomodation={isAddingImages}
-              getAccomodation={getAccomodation}
+            <RemoveAccomodationImages
+              accomodation={removing}
+              setRemoving={setRemoving}
+              getAccomodationData={getAccomodation}
             />
           )
         ) : (

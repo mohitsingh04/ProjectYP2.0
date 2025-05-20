@@ -201,7 +201,7 @@ export default function Blogs() {
                 to={`/dashboard/blogs/seo/${row._id}`}
                 className="btn btn-warning btn-sm"
               >
-                <i className="fe fe-search"></i>
+                <i class="ri-seo-line"></i>
               </Link>
               {authUser?.permissions?.some(
                 (item) => item.value === "Delete Blog"

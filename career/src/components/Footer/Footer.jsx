@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="bg-purple-600 text-white py-4 text-center">
       <p className="text-sm">
-        <Copyright /> {currentYear}{" "}
+        &copy;
         <a
           href="https://yogprerna.com"
           target="_blank"

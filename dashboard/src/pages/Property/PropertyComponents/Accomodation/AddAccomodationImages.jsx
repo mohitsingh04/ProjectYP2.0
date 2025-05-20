@@ -101,14 +101,25 @@ export default function AddAccomodationImages({
         title: "Upload Failed",
         text: message,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
       <Card>
-        <Card.Header>
+        <Card.Header className="d-flex justify-content-between">
           <Card.Title>Add Accomodation Images</Card.Title>
+          <div>
+            <Button
+              onClick={() => setAddingImages("")}
+              variant="danger"
+              size="sm"
+            >
+              Cancel
+            </Button>
+          </div>
         </Card.Header>
         <Card.Body>
           <Form onSubmit={handleSubmit}>
