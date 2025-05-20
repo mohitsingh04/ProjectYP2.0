@@ -15,7 +15,7 @@ app.use(
     origin: [
       process.env.FRONTEND_URL,
       process.env.FRONTEND_DASHBOARD_URL,
-      process.env.FRONTEND_CARRIER_URL,
+      process.env.FRONTEND_CAREER_URL,
     ],
     credentials: true,
   })

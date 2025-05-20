@@ -197,6 +197,12 @@ export default function Blogs() {
                   <i className="fe fe-edit-2"></i>
                 </Link>
               )}
+              <Link
+                to={`/dashboard/blogs/seo/${row._id}`}
+                className="btn btn-warning btn-sm"
+              >
+                <i className="fe fe-search"></i>
+              </Link>
               {authUser?.permissions?.some(
                 (item) => item.value === "Delete Blog"
               ) && (

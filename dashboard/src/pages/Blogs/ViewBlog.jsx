@@ -110,8 +110,16 @@ export default function ViewBlog() {
       <Row>
         <Col>
           <Card className="shadow-sm">
-            <Card.Header>
+            <Card.Header className="d-flex justify-content-between">
               <Card.Title>{blog?.title}</Card.Title>
+              <div>
+                <Link
+                  to={`/dashboard/blogs/seo/${blog?._id}`}
+                  className="btn btn-warning btn-sm"
+                >
+                  Blog Seo
+                </Link>
+              </div>
             </Card.Header>
             <Card.Body>
               <img

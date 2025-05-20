@@ -29,7 +29,7 @@ export const addSeo = async (req, res) => {
     if (primary_focus_keyword.length > 2) {
       return res
         .status(400)
-        .json({ error: "You can add a maximum of 3 focus keywords." });
+        .json({ error: "You can add a maximum of 2 focus keywords." });
     }
 
     const existSeo = await Seo.findOne({ title, property_id });

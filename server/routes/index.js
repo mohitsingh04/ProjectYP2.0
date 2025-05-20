@@ -224,6 +224,12 @@ import {
   getApplyHiringByUserId,
 } from "../controller/ApplyHiringController.js";
 import { getResumeByUserId } from "../controller/UserDocController.js";
+import {
+  CreateBlogSeo,
+  deleteBlogSeo,
+  getSeoByBlogId,
+  updateBlogSeo,
+} from "../controller/BlogSeoController.js";
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -453,11 +459,11 @@ router.get("/coupons/property/:property_id", getCouponByPropertyId);
 router.delete("/coupon/:uniqueId", DeleteCoupon);
 router.patch("/coupon/:uniqueId", UpdateCoupon);
 
-//Legal Routes
+//? Legal Routes
 router.get("/legal", getLegal);
 router.patch("/legal", addOrUpdateLegal);
 
-//Blog Routes
+//? Blog Routes
 const blogUpload = blogUploadMulter.fields([
   { name: "featured_image", maxCount: 1 },
 ]);
@@ -468,7 +474,13 @@ router.get("/blog/:objectId", getBlogById);
 router.get("/blog/id/:uniqueId", getBlogByUniqueId);
 router.patch("/blog/:objectId", blogUpload, processImage, UpdateBlog);
 
-//Blog Category Routes
+//? Blog Seo Routes
+router.post(`/blog/seo`, CreateBlogSeo);
+router.get(`/blog/seo/:blog_id`, getSeoByBlogId);
+router.delete(`/blog/seo/:objectId`, deleteBlogSeo);
+router.patch(`/blog/seo/:objectId`, updateBlogSeo);
+
+//? Blog Category Routes
 router.get("/blog/category/all", getAllBlogCategories);
 router.get("/blog/category/id/:objectId", getBlogCategoryById);
 router.post("/blog/category", createBlogCategory);
@@ -506,6 +518,6 @@ router.post(`/apply/hiring`, resumeUpload, applyForHiring);
 router.get(`/apply/hiring/:userId`, getApplyHiringByUserId);
 
 //? User Doc Routes
-router.get(`/user/doc/:userId`,getResumeByUserId)
+router.get(`/user/doc/:userId`, getResumeByUserId);
 
 export default router;

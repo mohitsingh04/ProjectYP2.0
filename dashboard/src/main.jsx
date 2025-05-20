@@ -78,6 +78,7 @@ import ViewBlog from "./pages/Blogs/ViewBlog";
 import KeyOUtComes from "./pages/KeyOutcomes/KeyOutComes";
 import Requirments from "./pages/Requirments/Requirments";
 import SoftDeletedCourses from "./pages/Courses/SoftDeletedCourses";
+import BlogSeo from "./pages/Blogs/SEO/blogSeo";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
@@ -160,6 +161,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route path="/dashboard/blogs/category/create" element={<ProtectedRoutes><CreateBlogCategory/></ProtectedRoutes>} />
               <Route path="/dashboard/blogs/category/edit/:objectId" element={<ProtectedRoutes><EditBlogCategory/></ProtectedRoutes>} />
               <Route path="/dashboard/blogs/tags" element={<ProtectedRoutes><Tags/></ProtectedRoutes>} />
+              <Route path="/dashboard/blogs/seo/:objectId" element={<ProtectedRoutes><BlogSeo/></ProtectedRoutes>} />
               
               <Route path="/dashboard/key-outcomes" element={<ProtectedRoutes><KeyOUtComes/></ProtectedRoutes>} />
               <Route path="/dashboard/requirments" element={<ProtectedRoutes><Requirments/></ProtectedRoutes>} />
