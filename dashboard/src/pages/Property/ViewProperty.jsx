@@ -118,12 +118,14 @@ const tabsData = [
     label: "Hiring",
     icon: "ri-briefcase-line ",
     component: <Hiring />,
+    online: true,
   },
   {
     key: "applications",
     label: "Applications",
     icon: "ri-file-text-line",
     component: <Applications />,
+    online: true,
   },
   {
     key: "seo",

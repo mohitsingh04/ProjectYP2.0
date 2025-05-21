@@ -18,6 +18,7 @@ import {
 import { API } from "@/context/API";
 import GetToken from "@/CallBacks/GetToken";
 import CVModal from "@/components/home/CVModal";
+import { date } from "yup";
 
 export default function JobDetailPage() {
   const { objectId } = useParams();
@@ -88,8 +89,7 @@ export default function JobDetailPage() {
         property_state: locationMap[hiring.property_id]?.property_state || null,
         property_country:
           locationMap[hiring.property_id]?.property_country || null,
-        propert_logo:
-          propertyMap[hiring.property_id]?.featupurple_image || null,
+        property_logo: propertyMap[hiring.property_id]?.property_logo || null,
       }));
 
       setJobs(enrichedHiringData.filter((item) => item.status === "Active"));
@@ -122,6 +122,33 @@ export default function JobDetailPage() {
     }
     window.scrollTo(0, 0);
   }, [objectId, jobs]);
+
+  let hasExpiredJob;
+  const today = new Date();
+  const endDateOnly = job?.end_date
+    ? new Date(job.end_date).toISOString().split("T")[0]
+    : undefined;
+
+  if (endDateOnly) {
+    const endDate = new Date(endDateOnly);
+    const todayDateOnly = new Date(today.toISOString().split("T")[0]);
+    hasExpiredJob = endDate <= todayDateOnly;
+  } else {
+    hasExpiredJob = true;
+  }
+
+  let hasStarted;
+  const startDateOnly = job?.start_date
+    ? new Date(job?.start_date).toISOString().split("T")[0]
+    : undefined;
+
+  if (startDateOnly) {
+    const startDate = new Date(startDateOnly);
+    const todayDateOnly = new Date(today.toISOString().split("T")[0]);
+    hasStarted = startDate <= todayDateOnly;
+  } else {
+    hasStarted = true;
+  }
 
   if (!job) {
     return (
@@ -157,9 +184,9 @@ export default function JobDetailPage() {
                   {job?.property_logo?.[0] && (
                     <div className="mr-6 flex-shrink-0">
                       <img
-                        src={job?.property_logo?.[0]}
+                        src={`${process.env.NEXT_PUBLIC_MEDIA_URL}/${job?.property_logo?.[0]}`}
                         alt={`${job.property_name} logo`}
-                        className="h-20 w-20 rounded-lg object-cover border border-gray-100"
+                        className="h-20 w-20 rounded-lg shadow-sm object-cover border border-gray-100"
                       />
                     </div>
                   )}
@@ -328,37 +355,45 @@ export default function JobDetailPage() {
 
           <div className="lg:col-span-1 mt-6 lg:mt-0">
             {/* Apply Now Card */}
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-6 sticky top-8">
-              {token ? (
-                applications?.some(
-                  (item) =>
-                    item.userId === 1 && item?.hiringId === job?.uniqueId
-                ) ? (
-                  <button className="w-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors mb-4">
-                    Applied
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setIsOpen(true)}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors mb-4"
-                  >
-                    Apply Now
-                  </button>
-                )
-              ) : (
-                <button
-                  onClick={() => (window.location.href = `/login`)}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors mb-4"
-                >
-                  Apply Now
-                </button>
-              )}
-              <p className="text-center text-sm text-gray-500">
-                Be an early applicant
-              </p>
-            </div>
 
-            {/* Related Jobs */}
+            {!hasExpiredJob && (
+              <div className="bg-white rounded-xl shadow-sm p-6 mb-6 sticky top-20">
+                {hasExpiredJob ? (
+                  token ? (
+                    applications?.some(
+                      (item) =>
+                        item.userId === 1 && item?.hiringId === job?.uniqueId
+                    ) ? (
+                      <button className="w-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors mb-4">
+                        Applied
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setIsOpen(true)}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors mb-4"
+                      >
+                        Apply Now
+                      </button>
+                    )
+                  ) : (
+                    <button
+                      onClick={() => (window.location.href = `/login`)}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors mb-4"
+                    >
+                      Apply Now
+                    </button>
+                  )
+                ) : (
+                  <button className="w-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors mb-4">
+                    Upcoming
+                  </button>
+                )}
+                <p className="text-center text-sm text-gray-500">
+                  Be an early applicant
+                </p>
+              </div>
+            )}
+
             {relatedJobs.length > 0 && (
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-lg font-bold text-gray-900 mb-4">

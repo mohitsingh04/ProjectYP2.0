@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
       <head>
         <link
           rel="shortcut icon"
-          href="Images/yogprerna-fav.png"
+          href="/Images/yogprerna-fav.png"
           type="image/x-icon"
         />
       </head>

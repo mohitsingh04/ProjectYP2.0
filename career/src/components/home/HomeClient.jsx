@@ -55,7 +55,7 @@ export default function HomeClient() {
         return acc;
       }, {});
 
-      const enrichedHiringData = await hiringData.map((hiring) => ({
+      const enrichedHiringData = hiringData.map((hiring) => ({
         ...hiring,
         property_name: propertyMap[hiring.property_id]?.property_name || null,
         property_address:
@@ -64,11 +64,20 @@ export default function HomeClient() {
         property_state: locationMap[hiring.property_id]?.property_state || null,
         property_country:
           locationMap[hiring.property_id]?.property_country || null,
-        propert_logo:
-          propertyMap[hiring.property_id]?.featupurple_image || null,
+        property_logo: propertyMap[hiring.property_id]?.property_logo || null,
       }));
 
-      setJobs(enrichedHiringData.filter((item) => item.status === "Active"));
+      const now = new Date();
+
+      const filteredData = enrichedHiringData.filter((item) => {
+        if (!item.end_date) {
+          return item.status === "Active";
+        }
+        const endDate = new Date(item.end_date);
+        return item.status === "Active" && endDate > now;
+      });
+
+      setJobs(filteredData);
     } catch (error) {
       console.error(error);
     } finally {
@@ -130,9 +139,7 @@ export default function HomeClient() {
           </div>
         )}
 
-        {/* Main Content */}
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-          {/* Mobile Filter Button */}
           <div className="lg:hidden mb-4">
             <button
               onClick={() => setShowMobileFilters(true)}
@@ -143,7 +150,6 @@ export default function HomeClient() {
             </button>
           </div>
 
-          {/* Mobile Filters Offcanvas */}
           <div
             className={`
             lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300

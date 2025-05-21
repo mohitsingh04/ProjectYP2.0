@@ -50,9 +50,19 @@ const JobCard = ({ job }) => {
     }).format(date);
   };
 
-  const jobLogo =
-    job?.propert_logo?.[0] ||
-    `https://img.freepik.com/free-vector/flat-illustration-international-yoga-day-celebration_23-2150525465.jpg?semt=ais_hybrid&w=740`;
+  let hasStarted;
+  const today = new Date();
+  const startDateOnly = job?.start_date
+    ? new Date(job?.start_date).toISOString().split("T")[0]
+    : undefined;
+
+  if (startDateOnly) {
+    const startDate = new Date(startDateOnly);
+    const todayDateOnly = new Date(today.toISOString().split("T")[0]);
+    hasStarted = startDate <= todayDateOnly;
+  } else {
+    hasStarted = true;
+  }
 
   return (
     <>
@@ -60,10 +70,14 @@ const JobCard = ({ job }) => {
         <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-5 border border-gray-100 fade-in">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="md:mr-4 flex-shrink-0">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border border-gray-200">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden shadow-xs border border-gray-200">
                 <img
-                  src={jobLogo}
-                  alt={job.property_name || "Company logo"}
+                  src={
+                    job?.property_logo?.[0]
+                      ? `${process.env.NEXT_PUBLIC_MEDIA_URL}/${job?.property_logo?.[0]}`
+                      : `https://img.freepik.com/free-vector/flat-illustration-international-yoga-day-celebration_23-2150525465.jpg?semt=ais_hybrid&w=740`
+                  }
+                  alt={`${job.property_name} logo`}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -71,7 +85,13 @@ const JobCard = ({ job }) => {
 
             <div className="flex-grow space-y-2">
               <div className="flex flex-col md:flex-row md:items-center justify-between">
-                <Link href={`/${job?.title.toLowerCase()}/${job?._id}`}>
+                <Link
+                  href={`/${job?.title
+                    ?.toLowerCase()
+                    ?.replace(/[^a-z0-9\s-]/g, "")
+                    ?.replace(/\s+/g, "-")
+                    ?.replace(/-+/g, "-")}/${job?._id}`}
+                >
                   <h3 className="text-lg font-semibold text-gray-900">
                     {job.title || "Job Title"}
                   </h3>
@@ -138,31 +158,37 @@ const JobCard = ({ job }) => {
               <div className="flex items-center text-sm text-gray-500">
                 <Calendar size={14} className="mr-1" />
                 <span>
-                  {formatDate(job.datePosted) || formatDate(Date.now())}
+                  {formatDate(job.start_date) || formatDate(Date.now())}
                 </span>
               </div>
-              {token ? (
-                applications?.some(
-                  (item) =>
-                    item.userId === 1 && item?.hiringId === job?.uniqueId
-                ) ? (
-                  <button className="mt-4 w-full md:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors">
-                    Applied
-                  </button>
+              {hasStarted ? (
+                token ? (
+                  applications?.some(
+                    (item) =>
+                      item.userId === 1 && item?.hiringId === job?.uniqueId
+                  ) ? (
+                    <button className="mt-4 w-full md:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors">
+                      Applied
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setIsOpen(true)}
+                      className="mt-4 w-full md:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
+                    >
+                      Apply Now
+                    </button>
+                  )
                 ) : (
                   <button
-                    onClick={() => setIsOpen(true)}
+                    onClick={() => (window.location.href = `/login`)}
                     className="mt-4 w-full md:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
                   >
                     Apply Now
                   </button>
                 )
               ) : (
-                <button
-                  onClick={() => (window.location.href = `/login`)}
-                  className="mt-4 w-full md:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
-                >
-                  Apply Now
+                <button className="mt-4 w-full md:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors">
+                  Upcoming
                 </button>
               )}
             </div>

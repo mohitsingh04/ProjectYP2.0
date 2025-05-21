@@ -37,7 +37,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <img
-            src="Images/yogprerna-logo.png"
+            src="/Images/yogprerna-logo.png"
             alt="Yog Prerna Logo"
             className="h-10 w-auto bg-white p-2 rounded-sm"
           />

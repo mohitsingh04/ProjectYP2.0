@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, MapPin, Briefcase } from "lucide-react";
+import { Search, MapPin } from "lucide-react";
 import CountUp from "react-countup";
 
 const bannerData = [
