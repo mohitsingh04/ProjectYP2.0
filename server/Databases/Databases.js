@@ -7,6 +7,10 @@ export const regularDatabase = mongoose.createConnection(
   process.env.MONGODB_URL
 );
 
+export const profileDatabase = mongoose.createConnection(
+  process.env.MONGODB_PROFILE_URL
+);
+
 export const analyticDatabase = mongoose.createConnection(
   process.env.MONGODB_ANALYTIC_URL
 );

@@ -36,13 +36,6 @@ export const register = async (req, res) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    const permissions = [
-      { label: "Read Property", value: "Read Property" },
-      { label: "Create Property", value: "Create Property" },
-      { label: "Update Property", value: "Update Property" },
-      { label: "Delete Property", value: "Delete Property" },
-    ];
-
     const lastUser = await User.findOne().sort({ _id: -1 }).limit(1);
     const uniqueId = lastUser ? lastUser.uniqueId + 1 : 1;
 
@@ -52,7 +45,6 @@ export const register = async (req, res) => {
       email,
       mobile_no: `+${mobile_no}`,
       password: passwordHash,
-      permissions,
     });
 
     await newUser.save();
@@ -375,21 +367,3 @@ export const getToken = async (req, res) => {
     });
   }
 };
-
-//? Checked Aboveimport bcrypt from "bcrypt";
-
-// export const getResetToken = async (req, res) => {
-//     try {
-//         const { token } = req.params;
-
-//         const isTokenExpired = await User.findOne({ resetToken: token });
-
-//         if (!isTokenExpired) {
-//             return res.send({ error: 'Expired token. Please request a new password reset.' });
-//         }
-
-//         res.render('/reset-password', { token });
-//     } catch (error) {
-//        return res.send({ error: "Internal Server Error" });
-//     }
-// };import bcrypt from "bcrypt";

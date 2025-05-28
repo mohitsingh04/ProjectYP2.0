@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import router from "./routes/index.js";
 import cookieParser from "cookie-parser";
 import analyticRouter from "./routes/AnalyticRoute.js";
+import profileRoutes from "./routes/ProfileRoute.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(
 );
 app.use("/api/", router);
 app.use("/api/", analyticRouter);
+app.use("/api/", profileRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on PORT ${process.env.PORT}`);

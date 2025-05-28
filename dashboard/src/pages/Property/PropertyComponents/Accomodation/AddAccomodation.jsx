@@ -16,6 +16,7 @@ export default function AddAccomodation({
   const [currency, setCurrency] = useState("");
   const [priceInput, setPriceInput] = useState("");
   const [prices, setPrices] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const addPrice = () => {
     if (!currency || !priceInput) {
@@ -53,6 +54,7 @@ export default function AddAccomodation({
     validationSchema: accomodationValidation,
     enableReinitialize: true,
     onSubmit: async (values) => {
+      setIsLoading(true);
       const updatedData = {
         ...values,
         accomodation_price: prices,
@@ -78,6 +80,8 @@ export default function AddAccomodation({
             error.response?.data?.error ||
             "Something went wrong while updating the Accomodation.",
         });
+      } finally {
+        setIsLoading(false);
       }
     },
   });
@@ -171,7 +175,7 @@ export default function AddAccomodation({
 
             <Button
               type="submit"
-              disabled={!formik.values.accomodation_description}
+              disabled={!formik.values.accomodation_description || isLoading}
             >
               Submit
             </Button>

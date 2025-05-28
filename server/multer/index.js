@@ -63,11 +63,25 @@ export const blogUploadMulter = multer({
 const ResumeStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "../media/resume"),
   filename: (req, file, cb) => {
-    cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
+    cb(null, `resume-${Date.now()}-${file.originalname.toLowerCase()}`);
   },
 });
 export const ResuemUploadMulter = multer({
   storage: ResumeStorage,
+  limits: {
+    fileSize: 100 * 1024 * 1024,
+    fieldSize: 100 * 1024 * 1024,
+  },
+});
+
+const ProfileResumeStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "./images"),
+  filename: (req, file, cb) => {
+    cb(null, `resume-${Date.now()}-${file.originalname.toLowerCase()}`);
+  },
+});
+export const ProfileResuemUploadMulter = multer({
+  storage: ProfileResumeStorage,
   limits: {
     fileSize: 100 * 1024 * 1024,
     fieldSize: 100 * 1024 * 1024,

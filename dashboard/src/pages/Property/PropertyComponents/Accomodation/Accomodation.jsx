@@ -84,7 +84,7 @@ export default function Accomodation() {
                       <Card.Header className="d-flex justify-content-between">
                         <Card.Title>{item?.accomodation_name}</Card.Title>
                         <div className="d-flex gap-1">
-                          {item.accomodation_images.length < 16 && (
+                          {/* {item.accomodation_images.length < 16 && (
                             <Button
                               size="sm"
                               onClick={() => setIsAddingImages(item)}
@@ -101,7 +101,7 @@ export default function Accomodation() {
                             >
                               <i className="fe fe-x me-1"></i>Remove Images
                             </Button>
-                          )}
+                          )} */}
                           <Button
                             size="sm"
                             variant="success"

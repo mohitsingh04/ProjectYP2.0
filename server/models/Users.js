@@ -73,6 +73,12 @@ const UserSchema = new mongoose.Schema({
   },
   permissions: {
     type: Array,
+    default: [
+      { label: "Read Property", value: "Read Property" },
+      { label: "Create Property", value: "Create Property" },
+      { label: "Update Property", value: "Update Property" },
+      { label: "Delete Property", value: "Delete Property" },
+    ],
   },
   isGoogleLogin: {
     type: Boolean,

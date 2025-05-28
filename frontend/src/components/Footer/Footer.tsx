@@ -2,10 +2,14 @@
 import React from "react";
 import Link from "next/link";
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { usePathname } from "next/navigation";
+import { handlehide } from "@/service/Callback/Callback";
 
 export default function Footer() {
+  const path = usePathname();
+
   return (
-    <footer className="footer">
+    <footer className={`footer ${handlehide(path)}`}>
       <div className="footer-top aos" data-aos="fade-up">
         <div className="container">
           <div className="row">

@@ -12,6 +12,7 @@ interface Property {
   property_address?: string;
   property_city?: string;
   property_state?: string;
+  property_country?: string;
 }
 
 export default function PropertyCard({ property }: { property: Property }) {
@@ -125,7 +126,9 @@ export default function PropertyCard({ property }: { property: Property }) {
                   {property?.property_name}
                 </Link>
               </h5>
-              <h6 className="m-0">{getCategoryToRelatedId(property?.category)}</h6>
+              <h6 className="m-0">
+                {getCategoryToRelatedId(property?.category)}
+              </h6>
             </div>
           </div>
           <div className="instructor-info">
@@ -148,15 +151,15 @@ export default function PropertyCard({ property }: { property: Property }) {
               <FaRegHeart />
             </a>
           </div>
-          <div className="instructor-badge">
-            {property?.property_address && (
-              <span className="web-badge">{property?.property_address}</span>
-            )}
+          <div className="instructor-badge gap-1 d-flex">
             {property?.property_city && (
               <span className="web-badge">{property?.property_city}</span>
             )}
             {property?.property_state && (
               <span className="web-badge">{property?.property_state}</span>
+            )}
+            {property?.property_country && (
+              <span className="web-badge">{property?.property_country}</span>
             )}
           </div>
         </div>

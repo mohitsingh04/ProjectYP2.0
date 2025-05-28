@@ -16,6 +16,7 @@ export default function EditAccomodation({
   const [currency, setCurrency] = useState("");
   const [priceInput, setPriceInput] = useState("");
   const [prices, setPrices] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (accomodation?.accomodation_price) {
@@ -58,6 +59,7 @@ export default function EditAccomodation({
     validationSchema: accomodationValidation,
     enableReinitialize: true,
     onSubmit: async (values) => {
+      setIsLoading(true);
       const updatedData = {
         ...values,
         accomodation_price: prices,
@@ -86,6 +88,8 @@ export default function EditAccomodation({
             error.response?.data?.error ||
             "Something went wrong while updating the Accomodation.",
         });
+      } finally {
+        setIsLoading(false);
       }
     },
   });
@@ -188,7 +192,9 @@ export default function EditAccomodation({
                   />
                 </Form.Group>
 
-                <Button type="submit">Submit</Button>
+                <Button type="submit" disabled={isLoading}>
+                  Submit
+                </Button>
                 <Button
                   variant="danger"
                   className="ms-1"

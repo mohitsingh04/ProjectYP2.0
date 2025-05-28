@@ -37,7 +37,7 @@ export const SaveResume = async (req, res) => {
 export const getResumeByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log(userId)
+    console.log(userId);
 
     const resume = await UserDoc.findOne({ userId });
 

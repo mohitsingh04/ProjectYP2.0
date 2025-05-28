@@ -37,7 +37,7 @@ export default function Banner({ setShow }: BannerProps) {
                         placeholder="Search School, Online eductional centers, etc"
                         autoComplete="off"
                       />
-                      <span className="drop-detail">
+                      {/* <span className="drop-detail">
                         <select
                           className="form-select select"
                           id="drop-details"
@@ -48,7 +48,7 @@ export default function Banner({ setShow }: BannerProps) {
                           <option>React</option>
                           <option>Python</option>
                         </select>
-                      </span>
+                      </span> */}
                       <button className="btn btn-primary sub-btn" type="submit">
                         <FaArrowRight />
                       </button>

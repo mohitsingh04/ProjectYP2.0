@@ -165,7 +165,6 @@ export default function AddAmenities({
                     options={[
                       { label: "Indoor", value: "Indoor" },
                       { label: "Outdoor", value: "Outdoor" },
-                      { label: "Valet", value: "Valet" },
                     ]}
                     onChange={(values) => setParkingType(values)}
                     values={parkingType}
@@ -255,7 +254,7 @@ export default function AddAmenities({
                   </div>
                 </div>
                 <div className="flex-grow-1 p-4 px-0">
-                  <h5 className="mb-4 px-4">{selectedCategory} Amenities</h5>
+                  <h5 className="mb-4 px-4">{selectedCategory}</h5>
                   <div className="amenities-list">
                     {amenitiesData[selectedCategory].map((amenity) =>
                       renderAmenityItem(selectedCategory, amenity)

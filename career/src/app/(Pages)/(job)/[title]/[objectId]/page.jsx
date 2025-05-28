@@ -358,7 +358,7 @@ export default function JobDetailPage() {
 
             {!hasExpiredJob && (
               <div className="bg-white rounded-xl shadow-sm p-6 mb-6 sticky top-20">
-                {hasExpiredJob ? (
+                {hasStarted ? (
                   token ? (
                     applications?.some(
                       (item) =>
