@@ -12,7 +12,7 @@ const CVModal = ({ setIsOpen, profile, job, getApplications }) => {
   const getResume = useCallback(async () => {
     if (profile) {
       try {
-        const response = await API.get(`/user/doc/${profile?.uniqueId}`);
+        const response = await API.get(`/profile/doc/resume/${profile?.uniqueId}`);
         setUserResume(response.data);
       } catch (error) {
         console.log(error);

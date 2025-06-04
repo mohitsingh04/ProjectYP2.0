@@ -158,18 +158,19 @@ export default function Navbar() {
                     className="dropdown-menu dropdown-menu-end"
                     aria-labelledby="profileDropdown"
                   >
-                    <li>
-                      <Link className="dropdown-item" href="/profile">
-                        My Profile
-                      </Link>
-                    </li>
-                    {profile?.role === "Professional" && (
+                    {profile?.role === "Professional" ? (
                       <li>
                         <Link
                           className="dropdown-item"
                           href="/profile/professional"
                         >
                           Professional Profile
+                        </Link>
+                      </li>
+                    ) : (
+                      <li>
+                        <Link className="dropdown-item" href="/profile">
+                          My Profile
                         </Link>
                       </li>
                     )}

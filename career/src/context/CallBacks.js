@@ -19,6 +19,7 @@ export const handleApply = async (userId, job, file, finallize) => {
       formData.append("resume", file);
     }
     const response = await API.post(`/apply/hiring`, formData);
+    const docresponse = await API.post(`/profile/doc/resume`, formData);
     Swal.fire({
       title: "Applied",
       text: response.data.message,

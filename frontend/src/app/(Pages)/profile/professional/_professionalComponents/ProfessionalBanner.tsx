@@ -7,7 +7,7 @@ const ProfileBanner = ({ profileData }: { profileData: any }) => {
       style={{
         height: "300px",
         background: profileData?.banner?.[0]
-          ? `url(${process.env.NEXT_PUBLIC_MEDIA_URL}${profileData.banner[0]})`
+          ? `url(${process.env.NEXT_PUBLIC_MEDIA_URL}${profileData.banner?.[0]})`
           : "/img/banner.png",
       }}
     >

@@ -1,5 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Breadcrumb, Button, Card, Col, Row, Table } from "react-bootstrap";
+import {
+  Badge,
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  Row,
+  Table,
+} from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ALLImages from "../../common/Imagesdata";
 import { API } from "../../context/API";
@@ -14,6 +22,34 @@ export default function ViewCourse() {
   const [authLoading, setAuthLoading] = useState(true);
   const [requirmentOptions, setRequirmentOptions] = useState([]);
   const [keyOutcomes, setKeyOutcomesOptions] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const getCategories = async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  const getCategoryById = (id) => {
+    const numId = Number(id);
+
+    // Check if id is a valid number
+    if (!isNaN(numId)) {
+      const category = categories.find(
+        (item) => Number(item.uniqueId) === numId
+      );
+      return category.category_name || "";
+    }
+
+    return id;
+  };
 
   const fetchData = async () => {
     try {
@@ -194,81 +230,106 @@ export default function ViewCourse() {
                     <Col>
                       <Table striped>
                         <tbody>
-                          {Object.entries(course).map(([key, value]) => {
-                            if (
-                              [
-                                "userId",
-                                "uniqueId",
-                                "createdAt",
-                                "updatedAt",
-                                "_id",
-                                "__v",
-                                "image",
-                                "description",
-                                "isDeleted"
-                              ].includes(key)
-                            )
-                              return null;
-
-                            const formatKey = key
-                              .replace(/_/g, " ")
-                              .replace(/\b\w/g, (c) => c.toUpperCase());
-
-                            let displayValue;
-
-                            if (
-                              key === "requirements" &&
-                              Array.isArray(value)
-                            ) {
-                              const items = value.map((id) =>
-                                getRequirmentToRelatedId(id)
-                              );
-                              displayValue = (
-                                <ul>
-                                  {items.map((item, index) => (
-                                    <li key={index}>{item}</li>
+                          <tr>
+                            <th className="align-content-start">Course Name</th>
+                            <td>{course?.course_name}</td>
+                          </tr>
+                          <tr>
+                            <th className="align-content-start">Course Type</th>
+                            <td>{getCategoryById(course?.course_type)}</td>
+                          </tr>
+                          {course?.course_short_name && (
+                            <tr>
+                              <th className="align-content-start">
+                                Course Short Name
+                              </th>
+                              <td>{course?.course_short_name}</td>
+                            </tr>
+                          )}
+                          <tr>
+                            <th className="align-content-start">Duration</th>
+                            <td>{course.duration}</td>
+                          </tr>
+                          <tr>
+                            <th className="align-content-start">
+                              Course Level
+                            </th>
+                            <td>{getCategoryById(course?.course_level)}</td>
+                          </tr>
+                          <tr>
+                            <th className="align-content-start">
+                              Certification Type
+                            </th>
+                            <td>
+                              {getCategoryById(course?.certification_type)}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th className="align-content-start">Status</th>
+                            <td>
+                              <Badge
+                                bg={
+                                  course.status === "Active"
+                                    ? "success"
+                                    : course.status === "Suspended"
+                                    ? "danger"
+                                    : "warning"
+                                }
+                              >
+                                {course?.status}
+                              </Badge>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th className="align-content-start">Slug</th>
+                            <td>{course.course_slug}</td>
+                          </tr>
+                          {course?.requirements?.length > 0 && (
+                            <tr>
+                              <th>Requirements</th>
+                              <td>
+                                <div className="tags">
+                                  {course?.requirements?.map((item) => (
+                                    <div className="tag bg-white overflow-hidden">
+                                      <span>
+                                        {getRequirmentToRelatedId(item)}
+                                      </span>
+                                    </div>
                                   ))}
-                                </ul>
-                              );
-                            } else if (
-                              key === "key_outcomes" &&
-                              Array.isArray(value)
-                            ) {
-                              const items = value.map((id) =>
-                                getKeyOutcomesToRelatedId(id)
-                              );
-                              displayValue = (
-                                <ul>
-                                  {items.map((item, index) => (
-                                    <li key={index}>{item}</li>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                          {course?.key_outcomes?.length > 0 && (
+                            <tr>
+                              <th>Key Outcomes</th>
+                              <td>
+                                <div className="tags">
+                                  {course?.key_outcomes?.map((item) => (
+                                    <div className="tag bg-white overflow-hidden">
+                                      <span>
+                                        {getKeyOutcomesToRelatedId(item)}
+                                      </span>
+                                    </div>
                                   ))}
-                                </ul>
-                              );
-                            } else if (Array.isArray(value)) {
-                              displayValue = (
-                                <ul>
-                                  {value.length ? (
-                                    value.map((item, idx) => (
-                                      <li key={idx}>{item}</li>
-                                    ))
-                                  ) : (
-                                    <li>None</li>
-                                  )}
-                                </ul>
-                              );
-                            } else if (typeof value === "boolean") {
-                              displayValue = value ? "true" : "false";
-                            } else {
-                              displayValue = value;
-                            }
-
-                            return (
-                              <tr key={key}>
-                                <th className="align-content-start">{formatKey}</th>
-                                <td>{displayValue}</td>
-                              </tr>
-                            );
-                          })}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                          {course?.best_for?.length > 0 && (
+                            <tr>
+                              <th>Best For</th>
+                              <td>
+                                <div className="tags">
+                                  {course?.best_for?.map((item) => (
+                                    <div className="tag bg-white overflow-hidden">
+                                      <span>{item}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
                         </tbody>
                       </Table>
                     </Col>

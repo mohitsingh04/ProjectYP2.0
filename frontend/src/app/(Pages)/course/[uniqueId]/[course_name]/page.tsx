@@ -18,9 +18,36 @@ interface Course {
 
 export default function page() {
   const [courese, setCourse] = useState<Course | null>({});
-
   const [allCourses, setAllCourses] = useState<Course[]>([]);
   const { uniqueId, course_name } = useParams();
+  const [categories, setCategories] = useState([]);
+
+  const getCategory = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getCategory();
+  }, [getCategory]);
+
+  const getCategoryById = (id: any) => {
+    const numId = Number(id);
+
+    // Check if id is a valid number
+    if (!isNaN(numId)) {
+      const category: any = categories.find(
+        (item: any) => Number(item.uniqueId) === numId
+      );
+      return category?.category_name || "";
+    }
+
+    return id;
+  };
 
   const name = typeof course_name === "string" ? course_name.toLowerCase() : "";
   useEffect(() => {
@@ -125,7 +152,9 @@ export default function page() {
                               src="/img/icon/icon-01.svg"
                               alt="Post Author"
                             />{" "}
-                            <span>{courese?.course_level}</span>
+                            <span>
+                              {getCategoryById(courese?.course_level)}
+                            </span>
                           </div>
                         </li>
                         <li>
@@ -137,12 +166,12 @@ export default function page() {
                           {courese?.duration}
                         </li>
                         <li>
-                          <img
+                         <img
                             className="img-fluid"
                             src="/img/icon/icon-23.svg"
                             alt="Img"
-                          />
-                          {courese?.course_type}
+                          /> 
+                          {getCategoryById(courese?.course_type)}
                         </li>
                       </ul>
                     </div>
@@ -201,7 +230,7 @@ export default function page() {
                                   </Link>
 
                                   <h6 className="text-muted m-0">
-                                    {suggestion?.course_type}
+                                    {getCategoryById(suggestion?.course_type)}
                                   </h6>
                                 </div>
                               </div>

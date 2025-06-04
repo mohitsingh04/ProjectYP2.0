@@ -20,7 +20,7 @@ export default function Navbar() {
 
   const handleLogout = useCallback(async () => {
     try {
-      await API.get(`/logout`);
+      await API.get(`/profile/logout`);
       window.location.reload();
     } catch (error) {
       console.log(error);

@@ -31,16 +31,18 @@ export default function CreateCourse() {
   const editorConfig = useMemo(() => getEditorConfig(), []);
   const [bestFor, setBestFor] = useState([]);
   const [bestForInput, setBestForInput] = useState("");
-
+  const [categories, setCategories] = useState([]);
   const [requirmentOptions, setRequirmentOptions] = useState([]);
   const [KeyOutComesOption, setKeyOutcomesOptions] = useState([]);
 
   const fetchData = async () => {
     try {
-      const [requrimentResponse, keyOutcomeRes] = await Promise.all([
-        API.get("/requirment/all"),
-        API.get("/key-outcome/all"),
-      ]);
+      const [requrimentResponse, keyOutcomeRes, categoryRes] =
+        await Promise.all([
+          API.get("/requirment/all"),
+          API.get("/key-outcome/all"),
+          API.get("/category"),
+        ]);
 
       const allRequirments = requrimentResponse.data.map((requirment) => ({
         label: requirment.requirment,
@@ -50,6 +52,7 @@ export default function CreateCourse() {
         label: keyOpt.key_outcome,
         value: keyOpt.uniqueId,
       }));
+      setCategories(categoryRes.data);
       setRequirmentOptions(allRequirments);
       setKeyOutcomesOptions(keyOutceData);
     } catch (err) {
@@ -228,16 +231,20 @@ export default function CreateCourse() {
                         onBlur={formik.handleBlur}
                         isInvalid={formik.errors.course_type}
                       >
-                        <option value="">Select Course</option>
-                        <option value="Academic Degrees">
-                          Academic Degrees
+                        <option value="" disabled>
+                          Select Course
                         </option>
-                        <option value="Professional Certification Courses">
-                          Professional Certification Courses
-                        </option>
-                        <option value="Specialized Styles of Yoga">
-                          Specialized Styles of Yoga
-                        </option>
+                        {categories
+                          .filter(
+                            (item) =>
+                              item?.parent_category?.toLowerCase() ===
+                              "course type"
+                          )
+                          .map((item) => (
+                            <option value={item?.uniqueId}>
+                              {item.category_name}
+                            </option>
+                          ))}
                       </Form.Select>
 
                       <Form.Control.Feedback type="invalid">
@@ -333,10 +340,20 @@ export default function CreateCourse() {
                         value={formik.values.course_level}
                         isInvalid={formik.errors.course_level}
                       >
-                        <option value="">Select</option>
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Advanced">Advanced</option>
+                        <option value="" disabled>
+                          Select
+                        </option>
+                        {categories
+                          .filter(
+                            (item) =>
+                              item?.parent_category?.toLowerCase() ===
+                              "difficulty level"
+                          )
+                          .map((item) => (
+                            <option value={item?.uniqueId}>
+                              {item.category_name}
+                            </option>
+                          ))}
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">
                         {formik.errors.course_level}
@@ -354,11 +371,20 @@ export default function CreateCourse() {
                         value={formik.values.certification_type}
                         isInvalid={formik.errors.certification_type}
                       >
-                        <option value="">Select</option>
-                        <option value="Diploma">Diploma</option>
-                        <option value="Certificate">Certificate</option>
-                        <option value="Degree">Degree</option>
-                        <option value="Bachlore">Bachlore</option>
+                        <option value="" disabled>
+                          Select
+                        </option>
+                        {categories
+                          .filter(
+                            (item) =>
+                              item?.parent_category?.toLowerCase() ===
+                              "certification type"
+                          )
+                          .map((item) => (
+                            <option value={item?.uniqueId}>
+                              {item.category_name}
+                            </option>
+                          ))}
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">
                         {formik.errors.certification_type}

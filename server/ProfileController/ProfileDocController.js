@@ -61,3 +61,15 @@ export const GetProfileResumeByUserId = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const GetProfilesResumeAll = async (req, res) => {
+  try {
+    const resumes = await ProfileDoc.find();
+    if (!resumes) {
+      return res.status(404).json({ error: "No Resume Found" });
+    }
+    return res.status(200).json(resumes);
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};

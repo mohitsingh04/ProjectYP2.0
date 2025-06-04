@@ -14,6 +14,34 @@ export default function ViewCourse({
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [requirmentOptions, setRequirmentOptions] = useState([]);
   const [keyOutcomes, setKeyOutcomesOptions] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const getCategories = async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  const getCategoryById = (id) => {
+    const numId = Number(id);
+
+    // Check if id is a valid number
+    if (!isNaN(numId)) {
+      const category = categories.find(
+        (item) => Number(item.uniqueId) === numId
+      );
+      return category?.category_name || "";
+    }
+
+    return id;
+  };
 
   const fetchData = async () => {
     try {
@@ -148,15 +176,15 @@ export default function ViewCourse({
                       <tr>
                         <th>Course Type</th>
                         <td>
-                          {course?.course_type ||
-                            courseFinder(course)?.course_type}
+                          {getCategoryById(course?.course_type) ||
+                            getCategoryById(courseFinder(course)?.course_type)}
                         </td>
                       </tr>
                       <tr>
                         <th>Course Level</th>
                         <td>
-                          {course?.course_level ||
-                            courseFinder(course)?.course_level}
+                          {getCategoryById(course?.course_level) ||
+                            getCategoryById(courseFinder(course)?.course_level)}
                         </td>
                       </tr>
                       <tr>
@@ -168,87 +196,177 @@ export default function ViewCourse({
                       <tr>
                         <th>Course Certification Type</th>
                         <td>
-                          {course?.certification_type ||
-                            courseFinder(course)?.certification_type}
+                          {getCategoryById(course?.certification_type) ||
+                            getCategoryById(
+                              courseFinder(course)?.certification_type
+                            )}
                         </td>
                       </tr>
                       <tr>
                         <th>Course Certification Info</th>
                         <td>{course?.certification_info ? "true" : "false"}</td>
                       </tr>
-                      <tr>
-                        <th>Course Requirments</th>
-                        <td>
-                          {(course?.requirements?.length
-                            ? course.requirements
-                            : courseFinder(course) || []
-                          )?.map((item, index) => (
-                            <p key={index}>{getRequirmentToRelatedId(item)}</p>
-                          ))}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>Course Key Outcomes</th>
-                        <td>
-                          {" "}
-                          {(course?.key_outcomes?.length
-                            ? course.key_outcomes
-                            : courseFinder(course) || []
-                          )?.map((item, index) => (
-                            <p key={index}>{getKeyOutcomesToRelatedId(item)}</p>
-                          ))}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>Course Best For</th>
-                        <td>
-                          {(course?.best_for?.length
-                            ? course.best_for
-                            : courseFinder(course) || []
-                          )?.map((item, index) => (
-                            <p key={index}>{item}</p>
-                          ))}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>Course Languages</th>
-                        <td>
-                          {(course?.languages?.length
-                            ? course.languages
-                            : courseFinder(course) || []
-                          )?.map((item, index) => (
-                            <p key={index}>{item}</p>
-                          ))}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>Course Prices</th>
-                        <td>
-                          {course?.prices?.length > 0 &&
-                            Object.entries(course.prices[0]).map(
-                              ([currency, amount]) => {
-                                const symbolMap = {
-                                  INR: "₹",
-                                  DOLLAR: "$",
-                                  EURO: "€",
-                                };
+                      {course?.requirements?.length > 0 ? (
+                        <tr>
+                          <th>Requirements</th>
+                          <td>
+                            <div className="tags">
+                              {course?.requirements?.map((item) => (
+                                <div className="tag bg-white overflow-hidden">
+                                  <span>{getRequirmentToRelatedId(item)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        courseFinder(course).requirements?.length > 0 && (
+                          <tr>
+                            <th>Requirements</th>
+                            <td>
+                              <div className="tags">
+                                {courseFinder(course)?.requirements?.map(
+                                  (item) => (
+                                    <div className="tag bg-white overflow-hidden">
+                                      <span>
+                                        {getRequirmentToRelatedId(item)}
+                                      </span>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      )}
+                      {course?.key_outcomes?.length > 0 ? (
+                        <tr>
+                          <th>Key Outcomes</th>
+                          <td>
+                            <div className="tags">
+                              {course?.key_outcomes?.map((item) => (
+                                <div className="tag bg-white overflow-hidden">
+                                  <span>{getKeyOutcomesToRelatedId(item)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        courseFinder(course).key_outcomes?.length > 0 && (
+                          <tr>
+                            <th>Key Outcomes</th>
+                            <td>
+                              <div className="tags">
+                                {courseFinder(course)?.key_outcomes?.map(
+                                  (item) => (
+                                    <div className="tag bg-white overflow-hidden">
+                                      <span>
+                                        {getKeyOutcomesToRelatedId(item)}
+                                      </span>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      )}
 
-                                return symbolMap[currency] ? (
-                                  <div key={currency}>
-                                    <strong>
-                                      {symbolMap[currency]}
-                                      {amount}
-                                    </strong>
+                      {course?.best_for?.length > 0 ? (
+                        <tr>
+                          <th>Best For</th>
+                          <td>
+                            <div className="tags">
+                              {course?.best_for?.map((item) => (
+                                <div className="tag bg-white overflow-hidden">
+                                  <span>{item}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        courseFinder(course).best_for?.length > 0 && (
+                          <tr>
+                            <th>Best For</th>
+                            <td>
+                              <div className="tags">
+                                {courseFinder(course)?.best_for?.map((item) => (
+                                  <div className="tag bg-white overflow-hidden">
+                                    <span>{item}</span>
                                   </div>
-                                ) : null;
-                              }
-                            )}
-                        </td>
-                      </tr>
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      )}
+
+                      {course?.languages?.length > 0 ? (
+                        <tr>
+                          <th>Languages</th>
+                          <td>
+                            <div className="tags">
+                              {course?.languages?.map((item) => (
+                                <div className="tag bg-white overflow-hidden">
+                                  <span>{item}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        courseFinder(course).languages?.length > 0 && (
+                          <tr>
+                            <th>Languages</th>
+                            <td>
+                              <div className="tags">
+                                {courseFinder(course)?.languages?.map(
+                                  (item) => (
+                                    <div className="tag bg-white overflow-hidden">
+                                      <span>{item}</span>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      )}
+
+                      {course?.prices?.[0] &&
+                        (course.prices[0].INR ||
+                          course.prices[0].DOLLAR ||
+                          course.prices[0].EURO) && (
+                          <tr>
+                            <th>Course Prices</th>
+                            <td>
+                              {Object.entries(course.prices[0]).map(
+                                ([currency, amount]) => {
+                                  const symbolMap = {
+                                    INR: "₹",
+                                    DOLLAR: "$",
+                                    EURO: "€",
+                                  };
+
+                                  return symbolMap[currency] ? (
+                                    <div key={currency}>
+                                      <strong>
+                                        {symbolMap[currency]}
+                                        {amount}
+                                      </strong>
+                                    </div>
+                                  ) : null;
+                                }
+                              )}
+                            </td>
+                          </tr>
+                        )}
 
                       <tr>
                         <th>Course Format</th>
-                        <td>{course?.course_format}</td>
+                        <td> {getCategoryById(course?.course_format)}</td>
                       </tr>
                       <tr>
                         <th>Course Status</th>

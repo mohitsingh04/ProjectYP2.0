@@ -1,11 +1,8 @@
 import ApplyHiring from "../models/ApplyHiring.js";
-import { SaveResume } from "./UserDocController.js";
 
 export const applyForHiring = async (req, res) => {
   try {
     const { userId, hiringId, property_id } = req.body;
-
-    const resume = req.files?.resume;
 
     const isApplied = await ApplyHiring.findOne({
       userId,
@@ -29,9 +26,6 @@ export const applyForHiring = async (req, res) => {
     });
 
     await newApplication.save();
-    if (resume) {
-      await SaveResume(req, res);
-    }
 
     return res.status(200).json({ message: "Your Application is Submitted" });
   } catch (error) {

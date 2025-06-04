@@ -1,4 +1,3 @@
-import React from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useFormik } from "formik";
 import { API } from "../../../../../context/API";
@@ -105,11 +104,13 @@ export default function AddLocation({
                 isInvalid={formik.errors.property_country}
               >
                 <option value="">Select Country</option>
-                {countries?.map((country, idx) => (
-                  <option key={idx} value={country?.country_name}>
-                    {country?.country_name}
-                  </option>
-                ))}
+                {countries
+                  ?.sort((a, b) => a.country_name.localeCompare(b.country_name))
+                  .map((country, idx) => (
+                    <option key={idx} value={country?.country_name}>
+                      {country?.country_name}
+                    </option>
+                  ))}
               </Form.Select>
               <Form.Control.Feedback type="invalid">
                 {formik.errors.property_country}
@@ -130,11 +131,13 @@ export default function AddLocation({
                 isInvalid={formik.errors.property_state}
               >
                 <option value="">Select State</option>
-                {states?.map((state, idx) => (
-                  <option key={idx} value={state?.name}>
-                    {state?.name}
-                  </option>
-                ))}
+                {states
+                  ?.sort((a, b) => a.name.localeCompare(b.name))
+                  .map((state, idx) => (
+                    <option key={idx} value={state?.name}>
+                      {state?.name}
+                    </option>
+                  ))}
               </Form.Select>
               <Form.Control.Feedback type="invalid">
                 {formik.errors.property_state}
@@ -152,11 +155,13 @@ export default function AddLocation({
                 isInvalid={formik.errors.property_city}
               >
                 <option value="">Select City</option>
-                {cities?.map((city, idx) => (
-                  <option key={idx} value={city?.name}>
-                    {city?.name}
-                  </option>
-                ))}
+                {cities
+                  ?.sort((a, b) => a.name.localeCompare(b.name))
+                  .map((city, idx) => (
+                    <option key={idx} value={city?.name}>
+                      {city?.name}
+                    </option>
+                  ))}
               </Form.Select>
               <Form.Control.Feedback type="invalid">
                 {formik.errors.property_city}

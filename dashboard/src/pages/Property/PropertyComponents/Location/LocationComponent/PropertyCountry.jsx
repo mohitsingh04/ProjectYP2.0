@@ -86,11 +86,13 @@ export default function PropertyCountry({
                 }
               >
                 <option value="">Select Country</option>
-                {countries?.map((item) => (
-                  <option key={item._id} value={item.country_name}>
-                    {item.country_name}
-                  </option>
-                ))}
+                {countries
+                  ?.sort((a, b) => a.country_name.localeCompare(b.country_name))
+                  .map((item) => (
+                    <option key={item._id} value={item.country_name}>
+                      {item.country_name}
+                    </option>
+                  ))}
               </Form.Select>
 
               <Button variant="success" type="submit" disabled={isLoading}>

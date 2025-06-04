@@ -92,11 +92,13 @@ export default function PropertyState({
                 <option value="">
                   {states?.length > 0 ? "Select State" : "No states available"}
                 </option>
-                {states?.map((item) => (
-                  <option key={item._id} value={item.name}>
-                    {item.name}
-                  </option>
-                ))}
+                {states
+                  ?.sort((a, b) => a.name.localeCompare(b.name))
+                  .map((item) => (
+                    <option key={item._id} value={item.name}>
+                      {item.name}
+                    </option>
+                  ))}
               </Form.Select>
 
               <Button variant="success" type="submit" disabled={isLoading}>

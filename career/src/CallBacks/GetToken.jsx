@@ -8,7 +8,7 @@ export default function GetToken() {
   useEffect(() => {
     const getToken = async () => {
       try {
-        const response = await API.get("/get-token");
+        const response = await API.get("/profile/token");
         setToken(response.data.token);
       } catch (error) {
         console.error(error);

@@ -7,7 +7,7 @@ import ProfileActions from "./_profileComponents/ProfileActions";
 import ImageCropper from "./_profileComponents/_profileModals/ImageCropper";
 
 function Profile() {
-  const [profile, setProfile] = useState("");
+  const [profile, setProfile] = useState<any>("");
   const [showCropper, setShowCropper] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [originalFileName, setOriginalFileName] = useState("");
@@ -28,6 +28,12 @@ function Profile() {
   useEffect(() => {
     getProfile();
   }, [getProfile]);
+
+  useEffect(() => {
+    if (profile?.role === "Professional") {
+      window.location.href="/profile/professional"
+    }
+  }, [profile]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {

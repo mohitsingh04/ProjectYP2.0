@@ -319,3 +319,32 @@ export const deleteGallery = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error!" });
   }
 };
+
+export const EditGalleryTitle = async (req, res) => {
+  try {
+    const { title, uniqueId } = req.body;
+
+    if (!title || !uniqueId) {
+      return res.status(400).json({ error: "Required Field Missing" });
+    }
+
+    const isExisting = await Gallery.findOne({ uniqueId });
+    if (!isExisting) {
+      return res.status(400).json({ error: "Gallery Not Found" });
+    }
+
+    const updatedTitle = await Gallery.findOneAndUpdate(
+      { uniqueId },
+      {
+        $set: { title },
+      }
+    );
+
+    if (updatedTitle) {
+      return res.status(200).json({ message: "Title Updated Successfully" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error!" });
+  }
+};

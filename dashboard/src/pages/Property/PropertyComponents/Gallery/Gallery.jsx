@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { API } from "../../../../context/API";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Button, Card, Col, Row, Form, InputGroup } from "react-bootstrap";
 import Lightbox from "yet-another-react-lightbox";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Slideshow from "yet-another-react-lightbox/plugins/slideshow";
@@ -19,6 +19,8 @@ export default function Gallery() {
   const [galleries, setGalleries] = useState([]);
   const [isAdding, setIsAdding] = useState("");
   const [removing, setRemoving] = useState("");
+  const [isEditTitle, setIsEditTitle] = useState("");
+  const [title, setTitle] = useState("");
   const [lightbox, setLightbox] = useState({
     open: false,
     index: 0,
@@ -115,6 +117,33 @@ export default function Gallery() {
     }
   };
 
+  useEffect(() => {
+    setTitle(isEditTitle?.title);
+  }, [isEditTitle]);
+
+  const handleChangeTitle = async () => {
+    try {
+      const payload = { title: title, uniqueId: isEditTitle.uniqueId };
+      const response = await API.patch(`/gallery/update/title`, payload);
+      Swal.fire({
+        icon: "success",
+        title: "Successfull",
+        text: response.data.message,
+      });
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: error.response.data.error,
+      });
+    } finally {
+      setIsEditTitle("");
+      setTitle("");
+      getGalleries();
+    }
+  };
+
   return (
     <>
       {!isAdding ? (
@@ -133,7 +162,30 @@ export default function Gallery() {
                   <Card key={gIndex} className="mb-4">
                     <Card.Header className="d-flex justify-content-between">
                       <Card.Title className="mb-0">
-                        {galleryItem.title}
+                        {isEditTitle.uniqueId === galleryItem.uniqueId ? (
+                          <InputGroup>
+                            <Form.Control
+                              type="text"
+                              value={title}
+                              onChange={(e) => setTitle(e.target.value)}
+                              className="form-control"
+                              placeholder="Enter the Title"
+                            />
+                            <Button onClick={handleChangeTitle}>
+                              <i className="fe fe-check-circle"></i>
+                            </Button>
+                          </InputGroup>
+                        ) : (
+                          <>
+                            {galleryItem.title}
+                            <button
+                              className="btn p-0"
+                              onClick={() => setIsEditTitle(galleryItem)}
+                            >
+                              <i className="fe fe-edit text-primary"></i>
+                            </button>
+                          </>
+                        )}
                       </Card.Title>
                       <div>
                         {galleryItem?.gallery?.length < 16 && (

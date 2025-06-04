@@ -15,6 +15,34 @@ export default function CourseList() {
   const [loading, setLoading] = useState(true);
   const [authUser, setAuthUser] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+
+  const getCategories = async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  const getCategoryById = (id) => {
+    const numId = Number(id);
+
+    // Check if id is a valid number
+    if (!isNaN(numId)) {
+      const category = categories.find(
+        (item) => Number(item.uniqueId) === numId
+      );
+      return category.category_name || "";
+    }
+
+    return id;
+  };
 
   const getAuhtUser = async () => {
     setAuthLoading(true);
@@ -130,7 +158,7 @@ export default function CourseList() {
       name: "Course Type",
       selector: (row) => row.course_type,
       sortable: true,
-      cell: (row) => row.course_type,
+      cell: (row) => getCategoryById(row.course_type),
     },
     {
       name: "Course Duration",

@@ -29,7 +29,7 @@ const JobCard = ({ job }) => {
 
   const getProfile = useCallback(async () => {
     try {
-      const response = await API.get(`/profile`);
+      const response = await API.get(`/profile/detail`);
       setProfile(response.data);
     } catch (error) {
       console.log(error);

@@ -5,6 +5,7 @@ import PhoneInput from "react-phone-input-2";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 interface Profile {}
 
@@ -93,6 +94,7 @@ const EditProfile = () => {
         toast.error((err as any)?.response?.data?.error);
       } finally {
         setBtnLoading(false);
+        window.location.href = "/profile";
       }
     },
   });
@@ -390,6 +392,9 @@ const EditProfile = () => {
           <button type="submit" className="btn btn-success">
             {btnLoading ? "Saving..." : "Save"}
           </button>
+          <Link href="/profile" className="btn btn-danger mx-1">
+            Cancel
+          </Link>
         </form>
       </div>
     </div>

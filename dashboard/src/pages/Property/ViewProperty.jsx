@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Breadcrumb, Button, Card, Col, Nav, Row, Tab } from "react-bootstrap";
 import {
   Link,
@@ -28,120 +28,13 @@ import Accomodation from "./PropertyComponents/Accomodation/Accomodation";
 import Hiring from "./PropertyComponents/Hiring/Hiring";
 import Applications from "./PropertyComponents/Applications/Applications";
 
-const tabsData = [
-  {
-    key: "enquiry",
-    label: "Enquiry",
-    icon: "ri-file-list-line",
-    component: <Enquiry />,
-    online: true,
-  },
-  {
-    key: "basic-details",
-    label: "Basic Details",
-    icon: "ri-profile-line",
-    component: <BasicDetails />,
-    online: true,
-  },
-  {
-    key: "location",
-    label: "Location",
-    icon: "ri-map-pin-line",
-    component: <LocationDetails />,
-    online: false,
-  },
-  {
-    key: "working-hours",
-    label: "Working Hours",
-    icon: "ri-time-line",
-    component: <Businesshours />,
-    online: false,
-  },
-  {
-    key: "accomodation",
-    label: "Accomodation",
-    icon: "ri-hotel-line",
-    component: <Accomodation />,
-    online: false,
-  },
-  {
-    key: "amenities",
-    label: "Amenties",
-    icon: "ri-building-2-line",
-    component: <Amenities />,
-    online: false,
-  },
-  {
-    key: "teachers",
-    label: "Teachers",
-    icon: "ri-user-star-line",
-    component: <Teacher />,
-    online: true,
-  },
-  {
-    key: "courses",
-    label: "Courses",
-    icon: "ri-book-open-line",
-    component: <Course />,
-    online: true,
-  },
-  {
-    key: "gallery",
-    label: "Gallery",
-    icon: "ri-image-line",
-    component: <Gallery />,
-    online: true,
-  },
-  {
-    key: "reviews",
-    label: "Reviews",
-    icon: "ri-chat-quote-line",
-    component: <Reviews />,
-    online: true,
-  },
-  {
-    key: "faqs",
-    label: "FAQ's",
-    icon: "ri-question-answer-line",
-    component: <Faq />,
-    online: true,
-  },
-  {
-    key: "certifications",
-    label: "Certifications",
-    icon: "ri-trophy-line",
-    component: <Certifications />,
-    online: true,
-  },
-  {
-    key: "hiring",
-    label: "Hiring",
-    icon: "ri-briefcase-line ",
-    component: <Hiring />,
-    online: true,
-  },
-  {
-    key: "applications",
-    label: "Applications",
-    icon: "ri-file-text-line",
-    component: <Applications />,
-    online: true,
-  },
-  {
-    key: "seo",
-    label: "SEO",
-    icon: "ri-bar-chart-line",
-    component: <Seo />,
-    online: true,
-  },
-  {
-    key: "coupons",
-    label: "Coupons",
-    icon: "ri-price-tag-3-line",
-    component: <Coupon />,
-    online: true,
-  },
-];
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import { Navigation, Pagination } from "swiper/modules";
 
 export default function ViewProperty() {
   const navigate = useNavigate();
@@ -150,6 +43,132 @@ export default function ViewProperty() {
   const activeTab = searchParams.get("tab") || "enquiry";
   const [authUser, setAuthUser] = useState("");
   const [categories, setCategories] = useState([]);
+  const [property, setProperty] = useState("");
+  const [loading, setLoading] = useState(true);
+  const swiperRef = useRef(null);
+
+  const tabsData = [
+    {
+      key: "enquiry",
+      label: "Enquiry",
+      icon: "ri-file-list-line",
+      component: <Enquiry />,
+      online: true,
+    },
+    {
+      key: "basic-details",
+      label: "Basic Details",
+      icon: "ri-profile-line",
+      component: <BasicDetails />,
+      online: true,
+    },
+    {
+      key: "location",
+      label: "Location",
+      icon: "ri-map-pin-line",
+      component: <LocationDetails />,
+      online: false,
+    },
+    {
+      key: "working-hours",
+      label: "Working Hours",
+      icon: "ri-time-line",
+      component: <Businesshours />,
+      online: false,
+    },
+    {
+      key: "accomodation",
+      label: "Accomodation",
+      icon: "ri-hotel-line",
+      component: <Accomodation />,
+      online: false,
+    },
+    {
+      key: "amenities",
+      label: "Amenties",
+      icon: "ri-building-2-line",
+      component: <Amenities />,
+      online: false,
+    },
+    {
+      key: "teachers",
+      label: "Teachers",
+      icon: "ri-user-star-line",
+      component: <Teacher />,
+      online: true,
+    },
+    {
+      key: "courses",
+      label: "Courses",
+      icon: "ri-book-open-line",
+      component: <Course />,
+      online: true,
+    },
+    {
+      key: "gallery",
+      label: "Gallery",
+      icon: "ri-image-line",
+      component: <Gallery />,
+      online: true,
+    },
+    {
+      key: "reviews",
+      label: "Reviews",
+      icon: "ri-chat-quote-line",
+      component: <Reviews />,
+      online: true,
+    },
+    {
+      key: "faqs",
+      label: "FAQ's",
+      icon: "ri-question-answer-line",
+      component: <Faq />,
+      online: true,
+    },
+    {
+      key: "certifications",
+      label: "Certifications",
+      icon: "ri-trophy-line",
+      component: <Certifications />,
+      online: true,
+    },
+    {
+      key: "hiring",
+      label: "Hiring",
+      icon: "ri-briefcase-line ",
+      component: <Hiring />,
+      online: true,
+    },
+    {
+      key: "applications",
+      label: "Applications",
+      icon: "ri-file-text-line",
+      component: <Applications />,
+      online: true,
+    },
+    {
+      key: "seo",
+      label: "SEO",
+      icon: "ri-bar-chart-line",
+      component: <Seo />,
+      online: true,
+    },
+    {
+      key: "coupons",
+      label: "Coupons",
+      icon: "ri-price-tag-3-line",
+      component: <Coupon />,
+      online: true,
+    },
+
+    {
+      link: `/dashboard/analytics/${property?._id}`,
+      label: "Analytics",
+      icon: "fe fe-bar-chart",
+      component: <Coupon />,
+      online: true,
+    },
+  ];
 
   const getCategories = useCallback(async () => {
     try {
@@ -168,9 +187,6 @@ export default function ViewProperty() {
   useEffect(() => {
     getCategories();
   }, [getCategories]);
-
-  const [property, setProperty] = useState("");
-  const [loading, setLoading] = useState(true);
 
   const getAuthUser = useCallback(async () => {
     try {
@@ -302,38 +318,82 @@ export default function ViewProperty() {
                   <Card.Footer>
                     <Nav
                       variant="pills"
-                      className="tab-style-2 nav-style-2 nav-pills flex-nowrap overflow-auto"
-                      style={{ scrollbarWidth: "none" }}
+                      className="tab-style-2 nav-style-2 nav-pills"
                     >
-                      {(getCategoryToRelatedId(property?.category) ===
-                      "Online Yoga Studio"
-                        ? tabsData.filter((tab) => tab.online === true)
-                        : tabsData
-                      ).map((tab, index) => (
-                        <Nav.Item key={index} className="mt-2">
-                          <Nav.Link
-                            className="text-nowrap text-center p-2"
-                            eventKey={tab.key}
-                            onClick={() => handleTabChange(tab.key)}
-                          >
-                            <i
-                              className={`${tab.icon} me-1 align-middle text-center`}
-                            ></i>
-                            {tab.label}
-                          </Nav.Link>
-                        </Nav.Item>
-                      ))}
-
-                      <Nav.Item className="mt-2">
-                        <Nav.Link
-                          as={Link}
-                          to={`/dashboard/analytics/${property?._id}`}
-                          className="text-nowrap text-center p-2"
+                      <Swiper
+                        modules={[Navigation, Pagination]}
+                        ref={swiperRef}
+                        spaceBetween={10}
+                        slidesPerView={2}
+                        breakpoints={{
+                          640: {
+                            slidesPerView: 3,
+                            spaceBetween: 15,
+                          },
+                          768: {
+                            slidesPerView: 5,
+                            spaceBetween: 20,
+                          },
+                          1024: {
+                            slidesPerView: 5,
+                            spaceBetween: 20,
+                          },
+                          1280: {
+                            slidesPerView: 7,
+                            spaceBetween: 25,
+                          },
+                        }}
+                      >
+                        {(getCategoryToRelatedId(property?.category) ===
+                        "Online Yoga Studio"
+                          ? tabsData.filter((tab) => tab.online === true)
+                          : tabsData
+                        ).map((tab, index) => (
+                          <SwiperSlide>
+                            <Nav.Item key={index}>
+                              {tab.key ? (
+                                <Nav.Link
+                                  className="text-nowrap text-center p-2"
+                                  eventKey={tab.key}
+                                  onClick={() => handleTabChange(tab.key)}
+                                >
+                                  <i
+                                    className={`${tab.icon} me-1 align-middle text-center`}
+                                  ></i>
+                                  {tab.label}
+                                </Nav.Link>
+                              ) : (
+                                <Nav.Item className="mt-2">
+                                  <Nav.Link
+                                    as={Link}
+                                    to={tab?.link}
+                                    className="text-nowrap text-center p-2"
+                                  >
+                                    <i
+                                      className={`${tab.icon} me-1 align-middle text-center`}
+                                    ></i>
+                                    {tab?.label}
+                                  </Nav.Link>
+                                </Nav.Item>
+                              )}
+                            </Nav.Item>
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                      <div className="w-100 d-flex justify-content-center gap-1">
+                        <button
+                          className="btn btn-sm btn-light"
+                          onClick={() => swiperRef.current?.swiper.slidePrev()}
                         >
-                          <i className="fe fe-bar-chart me-1 align-middle text-center"></i>
-                          Analytics
-                        </Nav.Link>
-                      </Nav.Item>
+                          <i className="fe fe-chevron-left"></i>
+                        </button>
+                        <button
+                          className="btn btn-sm btn-light"
+                          onClick={() => swiperRef.current?.swiper.slideNext()}
+                        >
+                          <i className="fe fe-chevron-right"></i>
+                        </button>
+                      </div>
                     </Nav>
                   </Card.Footer>
                 )}

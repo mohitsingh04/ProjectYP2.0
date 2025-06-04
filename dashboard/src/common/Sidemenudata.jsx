@@ -158,6 +158,14 @@ export const MENUITEMS = [
         title: "Property List",
       },
       {
+        path: `/dashboard/property/your`,
+        type: "link",
+        active: false,
+        selected: false,
+        dirchange: false,
+        title: "Your Properties",
+      },
+      {
         path: `/dashboard/property/create`,
         type: "link",
         active: false,

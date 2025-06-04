@@ -34,7 +34,7 @@ export default function Login() {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        await API.post("/login", values);
+        await API.post("/profile/login", values);
         window.location.reload();
       } catch (error) {
         console.log(error);

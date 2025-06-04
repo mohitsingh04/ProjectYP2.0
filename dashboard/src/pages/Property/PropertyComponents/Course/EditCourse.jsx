@@ -28,7 +28,7 @@ export default function EditCourse({
   const [bestForInput, setBestForInput] = useState("");
   const [languages, setLanguages] = useState([]);
   const [languagesInput, setLanguagesInput] = useState("");
-
+  const [categories, setCategories] = useState([]);
   const [requirmentOptions, setRequirmentOptions] = useState([]);
   const [keyOutcomes, setKeyOutcomesOptions] = useState([]);
   const [mainCourse, setMainCourse] = useState([]);
@@ -48,10 +48,12 @@ export default function EditCourse({
 
   const fetchData = async () => {
     try {
-      const [requrimentResponse, keyOutcomeRes] = await Promise.all([
-        API.get("/requirment/all"),
-        API.get("/key-outcome/all"),
-      ]);
+      const [requrimentResponse, keyOutcomeRes, categoryRes] =
+        await Promise.all([
+          API.get("/requirment/all"),
+          API.get("/key-outcome/all"),
+          API.get("/category"),
+        ]);
 
       const allRequirments = requrimentResponse.data.map((requirment) => ({
         label: requirment.requirment,
@@ -61,13 +63,13 @@ export default function EditCourse({
         label: keyOpt.key_outcome,
         value: keyOpt.uniqueId,
       }));
+      setCategories(categoryRes.data);
       setKeyOutcomesOptions(keyOutceData);
       setRequirmentOptions(allRequirments);
     } catch (err) {
       console.error("Error fetching data:", err);
     }
   };
-
   useEffect(() => {
     fetchData();
   }, []);
@@ -278,13 +280,16 @@ export default function EditCourse({
                   isInvalid={formik.errors.course_type}
                 >
                   <option value="">Select Type</option>
-                  <option value="Academic Degrees">Academic Degrees</option>
-                  <option value="Professional Certification Courses">
-                    Professional Certification Courses
-                  </option>
-                  <option value="Specialized Styles of Yoga">
-                    Specialized Styles of Yoga
-                  </option>
+                  {categories
+                    .filter(
+                      (item) =>
+                        item?.parent_category?.toLowerCase() === "course type"
+                    )
+                    .map((item) => (
+                      <option value={item?.uniqueId}>
+                        {item.category_name}
+                      </option>
+                    ))}
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.course_type}
@@ -362,9 +367,17 @@ export default function EditCourse({
                   isInvalid={formik.errors.course_level}
                 >
                   <option value="">Select Level</option>
-                  <option value="Beginner">Beginner</option>
-                  <option value="Intermediate">Intermediate</option>
-                  <option value="Advanced">Advanced</option>
+                  {categories
+                    .filter(
+                      (item) =>
+                        item?.parent_category?.toLowerCase() ===
+                        "difficulty level"
+                    )
+                    .map((item) => (
+                      <option value={item?.uniqueId}>
+                        {item.category_name}
+                      </option>
+                    ))}
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.course_level}
@@ -382,10 +395,17 @@ export default function EditCourse({
                   isInvalid={formik.errors.certification_type}
                 >
                   <option value="">Select Certification</option>
-                  <option value="Degree">Degree</option>
-                  <option value="Diploma">Diploma</option>
-                  <option value="Certificate">Certificate</option>
-                  <option value="Bachlore">Bachlore</option>
+                  {categories
+                    .filter(
+                      (item) =>
+                        item?.parent_category?.toLowerCase() ===
+                        "certification type"
+                    )
+                    .map((item) => (
+                      <option value={item?.uniqueId}>
+                        {item.category_name}
+                      </option>
+                    ))}
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.certification_type}
@@ -678,10 +698,16 @@ export default function EditCourse({
                   <option value="" disabled>
                     --select format--
                   </option>
-                  <option value={`Online`}>Online</option>
-                  <option value={`Offline`}>Offline</option>
-                  <option value={`Hybrid`}>Hybrid</option>
-                  <option value={`Recorded`}>Recorded</option>
+                  {categories
+                    .filter(
+                      (item) =>
+                        item?.parent_category?.toLowerCase() === "course format"
+                    )
+                    .map((item) => (
+                      <option value={item?.uniqueId}>
+                        {item.category_name}
+                      </option>
+                    ))}
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.course_format}

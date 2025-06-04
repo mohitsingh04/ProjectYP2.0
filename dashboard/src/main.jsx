@@ -79,6 +79,7 @@ import KeyOUtComes from "./pages/KeyOutcomes/KeyOutComes";
 import Requirments from "./pages/Requirments/Requirments";
 import SoftDeletedCourses from "./pages/Courses/SoftDeletedCourses";
 import BlogSeo from "./pages/Blogs/SEO/blogSeo";
+import YourProperty from "./pages/Property/YourProperty";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
@@ -142,6 +143,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route path="/dashboard/property" element={<ProtectedRoutes><PropertyList/></ProtectedRoutes>}/>
               <Route path="/dashboard/property/create" element={<ProtectedRoutes><CreateProperty/></ProtectedRoutes>}/>
               <Route path="/dashboard/property/view/:objectId" element={<ProtectedRoutes><ViewProperty/></ProtectedRoutes>}/>
+              <Route path="/dashboard/property/your" element={<ProtectedRoutes><YourProperty/></ProtectedRoutes>}/>
 
               <Route path="/dashboard/enquiry" element={<ProtectedRoutes><Enquiry/></ProtectedRoutes>}/>
               <Route path="/dashboard/enquiry/view/:objectId" element={<ProtectedRoutes><ViewEnquiry/></ProtectedRoutes>}/>

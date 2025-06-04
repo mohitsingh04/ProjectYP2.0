@@ -71,4 +71,14 @@
   border-color: black;
 }
 
-// .traffic-filter .dropdown-toggle::after{display: none;}
+.review-text.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.review-text.expanded {
+  display: block;
+}

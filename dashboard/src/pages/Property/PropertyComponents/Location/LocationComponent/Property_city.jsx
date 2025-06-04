@@ -84,11 +84,13 @@ export default function PropertyCity({
                 <option value="">Select City</option>
 
                 {!loadingCities &&
-                  cities?.map((item) => (
-                    <option key={item._id} value={item.name}>
-                      {item.name}
-                    </option>
-                  ))}
+                  cities
+                    ?.sort((a, b) => a.name.localeCompare(b.name))
+                    .map((item) => (
+                      <option key={item._id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
               </Form.Select>
 
               <Button variant="success" type="submit" disabled={isLoading}>

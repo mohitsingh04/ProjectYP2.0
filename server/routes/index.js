@@ -94,6 +94,7 @@ import {
   addGallery,
   addNewGalleryImages,
   deleteGallery,
+  EditGalleryTitle,
   getGallery,
   getGalleryById,
   getGalleryByPropertyId,
@@ -399,6 +400,7 @@ router.post(
   addNewGalleryImages
 );
 router.post("/gallery/remove/:uniqueId", removeGalleryImages);
+router.patch("/gallery/update/title", EditGalleryTitle);
 
 //? Faqs Route
 router.get("/faqs", getFaq);

@@ -5,11 +5,9 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import CVModal from "./CVModal";
 
 const JobsList = ({ jobs, filters, isLoading = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [cvModal, setCvModal] = useState(false);
   const jobsPerPage = 10;
 
   const filtepurpleJobs = jobs.filter((job) => {

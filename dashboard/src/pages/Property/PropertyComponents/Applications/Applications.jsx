@@ -13,7 +13,7 @@ export default function Applications() {
 
   const getAllResume = useCallback(async () => {
     try {
-      const response = await API.get(`/user/doc/all`);
+      const response = await API.get(`/profile/doc/resume`);
       setAllResume(response.data);
     } catch (error) {
       console.log(error);
@@ -41,7 +41,7 @@ export default function Applications() {
 
   const getAllUsers = useCallback(async () => {
     try {
-      const response = await API.get(`/users`);
+      const response = await API.get(`/profile/users`);
       setAllUser(response.data);
     } catch (error) {
       console.log(error);
@@ -128,7 +128,7 @@ export default function Applications() {
                       className="d-flex align-items-center justify-content-end"
                     >
                       <a
-                        href={`${import.meta.env?.VITE_MEDIA_URL}/resume/${
+                        href={`${import.meta.env?.VITE_MEDIA_URL}${
                           getResumeDetail(item?.userId)?.resume
                         }`}
                         target="_blank"

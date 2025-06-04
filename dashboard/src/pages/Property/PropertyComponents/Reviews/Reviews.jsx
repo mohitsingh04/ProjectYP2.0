@@ -11,6 +11,7 @@ export default function Reviews() {
   const [property, setProperty] = useState("");
   const { objectId } = useParams();
   const [isUpdating, setIsUpdating] = useState("");
+  const [expandedReviews, setExpandedReviews] = useState({});
 
   const getProperty = useCallback(async () => {
     try {
@@ -99,6 +100,13 @@ export default function Reviews() {
     }
   };
 
+  const toggleExpanded = (id) => {
+    setExpandedReviews((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   return (
     <div>
       {!isUpdating ? (
@@ -148,7 +156,28 @@ export default function Reviews() {
                               <strong>Rating:</strong>{" "}
                               {"⭐".repeat(review.rating)}
                             </p>
-                            <p>{review.review}</p>
+                            <div>
+                              <p
+                                className={`review-text ${
+                                  expandedReviews[review._id]
+                                    ? "expanded"
+                                    : "collapsed"
+                                }`}
+                              >
+                                {review.review}
+                              </p>
+                              {review.review?.split(" ").length > 80 && (
+                                <Button
+                                  variant="link"
+                                  className="p-0"
+                                  onClick={() => toggleExpanded(review._id)}
+                                >
+                                  {expandedReviews[review._id]
+                                    ? "Read less"
+                                    : "Read more"}
+                                </Button>
+                              )}
+                            </div>
                           </Col>
                           <Col md={2} className="text-end">
                             <Button

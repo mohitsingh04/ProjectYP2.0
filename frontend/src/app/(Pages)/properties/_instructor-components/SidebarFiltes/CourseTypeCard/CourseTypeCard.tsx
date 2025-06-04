@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import API from "@/service/API/API";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaAngleDown } from "react-icons/fa";
 
 interface Course {
@@ -26,6 +27,34 @@ const CourseTypeCard: React.FC<CourseTypeCardProps> = ({
   allCourses = [],
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [categories, setCategories] = useState([]);
+
+  const getCategory = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getCategory();
+  }, [getCategory]);
+
+  const getCategoryById = (id: any) => {
+    const numId = Number(id);
+
+    // Check if id is a valid number
+    if (!isNaN(numId)) {
+      const category: any = categories.find(
+        (item: any) => Number(item.uniqueId) === numId
+      );
+      return category?.category_name || "";
+    }
+
+    return id;
+  };
 
   const types = [...new Set(allCourses.map((item) => item.course_type))];
   const typeCounts: Record<string, number> = types?.reduce((acc, type) => {
@@ -90,8 +119,8 @@ const CourseTypeCard: React.FC<CourseTypeCardProps> = ({
                         checked={selectedType.includes(lowerCaseType)}
                         onChange={() => handleTypeChange(lowerCaseType)}
                       />
-                      <span className="checkmark"></span> {type} (
-                      {typeCounts[lowerCaseType]})
+                      <span className="checkmark"></span>{" "}
+                      {getCategoryById(type)} ({typeCounts[lowerCaseType]})
                     </label>
                   </div>
                 );

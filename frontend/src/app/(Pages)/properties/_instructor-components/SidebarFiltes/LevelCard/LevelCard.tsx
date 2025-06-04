@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import API from "@/service/API/API";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { FaAngleDown } from "react-icons/fa";
 
 interface Course {
@@ -24,45 +25,71 @@ const LevelCard: React.FC<LevelCardProps> = ({
   courses = [],
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [categories, setCategories] = useState([]);
 
-  const levels = ["Beginner", "Intermediate", "Advanced"];
+  const getCategory = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
-  const levelCounts = levels.reduce<Record<string, number>>((acc, level) => {
-    const lowerCaseLevel = level?.toLowerCase();
-    const uniquePropertyIds = new Set<number>();
+  useEffect(() => {
+    getCategory();
+  }, [getCategory]);
 
-    const count = courses.filter((course) => {
-      const isMatchingLevel =
-        course?.course_level?.toLowerCase() === lowerCaseLevel;
-      const isMatchingProperty = properties.some(
-        (property) => property.uniqueId === course.property_id
+  const getCategoryById = (id: any) => {
+    const numId = Number(id);
+
+    // Check if id is a valid number
+    if (!isNaN(numId)) {
+      const category: any = categories.find(
+        (item: any) => Number(item.uniqueId) === numId
       );
+      return category?.category_name || "";
+    }
 
-      if (
-        isMatchingLevel &&
-        isMatchingProperty &&
-        !uniquePropertyIds.has(course.property_id)
-      ) {
-        uniquePropertyIds.add(course.property_id);
-        return true;
-      }
-      return false;
-    }).length;
+    return id;
+  };
 
-    acc[lowerCaseLevel] = count;
-    return acc;
-  }, {});
+  // Get unique levels from courses
+  const levels = useMemo(() => {
+    return [
+      ...new Set(
+        courses
+          .map((course) => course.course_level?.toLowerCase())
+          .filter(Boolean)
+      ),
+    ];
+  }, [courses]);
+
+  // Count number of unique properties per level
+  const levelCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    levels.forEach((level) => {
+      const uniquePropertyIds = new Set<number>();
+      courses.forEach((course) => {
+        if (
+          course.course_level?.toLowerCase() === level &&
+          properties.some((p) => p.uniqueId === course.property_id)
+        ) {
+          uniquePropertyIds.add(course.property_id);
+        }
+      });
+      counts[level] = uniquePropertyIds.size;
+    });
+    return counts;
+  }, [levels, courses, properties]);
 
   const handleLevelChange = (level: string) => {
-    const lowerCaseLevel = level.toLowerCase();
     setSelectedLevel((prev) =>
-      prev.includes(lowerCaseLevel)
-        ? prev.filter((l) => l !== lowerCaseLevel)
-        : [...prev, lowerCaseLevel]
+      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
     );
   };
 
-  const filteredLevels = Object.keys(levelCounts).filter((level) =>
+  const filteredLevels = levels.filter((level) =>
     level.includes(searchQuery.toLowerCase())
   );
 
@@ -92,14 +119,16 @@ const LevelCard: React.FC<LevelCardProps> = ({
                   <label className="custom_check">
                     <input
                       type="checkbox"
-                      name="state_filter"
+                      name="level_filter"
                       value={level}
                       checked={selectedLevel.includes(level)}
                       onChange={() => handleLevelChange(level)}
                     />
                     <span className="checkmark"></span>{" "}
-                    {level.charAt(0).toUpperCase() + level.slice(1)} (
-                    {levelCounts[level]})
+                    {getCategoryById(
+                      level.charAt(0).toUpperCase() + level.slice(1)
+                    )}{" "}
+                    ({levelCounts[level] || 0})
                   </label>
                 </div>
               ))

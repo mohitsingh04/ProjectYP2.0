@@ -37,6 +37,7 @@ import {
 } from "../ProfileController/ProfileBioController.js";
 import {
   GetProfileResumeByUserId,
+  GetProfilesResumeAll,
   SaveProfileResume,
 } from "../ProfileController/ProfileDocController.js";
 import {
@@ -127,6 +128,7 @@ const resumeUpload = ProfileResuemUploadMulter.fields([
 ]);
 profileRoutes.post("/profile/doc/resume", resumeUpload, SaveProfileResume);
 profileRoutes.get("/profile/doc/resume/:userId", GetProfileResumeByUserId);
+profileRoutes.get("/profile/doc/resume",GetProfilesResumeAll)
 
 profileRoutes.patch(`/profile/skill`, AddProfileSkill);
 profileRoutes.patch(`/profile/skill/remove/:uniqueId`, RemoveProfileSkill);

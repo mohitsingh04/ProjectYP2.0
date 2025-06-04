@@ -2,7 +2,7 @@
 
 import API from "@/service/API/API";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Property {
   uniqueId: string;
@@ -31,6 +31,34 @@ export default function Courses({ property }: { property: Property | null }) {
     PropertyCourseOverrides[]
   >([]);
   const [propertyCourses, setPropertyCourses] = useState<MergedCourse[]>([]);
+  const [categories, setCategories] = useState([]);
+
+  const getCategory = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getCategory();
+  }, [getCategory]);
+
+  const getCategoryById = (id: any) => {
+    const numId = Number(id);
+
+    // Check if id is a valid number
+    if (!isNaN(numId)) {
+      const category: any = categories.find(
+        (item: any) => Number(item.uniqueId) === numId
+      );
+      return category?.category_name || "";
+    }
+
+    return id;
+  };
 
   const getAllCourses = async () => {
     try {
@@ -109,7 +137,7 @@ export default function Courses({ property }: { property: Property | null }) {
                       <div className="course-group-img">
                         <div className="course-name d-flex justify-content-between">
                           <h4>{course.course_short_name}</h4>
-                          <p>{course.course_type}</p>
+                          <p>{getCategoryById(course.course_type)}</p>
                         </div>
                       </div>
                     </div>
@@ -129,7 +157,7 @@ export default function Courses({ property }: { property: Property | null }) {
                     <div className="course-info border-0 d-flex align-items-center">
                       <div className="rating-img d-flex align-items-center">
                         <img src="/img/icon/icon-01.svg" alt="Lessons" />
-                        <p>{course.course_level}</p>
+                        <p>{getCategoryById(course.course_level)}</p>
                       </div>
                       <div className="course-view d-flex align-items-center">
                         <img src="/img/icon/icon-02.svg" alt="Duration" />

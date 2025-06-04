@@ -1,7 +1,7 @@
 "use client";
 import API from "@/service/API/API";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 interface Course {
   uniqueId: string;
@@ -15,6 +15,34 @@ interface Course {
 
 export default function FeaturesCourse() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [categories, setCategories] = useState([]);
+
+  const getCategory = useCallback(async () => {
+    try {
+      const response = await API.get(`/category`);
+      setCategories(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getCategory();
+  }, [getCategory]);
+
+  const getCategoryById = (id: any) => {
+    const numId = Number(id);
+
+    // Check if id is a valid number
+    if (!isNaN(numId)) {
+      const category: any = categories.find(
+        (item: any) => Number(item.uniqueId) === numId
+      );
+      return category?.category_name || "";
+    }
+
+    return id;
+  };
 
   const shuffleArray = (array: Course[]): Course[] => {
     return [...array].sort(() => Math.random() - 0.5);
@@ -71,7 +99,9 @@ export default function FeaturesCourse() {
                         <div className="course-group-img">
                           <div className="course-name w-100 d-flex justify-content-between align-items-center">
                             <h4>{course?.course_short_name}</h4>
-                            <p className="ms-auto">{course?.course_type}</p>
+                            <p className="ms-auto">
+                              {getCategoryById(course?.course_type)}
+                            </p>
                           </div>
                         </div>
                         <div className="course-share d-flex align-items-center justify-content-center"></div>
@@ -92,7 +122,7 @@ export default function FeaturesCourse() {
                       <div className="course-info d-flex align-items-center border-0">
                         <div className="rating-img d-flex align-items-center">
                           <img src="/img/icon/icon-01.svg" alt="Lessons" />
-                          <p>{course?.course_level}</p>
+                          <p>{getCategoryById(course?.course_level)}</p>
                         </div>
                         <div className="course-view d-flex align-items-center">
                           <img src="/img/icon/icon-02.svg" alt="Duration" />
