@@ -37,9 +37,7 @@ export default function CategoryList() {
   }, []);
 
   if (!authLoading) {
-    if (
-      !authUser?.permissions?.some((item) => item.value === "Read Category")
-    ) {
+    if (!authUser?.permissions?.some((item) => item === "Read Category")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -161,7 +159,7 @@ export default function CategoryList() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Read Category"
+                (item) => item === "Read Category"
               ) && (
                 <Link
                   to={`/dashboard/category/view/${row._id}`}
@@ -171,7 +169,7 @@ export default function CategoryList() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Update Category"
+                (item) => item === "Update Category"
               ) && (
                 <Link
                   to={`/dashboard/category/edit/${row._id}`}
@@ -181,7 +179,7 @@ export default function CategoryList() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Category"
+                (item) => item === "Delete Category"
               ) && (
                 <Button
                   variant="danger"
@@ -225,7 +223,7 @@ export default function CategoryList() {
               <h5 className="mb-0">Category List</h5>
               {!authLoading &&
                 authUser?.permissions?.some(
-                  (item) => item.value === "Create Category"
+                  (item) => item === "Create Category"
                 ) && (
                   <Link
                     to={`/dashboard/category/create`}

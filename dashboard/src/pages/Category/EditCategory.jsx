@@ -47,7 +47,7 @@ export default function EditCategory() {
 
   if (!authLoading) {
     if (
-      !authUser?.permissions?.some((item) => item.value === "Update Category")
+      !authUser?.permissions?.some((item) => item === "Update Category")
     ) {
       navigator("/dashboard/access-denied");
     }

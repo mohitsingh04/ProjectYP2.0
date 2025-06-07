@@ -41,12 +41,24 @@ const EducationSection = ({
     );
     return degree?.degree_name;
   };
+
   const getInstituteById = (id: any) => {
     const institute = allDegreeAndInst?.institute?.find(
       (item: any) => Number(item?.uniqueId) === Number(id)
     );
     return institute?.institute_name;
   };
+
+  // Group education entries by institute
+  const groupedEducation = education?.reduce(
+    (acc: Record<string, Education[]>, edu) => {
+      const key = edu.institute;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(edu);
+      return acc;
+    },
+    {}
+  );
 
   return (
     <Card>
@@ -60,33 +72,48 @@ const EducationSection = ({
             <Edit size={16} />
           </Button>
         </div>
+
         <div className="d-flex flex-column gap-4">
-          {education?.map((edu, index) => (
-            <div key={index} className="timeline-item-education">
-              <div className="d-flex gap-3">
-                <div
-                  className="rounded-3 overflow-hidden bg-light flex-shrink-0"
-                  style={{ width: "48px", height: "48px" }}
-                >
-                  <RandomPixelLogo rows={8} cols={8} density={0.5} size={48} />
-                </div>
-                <div>
-                  <h3 className="fw-semibold mb-1">
-                    {getDegreeById(edu.degree)}
-                  </h3>
-                  <p className="fw-medium mb-1">
-                    {getInstituteById(edu.institute)}
-                  </p>
-                  <p className="small text-muted">
-                    {formatDate(edu.start_date)} -{" "}
-                    {edu.currentlyStuding
-                      ? "Present"
-                      : formatDate(edu.end_date)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
+          {groupedEducation &&
+            Object.entries(groupedEducation).map(
+              ([instituteId, group], index) => {
+                const instituteName = getInstituteById(instituteId);
+
+                return (
+                  <div key={index} className="timeline-item-education">
+                    <div className="d-flex gap-3">
+                      <div
+                        className="rounded-3 overflow-hidden bg-light flex-shrink-0"
+                        style={{ width: "48px", height: "48px" }}
+                      >
+                        <RandomPixelLogo
+                          rows={8}
+                          cols={8}
+                          density={0.5}
+                          size={48}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="fw-semibold mb-1">{instituteName}</h3>
+                        {group.map((edu, i) => (
+                          <div key={i} className="mb-2">
+                            <p className="fw-medium mb-1">
+                              {getDegreeById(edu.degree)}
+                            </p>
+                            <p className="small text-muted">
+                              {formatDate(edu.start_date)} -{" "}
+                              {edu.currentlyStuding
+                                ? "Present"
+                                : formatDate(edu.end_date)}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+            )}
         </div>
       </Card.Body>
     </Card>

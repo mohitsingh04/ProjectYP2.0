@@ -131,6 +131,8 @@ export default function ProtectedRoutes({ children }) {
       "dashboard/key-outcomes",
       "dashboard/requirments",
       "dashboard/course/soft",
+      "dashboard/professionals",
+      "dashboard/professionals/view/:object",
     ],
   };
 

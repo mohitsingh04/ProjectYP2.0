@@ -65,7 +65,7 @@ export default function CourseList() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read Course")) {
+    if (!authUser?.permissions?.some((item) => item === "Read Course")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -191,7 +191,7 @@ export default function CourseList() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Read Course"
+                (item) => item === "Read Course"
               ) && (
                 <Link
                   to={`/dashboard/course/view/${row._id}`}
@@ -201,7 +201,7 @@ export default function CourseList() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Update Course"
+                (item) => item === "Update Course"
               ) && (
                 <Link
                   to={`/dashboard/course/edit/${row._id}`}
@@ -211,7 +211,7 @@ export default function CourseList() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Course"
+                (item) => item === "Delete Course"
               ) && (
                 <Button
                   variant="danger"
@@ -255,7 +255,7 @@ export default function CourseList() {
               <h5 className="mb-0">Course List</h5>
               {!authLoading &&
                 authUser?.permissions?.some(
-                  (item) => item.value === "Create Course"
+                  (item) => item === "Create Course"
                 ) && (
                   <Link
                     to={`/dashboard/course/create`}

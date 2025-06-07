@@ -34,9 +34,7 @@ export default function CreateStatus() {
   }, []);
 
   if (!authLoading) {
-    if (
-      !authUser?.permissions?.some((item) => item.value === "Create Status")
-    ) {
+    if (!authUser?.permissions?.some((item) => item === "Create Status")) {
       navigator("/dashboard/access-denied");
     }
   }

@@ -12,6 +12,36 @@ export default function Legaldisclaimer() {
   const editor = useRef(null);
   const [legalPolicy, setLegalPolicy] = useState("");
   const [loading, setLoading] = useState(true);
+  const [authUser, setAuthUser] = useState("");
+  const [authLoading, setAuthLoading] = useState(true);
+
+  const getAuhtUser = async () => {
+    setAuthLoading(true);
+    try {
+      const response = await API.get(`/profile`);
+      setAuthUser(response.data);
+    } catch (error) {
+      console.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          error.message
+      );
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAuhtUser();
+  }, []);
+
+  if (!authLoading) {
+    if (
+      !authUser?.permissions?.some((item) => item === "Create Legal Policy")
+    ) {
+      navigator("/dashboard/access-denied");
+    }
+  }
 
   const formik = useFormik({
     initialValues: {

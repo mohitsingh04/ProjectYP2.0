@@ -37,7 +37,7 @@ export default function Userlist() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read User")) {
+    if (!authUser?.permissions?.some((item) => item === "Read User")) {
       navigator("/dashboard/access-denied");
     }
   }

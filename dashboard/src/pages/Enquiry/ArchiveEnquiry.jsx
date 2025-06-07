@@ -39,7 +39,7 @@ export default function ArchiveEnquiry() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read Archive")) {
+    if (!authUser?.permissions?.some((item) => item === "Read Archive")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -166,7 +166,7 @@ export default function ArchiveEnquiry() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Read Archive"
+                (item) => item === "Read Archive"
               ) && (
                 <Link
                   to={`/dashboard/enquiry/archive/view/${row._id}`}
@@ -176,7 +176,7 @@ export default function ArchiveEnquiry() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Archive"
+                (item) => item === "Delete Archive"
               ) && (
                 <Button
                   variant="danger"

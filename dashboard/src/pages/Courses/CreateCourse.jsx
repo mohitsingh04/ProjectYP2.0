@@ -85,9 +85,7 @@ export default function CreateCourse() {
   }, []);
 
   if (!authLoading) {
-    if (
-      !authUser?.permissions?.some((item) => item.value === "Create Course")
-    ) {
+    if (!authUser?.permissions?.some((item) => item === "Create Course")) {
       navigator("/dashboard/access-denied");
     }
   }

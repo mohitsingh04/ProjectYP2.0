@@ -98,8 +98,11 @@ export default function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <Link href={`/`} className="submenu">
-                    About Us
+                  <Link
+                    href={`${process.env.NEXT_PUBLIC_CAREER_URL}`}
+                    className="submenu"
+                  >
+                    Jobs
                   </Link>
                 </li>
                 <li>

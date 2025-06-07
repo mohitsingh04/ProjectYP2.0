@@ -34,7 +34,7 @@ export default function ViewStatus() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read Status")) {
+    if (!authUser?.permissions?.some((item) => item === "Read Status")) {
       navigator("/dashboard/access-denied");
     }
   }

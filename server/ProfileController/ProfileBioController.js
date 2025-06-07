@@ -1,4 +1,5 @@
 import ProfileBio from "../ProfileModel/ProfileBio.js";
+import { addProfileScore } from "./ProfileScoreController.js";
 
 export const addProfileBio = async (req, res) => {
   try {
@@ -8,7 +9,13 @@ export const addProfileBio = async (req, res) => {
       return res.status(400).json({ error: "Required field missing." });
     }
 
+    let score = 0;
     const existingBio = await ProfileBio.findOne({ userId });
+    const isNewAbout = !existingBio?.about && !!about;
+    const isNewHeading = !existingBio?.heading && !!heading;
+
+    if (isNewAbout) score += 2;
+    if (isNewHeading) score += 2;
 
     let uniqueId = existingBio?.uniqueId;
     if (!uniqueId) {
@@ -34,6 +41,10 @@ export const addProfileBio = async (req, res) => {
       }
     );
 
+    if (score > 0) {
+      await addProfileScore({ userId: userId, score: score });
+    }
+
     return res.status(200).json({ message: "Profile bio saved successfully." });
   } catch (error) {
     console.error("Error saving profile bio:", error);
@@ -41,7 +52,7 @@ export const addProfileBio = async (req, res) => {
   }
 };
 
-export const getProfileBioByUserId = async (req,res) => {
+export const getProfileBioByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
 

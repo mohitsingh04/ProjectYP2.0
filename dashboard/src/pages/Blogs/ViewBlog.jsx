@@ -11,6 +11,34 @@ export default function ViewBlog() {
   const [blogCategory, setBlogCategory] = useState([]);
   const [users, setUsers] = useState([]);
   const [tags, setTags] = useState([]);
+  const [authUser, setAuthUser] = useState("");
+  const [authLoading, setAuthLoading] = useState(true);
+
+  const getAuhtUser = async () => {
+    setAuthLoading(true);
+    try {
+      const response = await API.get(`/profile`);
+      setAuthUser(response.data);
+    } catch (error) {
+      console.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          error.message
+      );
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAuhtUser();
+  }, []);
+
+  if (!authLoading) {
+    if (!authUser?.permissions?.some((item) => item === "Read Blog")) {
+      navigate("/dashboard/access-denied");
+    }
+  }
 
   const getUser = useCallback(async () => {
     try {
@@ -113,12 +141,17 @@ export default function ViewBlog() {
             <Card.Header className="d-flex justify-content-between">
               <Card.Title>{blog?.title}</Card.Title>
               <div>
-                <Link
-                  to={`/dashboard/blogs/seo/${blog?._id}`}
-                  className="btn btn-warning btn-sm"
-                >
-                  Blog Seo
-                </Link>
+                {!authLoading &&
+                  authUser?.permissions?.some(
+                    (item) => item === "Create Blog SEO"
+                  ) && (
+                    <Link
+                      to={`/dashboard/blogs/seo/${blog?._id}`}
+                      className="btn btn-warning btn-sm"
+                    >
+                      Blog Seo
+                    </Link>
+                  )}
               </div>
             </Card.Header>
             <Card.Body>

@@ -1,5 +1,6 @@
 import ProfileSkills from "../ProfileModel/ProfileSkills.js";
 import ProfileSkillList from "../ProfileModel/ProfileSkillList.js";
+import { addProfileScore } from "./ProfileScoreController.js";
 
 export const AddProfileSkill = async (req, res) => {
   try {
@@ -18,7 +19,6 @@ export const AddProfileSkill = async (req, res) => {
     } else if (skill) {
       const skillLower = skill.toLowerCase();
 
-      // Check if skill exists in master list
       let existingSkill = await ProfileSkillList.findOne({ skill: skillLower });
 
       if (!existingSkill) {
@@ -43,7 +43,13 @@ export const AddProfileSkill = async (req, res) => {
       return res.status(400).json({ error: "Could not resolve skill ID." });
     }
 
-    // Get or create profile skills entry
+    // 👉 Check if the user already has skills or not
+    const existingUserSkills = await ProfileSkills.findOne({ userId });
+    const isFirstSkill =
+      !existingUserSkills ||
+      (Array.isArray(existingUserSkills.skills) &&
+        existingUserSkills.skills.length === 0);
+
     const lastProfileSkills = await ProfileSkills.findOne().sort({
       uniqueId: -1,
     });
@@ -67,13 +73,17 @@ export const AddProfileSkill = async (req, res) => {
       }
     );
 
+    // ✅ Give score only when adding the very first skill
+    if (isFirstSkill) {
+      await addProfileScore({ userId, score: 6 });
+    }
+
     return res.status(200).json({ message: "Skill added successfully." });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 export const RemoveProfileSkill = async (req, res) => {
   try {
     const { uniqueId } = req.params;
@@ -85,8 +95,13 @@ export const RemoveProfileSkill = async (req, res) => {
         .json({ error: "uniqueId and skill are required." });
     }
 
-    const isExisting = await ProfileSkills.findOne({ uniqueId });
-    if (!isExisting.skills.some((item) => item === skill)) {
+    const profileSkill = await ProfileSkills.findOne({ uniqueId });
+
+    if (!profileSkill) {
+      return res.status(404).json({ error: "Profile not found." });
+    }
+
+    if (!profileSkill.skills.some((item) => item === skill)) {
       return res.status(404).json({ error: "Skill Not Found" });
     }
 
@@ -99,11 +114,17 @@ export const RemoveProfileSkill = async (req, res) => {
     );
 
     if (!updatedDoc) {
-      return res.status(404).json({ error: "Profile not found." });
+      return res.status(404).json({ error: "Profile not found after update." });
+    }
+
+    // Subtract 6 points if all skills are removed
+    if (updatedDoc.skills.length === 0) {
+      await addProfileScore({ userId: updatedDoc.userId, score: -6 });
     }
 
     return res.status(200).json({ message: "Skill removed successfully." });
   } catch (error) {
+    console.error("Error removing skill:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

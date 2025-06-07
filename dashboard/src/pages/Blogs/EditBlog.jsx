@@ -117,7 +117,7 @@ export default function EditBlog() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Update Blog")) {
+    if (!authUser?.permissions?.some((item) => item === "Update Blog")) {
       navigator("/dashboard/access-denied");
     }
   }

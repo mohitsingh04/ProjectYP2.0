@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card, Button } from "react-bootstrap";
-import { Edit, BadgeCheck } from "lucide-react";
+import { Edit, BadgeCheck, Award } from "lucide-react";
 import Link from "next/link";
 import ImageCropper from "../../_profileComponents/_profileModals/ImageCropper";
 import BannerCropper from "./modals/BannerCropper";
@@ -12,6 +12,7 @@ interface ProfileInfoProps {
     heading: string;
     verified: boolean;
     avatar: any;
+    score?: number;
   };
 }
 
@@ -35,6 +36,7 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
       reader.readAsDataURL(file);
     }
   };
+
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -49,6 +51,21 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
       reader.readAsDataURL(file);
     }
   };
+
+  const getBadgeColor = (score: number) => {
+    if (score < 25) return "red";
+    if (score < 50) return "blue";
+    if (score < 75) return "purple";
+    return "goldenrod";
+  };
+
+  const getBadgeBackground = (score: number) => {
+    if (score < 25) return "rgba(255, 0, 0, 0.1)";
+    if (score < 50) return "rgba(0, 0, 255, 0.1)";
+    if (score < 75) return "rgba(128, 0, 128, 0.1)";
+    return "rgba(218, 165, 32, 0.1)";
+  };
+
   return (
     <Card
       className="position-relative mb-4 shadow-sm rounded"
@@ -104,10 +121,31 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
           <div className="flex-grow-1">
             <div className="d-flex flex-column flex-md-row align-items-md-center gap-2 mb-2">
               <h1 className="fs-2 fw-bold mb-0">{profileData.name}</h1>
+
               {profileData.verified && (
-                <div className="verified-badge">
+                <div className="verified-badge d-flex align-items-center ms-2">
                   <BadgeCheck size={16} className="me-1" />
                   <span>Verified</span>
+                </div>
+              )}
+
+              {/* Professional Badge */}
+              {typeof profileData.score === "number" && (
+                <div
+                  className="d-flex align-items-center ms-3"
+                  title={`Professional Score: ${profileData.score}`}
+                  style={{
+                    backgroundColor: getBadgeBackground(profileData.score),
+                    border: `1px solid ${getBadgeColor(profileData.score)}`,
+                    borderRadius: "20px",
+                    padding: "4px 10px",
+                    fontWeight: 600,
+                    fontSize: "0.9rem",
+                    color: getBadgeColor(profileData.score),
+                  }}
+                >
+                  <Award size={16} color={getBadgeColor(profileData.score)} className="me-1" />
+                  Professional
                 </div>
               )}
             </div>
@@ -134,7 +172,7 @@ const ProfileInfo = ({ profileData }: ProfileInfoProps) => {
           image={image}
           setImage={setImage}
           profile={profileData}
-          setShowCropper={setShowCropper}
+          setShowCropper={setShowBannerCropper}
         />
       )}
     </Card>

@@ -36,7 +36,7 @@ export default function StatusList() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read Status")) {
+    if (!authUser?.permissions?.some((item) => item === "Read Status")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -119,7 +119,7 @@ export default function StatusList() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Read Status"
+                (item) => item === "Read Status"
               ) && (
                 <Link
                   to={`/dashboard/status/view/${row._id}`}
@@ -129,7 +129,7 @@ export default function StatusList() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Update Status"
+                (item) => item === "Update Status"
               ) && (
                 <Link
                   to={`/dashboard/status/edit/${row._id}`}
@@ -139,7 +139,7 @@ export default function StatusList() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Status"
+                (item) => item === "Delete Status"
               ) && (
                 <Button
                   variant="danger"
@@ -183,7 +183,7 @@ export default function StatusList() {
               <h5 className="mb-0">Status List</h5>
               {!authLoading &&
                 authUser?.permissions?.some(
-                  (item) => item.value === "Create Status"
+                  (item) => item === "Create Status"
                 ) && (
                   <Link
                     to={`/dashboard/status/create`}

@@ -14,6 +14,11 @@ import ProfileEducation from "../ProfileModel/ProfileEducation.js";
 import ProfileExperience from "../ProfileModel/ProfileExperience.js";
 import ProfileLanguage from "../ProfileModel/ProfileLanguage.js";
 import ProfileSkills from "../ProfileModel/ProfileSkills.js";
+import { addProfileScore } from "./ProfileScoreController.js";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+import ProfileScore from "../ProfileModel/ProfileScore.js";
 
 dotenv.config();
 const saltRounds = 10;
@@ -32,6 +37,21 @@ export const profileRegister = async (req, res) => {
       !confirm_password
     ) {
       return res.status(400).json({ error: "Required Field is Missing." });
+    }
+
+    let score = 0;
+
+    if (username) {
+      score += 2;
+    }
+    if (name) {
+      score += 2;
+    }
+    if (email) {
+      score += 2;
+    }
+    if (mobile_no) {
+      score += 2;
     }
 
     if (password !== confirm_password) {
@@ -68,6 +88,7 @@ export const profileRegister = async (req, res) => {
     });
 
     await newUser.save();
+    await addProfileScore({ userId: uniqueId, score: score });
     await sendProfileEmailVerification({ uniqueId, email });
 
     return res.status(201).json({ message: "User Registered Successfully" });
@@ -393,6 +414,9 @@ export const ProfileAccountDeletionOtp = async (req, res) => {
   }
 };
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export const DeleteAccountConfirm = async (req, res) => {
   try {
     const { uniqueId, token } = req.params;
@@ -414,15 +438,27 @@ export const DeleteAccountConfirm = async (req, res) => {
       return res.status(400).json({ error: "Link Has Been Expired" });
     }
 
-    if (isExisting.role === "Professional") {
-      await ProfileBio.deleteMany({ userId: uniqueId });
-      await ProfileDoc.deleteMany({ userId: uniqueId });
-      await ProfileEducation.deleteMany({ userId: uniqueId });
-      await ProfileExperience.deleteMany({ userId: uniqueId });
-      await ProfileLanguage.deleteMany({ userId: uniqueId });
-      await ProfileSkills.deleteMany({ userId: uniqueId });
-    }
+    const propertyFolder = path.join(
+      __dirname,
+      `../../media/profile/${uniqueId}`
+    );
 
+    await ProfileBio.deleteMany({ userId: uniqueId });
+    await ProfileDoc.deleteMany({ userId: uniqueId });
+    await ProfileEducation.deleteMany({ userId: uniqueId });
+    await ProfileExperience.deleteMany({ userId: uniqueId });
+    await ProfileLanguage.deleteMany({ userId: uniqueId });
+    await ProfileSkills.deleteMany({ userId: uniqueId });
+    await ProfileScore.deleteMany({ userId: uniqueId });
+
+    const folderExists = await fs
+      .stat(propertyFolder)
+      .then(() => true)
+      .catch(() => false);
+
+    if (folderExists) {
+      await fs.rm(propertyFolder, { recursive: true, force: true });
+    }
     await ProfileLocation.deleteMany({ userId: uniqueId });
     await RegularUser.findOneAndDelete({ uniqueId });
 

@@ -56,9 +56,7 @@ export default function PropertyList() {
   }, []);
 
   if (!authLoading) {
-    if (
-      !authUser?.permissions?.some((item) => item.value === "Read Property")
-    ) {
+    if (!authUser?.permissions?.some((item) => item === "Read Property")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -183,7 +181,7 @@ export default function PropertyList() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Read Property"
+                (item) => item === "Read Property"
               ) && (
                 <Link
                   to={`/dashboard/property/view/${row._id}`}
@@ -193,7 +191,7 @@ export default function PropertyList() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Property"
+                (item) => item === "Delete Property"
               ) && (
                 <Button
                   variant="danger"
@@ -237,7 +235,7 @@ export default function PropertyList() {
               <h5 className="mb-0">Property List</h5>
               {!authLoading &&
                 authUser?.permissions?.some(
-                  (item) => item.value === "Create Property"
+                  (item) => item === "Create Property"
                 ) && (
                   <Link
                     to={`/dashboard/property/create`}

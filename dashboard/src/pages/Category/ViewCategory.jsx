@@ -37,9 +37,7 @@ export default function ViewCategory() {
   }, []);
 
   if (!authLoading) {
-    if (
-      !authUser?.permissions?.some((item) => item.value === "Read Category")
-    ) {
+    if (!authUser?.permissions?.some((item) => item === "Read Category")) {
       navigator("/dashboard/access-denied");
     }
   }

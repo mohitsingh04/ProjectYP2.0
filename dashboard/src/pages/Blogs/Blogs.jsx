@@ -13,9 +13,9 @@ export default function Blogs() {
   const [search, setSearch] = useState("");
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [blogCategory, setBlogCategory] = useState([]);
   const [authUser, setAuthUser] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
-  const [blogCategory, setBlogCategory] = useState([]);
 
   const getAuhtUser = async () => {
     setAuthLoading(true);
@@ -38,7 +38,7 @@ export default function Blogs() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read Blog")) {
+    if (!authUser?.permissions?.some((item) => item === "Read Blog")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -177,9 +177,7 @@ export default function Blogs() {
         <div className="d-flex gap-1">
           {!authLoading && (
             <>
-              {authUser?.permissions?.some(
-                (item) => item.value === "Read Blog"
-              ) && (
+              {authUser?.permissions?.some((item) => item === "Read Blog") && (
                 <Link
                   to={`/dashboard/blogs/view/${row._id}`}
                   className="btn btn-primary btn-sm"
@@ -188,7 +186,7 @@ export default function Blogs() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Update Blog"
+                (item) => item === "Update Blog"
               ) && (
                 <Link
                   to={`/dashboard/blogs/edit/${row._id}`}
@@ -197,14 +195,18 @@ export default function Blogs() {
                   <i className="fe fe-edit-2"></i>
                 </Link>
               )}
-              <Link
-                to={`/dashboard/blogs/seo/${row._id}`}
-                className="btn btn-warning btn-sm"
-              >
-                <i class="ri-seo-line"></i>
-              </Link>
+              {authUser?.permissions.some(
+                (item) => item === "Create Blog SEO"
+              ) && (
+                <Link
+                  to={`/dashboard/blogs/seo/${row._id}`}
+                  className="btn btn-warning btn-sm"
+                >
+                  <i class="ri-seo-line"></i>
+                </Link>
+              )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Blog"
+                (item) => item === "Delete Blog"
               ) && (
                 <Button
                   variant="danger"

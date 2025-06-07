@@ -39,7 +39,7 @@ export default function BlogsCategory() {
   if (!authLoading) {
     if (
       !authUser?.permissions?.some(
-        (item) => item.value === "Read Blog Category"
+        (item) => item === "Read Blog Category"
       )
     ) {
       navigator("/dashboard/access-denied");
@@ -142,7 +142,7 @@ export default function BlogsCategory() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Update Blog Category"
+                (item) => item === "Update Blog Category"
               ) && (
                 <Link
                   to={`/dashboard/blogs/category/edit/${row._id}`}
@@ -152,7 +152,7 @@ export default function BlogsCategory() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Blog Category"
+                (item) => item === "Delete Blog Category"
               ) && (
                 <Button
                   variant="danger"
@@ -196,7 +196,7 @@ export default function BlogsCategory() {
               <h5 className="mb-0">Blog Category List</h5>
               {!authLoading &&
                 authUser?.permissions?.some(
-                  (item) => item.value === "Create Blog Category"
+                  (item) => item === "Create Blog Category"
                 ) && (
                   <Link
                     to={`/dashboard/blogs/category/create`}

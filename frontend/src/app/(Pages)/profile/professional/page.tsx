@@ -19,10 +19,8 @@ import API from "@/service/API/API";
 import Link from "next/link";
 import ResumeUploadModal from "./_professionalComponents/modals/ResumeUploadModal";
 
-interface ProfileProps {}
-
 const ProfessionalProfile = () => {
-  const [profileData, setProfileData] = useState<ProfileProps | any>({});
+  const [profileData, setProfileData] = useState<any>({});
   const [isOpenResumeModal, setIsOpenResumeModal] = useState(false);
   const [properties, setProperties] = useState([]);
   const [profileProperties, setProfileProperties] = useState([]);
@@ -97,14 +95,15 @@ const ProfessionalProfile = () => {
   const getProfile = useCallback(async () => {
     try {
       const { data: profile } = await API.get("/profile/detail");
-      const uniqueId = profile?.uniqueId;
 
-      if (!uniqueId) {
-        console.warn("Unique ID not found in profile response.");
+      if (!profile || profile.role !== "Professional" || !profile.uniqueId) {
+        console.warn("Invalid profile or unauthorized role.");
+        window.location.href = "/";
         return;
       }
 
-      // Run requests in parallel and handle partial failures
+      const uniqueId = profile.uniqueId;
+
       const [
         bioResult,
         skillResult,
@@ -112,6 +111,7 @@ const ProfessionalProfile = () => {
         resumeResult,
         expResult,
         eduResult,
+        scoreResult,
       ] = await Promise.allSettled([
         API.get(`/profile/bio/${uniqueId}`),
         API.get(`/profile/skill/${uniqueId}`),
@@ -119,6 +119,7 @@ const ProfessionalProfile = () => {
         API.get(`/profile/doc/resume/${uniqueId}`),
         API.get(`/profile/experience/${uniqueId}`),
         API.get(`/profile/education/${uniqueId}`),
+        API.get(`/profile/score/${uniqueId}`),
       ]);
 
       const getData = (result: PromiseSettledResult<any>, fallback: any) =>
@@ -135,11 +136,13 @@ const ProfessionalProfile = () => {
         resume: getData(resumeResult, {}).resume,
         experiences: getData(expResult, []),
         education: getData(eduResult, []),
+        score: getData(scoreResult, {}).score,
       };
 
       setProfileData(finalData);
     } catch (error) {
       console.error("Failed to fetch profile data:", error);
+      window.location.href = "/";
     } finally {
       getAllSkillAndLanuages();
       getAllDegreeAndInstitute();
@@ -258,9 +261,7 @@ const ProfessionalProfile = () => {
               )}
             </Card>
 
-            {/* <ProfileScoreSection
-              profileScore={Math.floor(Math.random() * 100)}
-            /> */}
+            <ProfileScoreSection profileScore={profileData.score || 0} />
 
             <ContactInfoSection profileData={profileData} />
           </Col>

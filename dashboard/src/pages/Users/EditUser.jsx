@@ -48,7 +48,7 @@ export default function EditUser() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Update User")) {
+    if (!authUser?.permissions?.some((item) => item === "Update User")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -65,11 +65,17 @@ export default function EditUser() {
             API.get(`/permissions`),
             API.get(`/status`),
           ]);
-
+        const formattedUserPermissions = userRes?.data?.permissions?.map(
+          (perm) => ({
+            label: perm,
+            value: perm,
+          })
+        );
+        userRes.data.permissions = formattedUserPermissions;
         setUser(userRes.data);
         setSelectedState(userRes.data.state);
         setStates(statesRes.data);
-        const formattedPermissions = permissionsRes.data.map((perm) => ({
+        const formattedPermissions = permissionsRes?.data.map((perm) => ({
           label: perm.name,
           value: perm.name,
         }));
@@ -120,7 +126,7 @@ export default function EditUser() {
       city: user.city || "",
       role: user.role || "",
       status: user.status || "",
-      permission: user.permissions || [],
+      permission: user?.permissions || [],
     },
     validationSchema: EditUserValidation,
     validateOnBlur: false,
@@ -129,7 +135,11 @@ export default function EditUser() {
     onSubmit: async (values) => {
       setResponseLoading(true);
       try {
-        const response = await API.patch(`/user/${objectId}`, values);
+        const formattedValues = {
+          ...values,
+          permission: values.permission.map((perm) => perm.value),
+        };
+        const response = await API.patch(`/user/${objectId}`, formattedValues);
         if (response) {
           Swal.fire({
             icon: "success",
@@ -152,12 +162,9 @@ export default function EditUser() {
     },
   });
   useEffect(() => {
-    // Sync selectAll checkbox with formik values
     if (permissionData.length > 0) {
       const allSelected = permissionData.every((perm) =>
-        formik.values.permission.some(
-          (selected) => selected.value === perm.value
-        )
+        formik.values.permission?.some((sel) => sel.value === perm.value)
       );
       setSelectAll(allSelected);
     }
@@ -384,6 +391,7 @@ export default function EditUser() {
                         <Dropdown
                           options={permissionData}
                           multi
+                          keepSelectedInList={false}
                           placeholder="Choose Permissions"
                           values={formik.values.permission}
                           onChange={(value) =>
@@ -394,6 +402,7 @@ export default function EditUser() {
                         />
                         <Form.Check
                           type="checkbox"
+                          id="Select All Permissions"
                           label="Select All Permissions"
                           className="mt-2"
                           checked={selectAll}

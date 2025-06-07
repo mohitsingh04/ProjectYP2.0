@@ -1,8 +1,6 @@
 import RandomPixelLogo from "@/components/ImageGenerator/RandomPixelLogo";
-import API from "@/service/API/API";
-import { Edit, Plus, Trash, Trash2, X, XIcon } from "lucide-react";
+import { Edit, Plus, XIcon } from "lucide-react";
 import React from "react";
-import { toast } from "react-toastify";
 
 interface listProps {
   onClose: any;
@@ -11,7 +9,6 @@ interface listProps {
   handleEdit: any;
   properties: any;
   profileProperties: any;
-  getProfile: any;
 }
 
 export default function ExpereninceModalList({
@@ -21,7 +18,6 @@ export default function ExpereninceModalList({
   handleEdit,
   properties,
   profileProperties,
-  getProfile,
 }: listProps) {
   const getPropertyDetails = (id: number) => {
     const property = properties.find(
@@ -35,23 +31,6 @@ export default function ExpereninceModalList({
       (item: any) => Number(item?.uniqueId) === Number(id)
     );
     return property;
-  };
-  const handleDelete = async (id: number) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this experience?"
-    );
-
-    if (!confirmDelete) return;
-
-    try {
-      const response = await API.delete(`/profile/experience/${id}`);
-      toast.success(response.data.message);
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to delete experience.");
-    } finally {
-      getProfile();
-    }
   };
 
   return (
@@ -135,12 +114,6 @@ export default function ExpereninceModalList({
                           onClick={() => handleEdit(exp)}
                         >
                           <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          className="btn btn-light btn-sm text-danger"
-                          onClick={() => handleDelete(exp?.uniqueId)}
-                        >
-                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>

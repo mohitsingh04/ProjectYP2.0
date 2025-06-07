@@ -39,7 +39,7 @@ export default function CreateUser() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Create User")) {
+    if (!authUser?.permissions?.some((item) => item === "Create User")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -89,7 +89,12 @@ export default function CreateUser() {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        const response = await API.post("/user/new", values);
+        const formattedValues = {
+          ...values,
+          permission: values.permission.map((perm) => perm.value), // <- key change here
+        };
+
+        const response = await API.post("/user/new", formattedValues);
         Swal.fire({
           title: "Success",
           text: response.data.message || "User created successfully!",

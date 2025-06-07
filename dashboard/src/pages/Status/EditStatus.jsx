@@ -39,9 +39,7 @@ export default function EditStatus() {
   }, []);
 
   if (!authLoading) {
-    if (
-      !authUser?.permissions?.some((item) => item.value === "Update Status")
-    ) {
+    if (!authUser?.permissions?.some((item) => item === "Update Status")) {
       navigator("/dashboard/access-denied");
     }
   }

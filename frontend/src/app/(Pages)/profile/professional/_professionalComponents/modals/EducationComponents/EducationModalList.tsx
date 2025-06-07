@@ -1,8 +1,6 @@
 import RandomPixelLogo from "@/components/ImageGenerator/RandomPixelLogo";
-import API from "@/service/API/API";
 import { Edit, Plus, XIcon } from "lucide-react";
 import React from "react";
-import { toast } from "react-toastify";
 
 interface EducationListProps {
   onClose: any;
@@ -10,7 +8,6 @@ interface EducationListProps {
   editableEducation: any;
   handleEdit: any;
   allDegreeAndInst: any;
-  getProfile: any;
 }
 
 export default function EducationModalList({
@@ -18,7 +15,6 @@ export default function EducationModalList({
   handleAddNew,
   editableEducation,
   handleEdit,
-  getProfile,
   allDegreeAndInst,
 }: EducationListProps) {
   const getDegreeById = (id: any) => {
@@ -34,23 +30,6 @@ export default function EducationModalList({
     return institute?.institute_name;
   };
 
-  const handleDelete = async (id: any) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this education?"
-    );
-
-    if (!confirmDelete) return;
-
-    try {
-      const response = await API.delete(`/profile/education/${id}`);
-      toast.success(response.data.message);
-    } catch (error) {
-      console.log(error);
-      toast.error((error as any).response.data.error);
-    } finally {
-      getProfile();
-    }
-  };
   return (
     <>
       <div className="modal fade show d-block" tabIndex={-1}>
@@ -119,12 +98,6 @@ export default function EducationModalList({
                           onClick={() => handleEdit(edu)}
                         >
                           <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          className="btn btn-light btn-sm text-danger"
-                          onClick={() => handleDelete(edu.uniqueId)}
-                        >
-                          <XIcon className="w-4 h-4" />
                         </button>
                       </div>
                     </div>

@@ -47,7 +47,7 @@ export default function ViewEnquiry() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read Enquiry")) {
+    if (!authUser?.permissions?.some((item) => item === "Read Enquiry")) {
       navigator("/dashboard/access-denied");
     }
   }

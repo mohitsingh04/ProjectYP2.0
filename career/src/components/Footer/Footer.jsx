@@ -9,10 +9,9 @@ export default function Footer() {
       <p className="text-sm">
         &copy;
         <a
-          href="https://yogprerna.com"
-          target="_blank"
+          href={`${process.env.NEXT_PUBLIC_YP_URL}`}
           rel="noopener noreferrer"
-          className="underline hover:text-white/80 transition-colors"
+          className="underline hover:text-white/80 transition-colors ms-2"
         >
           Yogprerna
         </a>

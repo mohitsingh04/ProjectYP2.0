@@ -1,6 +1,7 @@
 import ProfileEducation from "../ProfileModel/ProfileEducation.js";
 import ProfileInstitutes from "../ProfileModel/ProfileInstitutes.js";
 import ProfileDegree from "../ProfileModel/ProfileDegree.js";
+import { addProfileScore } from "./ProfileScoreController.js"; // adjust path
 
 export const AddAndUpdateProfileEducation = async (req, res) => {
   try {
@@ -32,12 +33,11 @@ export const AddAndUpdateProfileEducation = async (req, res) => {
 
         await ProfileDegree.create({
           uniqueId: finalDegreeId,
-          degree_name: degree,
+          degree_name: degree.toLowerCase(),
         });
       }
     }
 
-    // INSTITUTE HANDLING
     if (!instituteId && institute) {
       const existingInstitute = await ProfileInstitutes.findOne({
         institute_name: { $regex: new RegExp(`^${institute}$`, "i") },
@@ -53,12 +53,11 @@ export const AddAndUpdateProfileEducation = async (req, res) => {
 
         await ProfileInstitutes.create({
           uniqueId: finalInstituteId,
-          institute_name: institute,
+          institute_name: institute.toLowerCase(),
         });
       }
     }
 
-    // ✅ DUPLICATE CHECK
     const duplicate = await ProfileEducation.findOne({
       userId,
       degree: finalDegreeId,
@@ -73,7 +72,6 @@ export const AddAndUpdateProfileEducation = async (req, res) => {
       });
     }
 
-    // BUILD EDUCATION OBJECT
     const educationData = {
       userId,
       degree: finalDegreeId,
@@ -83,20 +81,29 @@ export const AddAndUpdateProfileEducation = async (req, res) => {
       end_date: currentlyStuding ? null : end_date || null,
     };
 
-    // HANDLE uniqueId FOR EDUCATION
     let finalUniqueId = uniqueId;
+    let isNewEntry = false;
+
     if (!finalUniqueId) {
       const lastEdu = await ProfileEducation.findOne().sort({ uniqueId: -1 });
       finalUniqueId = lastEdu ? lastEdu.uniqueId + 1 : 1;
+      isNewEntry = true;
     }
     educationData.uniqueId = finalUniqueId;
 
-    // UPSERT PROFILE EDUCATION
     const result = await ProfileEducation.findOneAndUpdate(
       { userId, uniqueId: finalUniqueId },
       { $set: educationData },
       { upsert: true, new: true }
     );
+
+    // Check if this is the FIRST education ever for this user, only then award points
+    if (isNewEntry) {
+      const totalEducations = await ProfileEducation.countDocuments({ userId });
+      if (totalEducations === 1) {
+        await addProfileScore({ userId, score: 20 });
+      }
+    }
 
     return res.status(200).json({
       message: "Profile education saved successfully",

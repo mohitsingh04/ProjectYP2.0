@@ -15,6 +15,7 @@ const Dashboard = () => {
       console.log(error);
     }
   }, []);
+
   useEffect(() => {
     getProperties();
   }, [getProperties]);

@@ -34,7 +34,7 @@ export default function ViewUser() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read User")) {
+    if (!authUser?.permissions?.some((item) => item === "Read User")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -130,7 +130,7 @@ export default function ViewUser() {
                           <div>
                             {!authLoading &&
                               authUser?.permissions?.some(
-                                (item) => item.value === "Update User"
+                                (item) => item === "Update User"
                               ) && (
                                 <Link
                                   to={`/dashboard/user/edit/${user?._id}`}

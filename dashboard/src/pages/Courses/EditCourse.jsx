@@ -108,9 +108,7 @@ export default function EditCourse() {
   }, []);
 
   if (!authLoading) {
-    if (
-      !authUser?.permissions?.some((item) => item.value === "Update Course")
-    ) {
+    if (!authUser?.permissions?.some((item) => item === "Update Course")) {
       navigator("/dashboard/access-denied");
     }
   }

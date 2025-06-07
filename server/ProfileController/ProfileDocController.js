@@ -1,5 +1,6 @@
 import { ProfileResumeMover } from "../helper/FolderCleaners/ProfileImageMover.js";
 import ProfileDoc from "../ProfileModel/ProfileDoc.js";
+import { addProfileScore } from "./ProfileScoreController.js";
 
 export const SaveProfileResume = async (req, res) => {
   try {
@@ -25,6 +26,7 @@ export const SaveProfileResume = async (req, res) => {
       const newResume = await ProfileDoc({ uniqueId, userId, resume });
 
       await newResume.save();
+      await addProfileScore({ userId, score: 20 });
       await ProfileResumeMover(req, res, userId);
       return res.status(200).json({ message: "Resume is Uploaded" });
     }

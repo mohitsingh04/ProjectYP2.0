@@ -1,16 +1,15 @@
 import ProfileLanguage from "../ProfileModel/ProfileLanguage.js";
 import ProfileLanguagesList from "../ProfileModel/ProfileLanguagesList.js";
+import { addProfileScore } from "./ProfileScoreController.js";
 
 export const AddProfileLanguage = async (req, res) => {
   try {
     const { userId, language, languageId } = req.body;
 
     if (!userId || (!language && !languageId)) {
-      return res
-        .status(400)
-        .json({
-          error: "userId and either language or languageId is required.",
-        });
+      return res.status(400).json({
+        error: "userId and either language or languageId is required.",
+      });
     }
 
     let finalLanguageId;
@@ -47,6 +46,10 @@ export const AddProfileLanguage = async (req, res) => {
       return res.status(400).json({ error: "Could not resolve language ID." });
     }
 
+    // Check if this is the user's first language
+    const existingDoc = await ProfileLanguage.findOne({ userId });
+    const isFirstLanguage = !existingDoc || existingDoc.languages?.length === 0;
+
     // Get or create profile language entry
     const lastProfileLanguage = await ProfileLanguage.findOne().sort({
       uniqueId: -1,
@@ -71,9 +74,14 @@ export const AddProfileLanguage = async (req, res) => {
       }
     );
 
+    // Award score only if it was the first language being added
+    if (isFirstLanguage && updatedDoc.languages.length === 1) {
+      await addProfileScore({ userId, score: 6 });
+    }
+
     return res.status(200).json({ message: "Language added successfully." });
   } catch (error) {
-    console.error(error);
+    console.error("Error adding language:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -89,12 +97,13 @@ export const RemoveProfileLanguage = async (req, res) => {
         .json({ error: "uniqueId and language are required." });
     }
 
-    const isExisting = await ProfileLanguage.findOne({ uniqueId });
-    if (!isExisting) {
+    const profileLang = await ProfileLanguage.findOne({ uniqueId });
+
+    if (!profileLang) {
       return res.status(404).json({ error: "Profile not found." });
     }
 
-    if (!isExisting.languages.some((item) => item === language)) {
+    if (!profileLang.languages.some((item) => item === language)) {
       return res.status(404).json({ error: "Language Not Found" });
     }
 
@@ -106,8 +115,18 @@ export const RemoveProfileLanguage = async (req, res) => {
       { new: true }
     );
 
+    if (!updatedDoc) {
+      return res.status(404).json({ error: "Profile not found after update." });
+    }
+
+    // Subtract 6 points if all languages are removed
+    if (updatedDoc.languages.length === 0) {
+      await addProfileScore({ userId: updatedDoc.userId, score: -6 });
+    }
+
     return res.status(200).json({ message: "Language removed successfully." });
   } catch (error) {
+    console.error("Error removing language:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

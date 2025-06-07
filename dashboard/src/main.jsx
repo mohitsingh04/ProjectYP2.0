@@ -7,6 +7,10 @@ import "react-phone-input-2/lib/bootstrap.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "bootstrap/dist/js/bootstrap.js"
 
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Scrolltotop from "./Scrolltotop";
@@ -80,6 +84,8 @@ import Requirments from "./pages/Requirments/Requirments";
 import SoftDeletedCourses from "./pages/Courses/SoftDeletedCourses";
 import BlogSeo from "./pages/Blogs/SEO/blogSeo";
 import YourProperty from "./pages/Property/YourProperty";
+import ProfessionalsList from "./pages/Professional/ProfessionalsList";
+import ProfessionalView from "./pages/Professional/ProfessionalView";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
@@ -123,6 +129,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route path="/dashboard/user/create"element={<ProtectedRoutes><CreateUser /></ProtectedRoutes>}/>
               <Route path="/dashboard/user/view/:objectId"element={<ProtectedRoutes><ViewUser /></ProtectedRoutes>}/>
               <Route path="/dashboard/user/edit/:objectId"element={<ProtectedRoutes><EditUser /></ProtectedRoutes>}/>
+
+              <Route path="/dashboard/professionals"element={<ProtectedRoutes><ProfessionalsList /></ProtectedRoutes>}/>
+              <Route path="/dashboard/professionals/view/:objectId"element={<ProtectedRoutes><ProfessionalView /></ProtectedRoutes>}/>
 
               <Route path="/dashboard/status"element={<ProtectedRoutes><Statuslist /></ProtectedRoutes>}/>
               <Route path="/dashboard/status/create"element={<ProtectedRoutes><CreateStatus /></ProtectedRoutes>}/>

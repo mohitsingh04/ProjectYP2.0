@@ -79,7 +79,6 @@ const EducationEditModal = ({
         editableEducation={editableEducation}
         onClose={onClose}
         allDegreeAndInst={allDegreeAndInst}
-        getProfile={getProfile}
       />
     </>
   );

@@ -11,6 +11,34 @@ export default function CreateBlogCategory() {
   const navigator = useNavigate();
   const [parentCategories, setParentCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [authUser, setAuthUser] = useState("");
+  const [authLoading, setAuthLoading] = useState(true);
+
+  const getAuhtUser = async () => {
+    setAuthLoading(true);
+    try {
+      const response = await API.get(`/profile`);
+      setAuthUser(response.data);
+    } catch (error) {
+      console.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          error.message
+      );
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAuhtUser();
+  }, []);
+
+  if (!authLoading) {
+    if (!authUser?.permissions?.some((item) => item === "Create Blog Category")) {
+      navigator("/dashboard/access-denied");
+    }
+  }
 
   const fetchParentCategories = useCallback(async () => {
     try {

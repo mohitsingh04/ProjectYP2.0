@@ -1,5 +1,6 @@
 import ProfileExperience from "../ProfileModel/ProfileExperience.js";
 import ProfileProperties from "../ProfileModel/ProfileProperties.js";
+import { addProfileScore } from "./ProfileScoreController.js"; // Adjust path as needed
 
 export const AddAndUpdateProfileExperience = async (req, res) => {
   try {
@@ -47,7 +48,7 @@ export const AddAndUpdateProfileExperience = async (req, res) => {
 
         const newProperty = new ProfileProperties({
           uniqueId: propertyUniqueId,
-          property_name: property_name,
+          property_name: property_name.toLowerCase(),
         });
 
         await newProperty.save();
@@ -62,15 +63,17 @@ export const AddAndUpdateProfileExperience = async (req, res) => {
       unsetFields.property_name_id = "";
     }
 
-    // Handle currentlyWorking
     if (currentlyWorking) {
       unsetFields.end_date = "";
     } else if (end_date) {
       experienceData.end_date = end_date;
     }
 
-    // === UPDATE FLOW ===
+    // Check if this is a new experience entry
+    let isNewEntry = false;
+
     if (uniqueId) {
+      // Update flow
       const updated = await ProfileExperience.findOneAndUpdate(
         { userId, uniqueId },
         {
@@ -90,26 +93,38 @@ export const AddAndUpdateProfileExperience = async (req, res) => {
         message: "Profile experience updated successfully.",
         data: updated,
       });
+    } else {
+      // Create flow
+      isNewEntry = true;
+
+      const lastDoc = await ProfileExperience.findOne({ userId })
+        .sort({ uniqueId: -1 })
+        .lean();
+
+      const nextUniqueId = lastDoc ? lastDoc.uniqueId + 1 : 1;
+
+      const newExperience = new ProfileExperience({
+        ...experienceData,
+        uniqueId: nextUniqueId,
+      });
+
+      await newExperience.save();
+
+      // Award 20 points only if this is the user's first experience
+      if (isNewEntry) {
+        const totalExperiences = await ProfileExperience.countDocuments({
+          userId,
+        });
+        if (totalExperiences === 1) {
+          await addProfileScore({ userId, score: 20 });
+        }
+      }
+
+      return res.status(201).json({
+        message: "Profile experience created successfully.",
+        data: newExperience,
+      });
     }
-
-    // === CREATE FLOW ===
-    const lastDoc = await ProfileExperience.findOne({ userId })
-      .sort({ uniqueId: -1 })
-      .lean();
-
-    const nextUniqueId = lastDoc ? lastDoc.uniqueId + 1 : 1;
-
-    const newExperience = new ProfileExperience({
-      ...experienceData,
-      uniqueId: nextUniqueId,
-    });
-
-    await newExperience.save();
-
-    return res.status(201).json({
-      message: "Profile experience created successfully.",
-      data: newExperience,
-    });
   } catch (error) {
     console.error("Error handling profile experience:", error);
     return res.status(500).json({ error: "Internal Server Error" });

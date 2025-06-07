@@ -28,10 +28,6 @@ import Accomodation from "./PropertyComponents/Accomodation/Accomodation";
 import Hiring from "./PropertyComponents/Hiring/Hiring";
 import Applications from "./PropertyComponents/Applications/Applications";
 
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import { Navigation, Pagination } from "swiper/modules";
@@ -46,6 +42,7 @@ export default function ViewProperty() {
   const [property, setProperty] = useState("");
   const [loading, setLoading] = useState(true);
   const swiperRef = useRef(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   const tabsData = [
     {
@@ -189,6 +186,7 @@ export default function ViewProperty() {
   }, [getCategories]);
 
   const getAuthUser = useCallback(async () => {
+    setAuthLoading(true);
     try {
       const response = await API.get(`/profile`);
       setAuthUser(response.data);
@@ -198,12 +196,20 @@ export default function ViewProperty() {
           error.response.data.message ||
           error.message
       );
+    } finally {
+      setAuthLoading(false);
     }
   }, []);
 
   useEffect(() => {
     getAuthUser();
   }, [getAuthUser]);
+
+  if (!authLoading) {
+    if (!authUser?.permissions?.some((item) => item === "Read Property")) {
+      navigator("/dashboard/access-denied");
+    }
+  }
 
   const getProperty = useCallback(async () => {
     setLoading(true);

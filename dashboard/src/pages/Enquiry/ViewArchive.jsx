@@ -47,7 +47,7 @@ export default function ViewArchive() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read Archive")) {
+    if (!authUser?.permissions?.some((item) => item === "Read Archive")) {
       navigator("/dashboard/access-denied");
     }
   }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, Col, Row, Form, Button, Breadcrumb } from "react-bootstrap";
 import { useFormik } from "formik";
 import Skeleton from "react-loading-skeleton";
@@ -14,6 +14,36 @@ export default function EditBlogCategory() {
   const [statusOptions, setStatusOptions] = useState([]);
   const [categoryData, setCategoryData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [authUser, setAuthUser] = useState("");
+  const [authLoading, setAuthLoading] = useState(true);
+
+  const getAuhtUser = async () => {
+    setAuthLoading(true);
+    try {
+      const response = await API.get(`/profile`);
+      setAuthUser(response.data);
+    } catch (error) {
+      console.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          error.message
+      );
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAuhtUser();
+  }, []);
+
+  if (!authLoading) {
+    if (
+      !authUser?.permissions?.some((item) => item === "Update Blog Category")
+    ) {
+      navigator("/dashboard/access-denied");
+    }
+  }
 
   const fetchParentCategories = useCallback(async () => {
     try {

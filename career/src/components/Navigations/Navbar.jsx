@@ -35,7 +35,10 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center">
+        <Link
+          href={`${process.env.NEXT_PUBLIC_YP_URL}`}
+          className="flex items-center"
+        >
           <img
             src="/Images/yogprerna-logo.png"
             alt="Yog Prerna Logo"
@@ -52,7 +55,7 @@ export default function Navbar() {
           </Link>*/}
           {!token ? (
             <Link
-              href={`/login`}
+              href={`${process.env.NEXT_PUBLIC_YP_URL}/login`}
               className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
             >
               Login

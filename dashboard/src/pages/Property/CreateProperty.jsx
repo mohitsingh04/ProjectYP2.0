@@ -50,7 +50,7 @@ export default function CreateProperty() {
 
   if (!authLoading) {
     if (
-      !authUser?.permissions?.some((item) => item.value === "Create Property")
+      !authUser?.permissions?.some((item) => item === "Create Property")
     ) {
       navigator("/dashboard/access-denied");
     }
@@ -110,7 +110,9 @@ export default function CreateProperty() {
             title: "Success",
             text: response.data.message || "Property Added Successfully",
           });
-          navigator(`/dashboard/property/view/${response.data.property._id}?tab=basic-details`);
+          navigator(
+            `/dashboard/property/view/${response.data.property._id}?tab=basic-details`
+          );
           window.location.reload();
         }
       } catch (error) {

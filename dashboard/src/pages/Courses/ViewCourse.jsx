@@ -101,7 +101,7 @@ export default function ViewCourse() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read Course")) {
+    if (!authUser?.permissions?.some((item) => item === "Read Course")) {
       navigator("/dashboard/access-denied");
     }
   }

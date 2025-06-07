@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Breadcrumb, Button, Card, Col, Form, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import CreateTags from "./CreateTags";
 import { API } from "../../../context/API";
 import Swal from "sweetalert2";
 
 export default function Tags() {
+  const navigator = useNavigate();
   const [tags, setTags] = useState([]);
   const [filteredTags, setFilteredTags] = useState([]);
   const [search, setSearch] = useState("");
@@ -33,6 +34,13 @@ export default function Tags() {
   useEffect(() => {
     getAuhtUser();
   }, []);
+
+  if (!authLoading) {
+    if (!authUser?.permissions?.some((item) => item === "Read Blog Tags")) {
+      navigator("/dashboard/access-denied");
+    }
+  }
+
   // Fetch all tags
   const fetchTags = useCallback(async () => {
     try {
@@ -96,7 +104,7 @@ export default function Tags() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Blog Tags"
+                (item) => item === "Delete Blog Tags"
               ) && (
                 <Button
                   variant="danger"
@@ -132,9 +140,10 @@ export default function Tags() {
           </Button>
         </div>
       </div>
-
-      <CreateTags onAfterCreate={fetchTags} />
-
+      {!authLoading &&
+        authUser?.permissions.some((item) => item === "Create Blog Tags") && (
+          <CreateTags onAfterCreate={fetchTags} />
+        )}
       <Row>
         <Col md={12}>
           <Card>

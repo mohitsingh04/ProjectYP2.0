@@ -27,17 +27,28 @@ const ExperienceSection = ({
   properties,
 }: ExperienceSectionProps) => {
   const getPropertyDetails = (id: string) => {
-    const property = properties?.find(
+    return properties?.find(
       (item: any) => Number(item?.uniqueId) === Number(id)
     );
-    return property;
   };
+
   const getProfilePropertyDetails = (id: string) => {
-    const property = profileProperties?.find(
+    return profileProperties?.find(
       (item: any) => Number(item?.uniqueId) === Number(id)
     );
-    return property;
   };
+
+  // Group experiences by property_id
+  const groupedExperiences = experiences?.reduce(
+    (acc: Record<string, Experience[]>, exp) => {
+      const key = exp.property_id || `custom-${exp.property_name_id}`;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(exp);
+      return acc;
+    },
+    {}
+  );
+
   return (
     <Card>
       <Card.Body className="p-4">
@@ -50,58 +61,74 @@ const ExperienceSection = ({
             <Edit size={16} />
           </Button>
         </div>
+
         <div className="d-flex flex-column gap-4">
-          {experiences?.map((exp, index) => (
-            <div key={index} className="timeline-item">
-              <div className="d-flex gap-3">
-                {/* Company Image */}
-                <div
-                  className="rounded-3 overflow-hidden bg-light flex-shrink-0"
-                  style={{ width: "48px", height: "48px" }}
-                >
-                  {exp?.property_id ? (
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_MEDIA_URL}/${
-                        getPropertyDetails(exp?.property_id)?.property_logo?.[0]
-                      }`}
-                      alt={exp.position}
-                      className="w-100 h-100 object-fit-cover"
-                    />
-                  ) : (
-                    <RandomPixelLogo
-                      rows={8}
-                      cols={8}
-                      density={0.5}
-                      size={48}
-                    />
-                  )}
+          {groupedExperiences &&
+            Object?.entries(groupedExperiences).map(([key, group], index) => {
+              const first = group[0];
+              const property = first.property_id
+                ? getPropertyDetails(first.property_id)
+                : getProfilePropertyDetails(first.property_name_id);
+              const logoSrc = property?.property_logo?.[0];
+
+              return (
+                <div key={index} className="timeline-item">
+                  <div className="d-flex gap-3">
+                    <div
+                      className="rounded-3 overflow-hidden bg-light flex-shrink-0"
+                      style={{ width: "48px", height: "48px" }}
+                    >
+                      {first?.property_id && logoSrc ? (
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_MEDIA_URL}/${logoSrc}`}
+                          alt="Company Logo"
+                          className="w-100 h-100 object-fit-cover"
+                        />
+                      ) : (
+                        <RandomPixelLogo
+                          rows={8}
+                          cols={8}
+                          density={0.5}
+                          size={48}
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="fw-semibold mb-1">
+                        {property?.property_name || "Unknown Company"}
+                      </h3>
+                      {group.map((exp, i) => (
+                        <div key={i} className="mb-2">
+                          <strong>{exp.position}</strong>
+                          <p className="small text-muted mb-1">
+                            {exp.location}
+                          </p>
+                          <p className="small text-muted">
+                            {new Date(exp.start_date).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )}{" "}
+                            -{" "}
+                            {exp.currentlyWorking
+                              ? "Present"
+                              : new Date(exp.end_date).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    year: "numeric",
+                                  }
+                                )}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="fw-semibold mb-1">{exp.position}</h3>
-                  <p className="text-secondary mb-1">
-                    {exp.property_id
-                      ? getPropertyDetails(exp.property_id)?.property_name
-                      : getProfilePropertyDetails(exp.property_name_id)
-                          ?.property_name}
-                  </p>{" "}
-                  <p className="small text-muted mb-1">{exp.location}</p>
-                  <p className="small text-muted">
-                    {new Date(exp.start_date).toLocaleDateString("en-US", {
-                      month: "short",
-                      year: "numeric",
-                    })}{" "}
-                    -{" "}
-                    {exp.currentlyWorking
-                      ? "Present"
-                      : new Date(exp.end_date).toLocaleDateString("en-US", {
-                          month: "short",
-                          year: "numeric",
-                        })}
-                  </p>{" "}
-                </div>
-              </div>
-            </div>
-          ))}
+              );
+            })}
         </div>
       </Card.Body>
     </Card>

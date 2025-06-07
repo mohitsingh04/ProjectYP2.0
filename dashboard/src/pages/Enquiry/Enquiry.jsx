@@ -39,7 +39,7 @@ export default function Enquiry() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Read Enquiry")) {
+    if (!authUser?.permissions?.some((item) => item === "Read Enquiry")) {
       navigator("/dashboard/access-denied");
     }
   }
@@ -170,7 +170,7 @@ export default function Enquiry() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Read Enquiry"
+                (item) => item === "Read Enquiry"
               ) && (
                 <Link
                   to={`/dashboard/enquiry/view/${row._id}`}
@@ -180,7 +180,7 @@ export default function Enquiry() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Enquiry"
+                (item) => item === "Delete Enquiry"
               ) && (
                 <Button
                   variant="danger"

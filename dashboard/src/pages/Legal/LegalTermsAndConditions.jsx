@@ -12,6 +12,36 @@ export default function LegalTermsAndConditions() {
   const editor = useRef(null);
   const [loading, setLoading] = useState(true);
   const [legalPolicy, setLegalPolicy] = useState("");
+  const [authUser, setAuthUser] = useState("");
+  const [authLoading, setAuthLoading] = useState(true);
+
+  const getAuhtUser = async () => {
+    setAuthLoading(true);
+    try {
+      const response = await API.get(`/profile`);
+      setAuthUser(response.data);
+    } catch (error) {
+      console.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          error.message
+      );
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAuhtUser();
+  }, []);
+
+  if (!authLoading) {
+    if (
+      !authUser?.permissions?.some((item) => item === "Create Legal Policy")
+    ) {
+      navigator("/dashboard/access-denied");
+    }
+  }
 
   const formik = useFormik({
     initialValues: {

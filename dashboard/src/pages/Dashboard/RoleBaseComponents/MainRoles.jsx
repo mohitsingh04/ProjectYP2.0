@@ -9,6 +9,7 @@ export default function MainRoles({ authUser, properties }) {
   const [category, setCategory] = useState([]);
   const [course, setCourse] = useState([]);
   const [profile, setProfile] = useState("");
+  const [blogs, setBlogs] = useState([]);
 
   const getProfile = useCallback(async () => {
     try {
@@ -43,7 +44,18 @@ export default function MainRoles({ authUser, properties }) {
       console.log(error);
     }
   });
+  const getBlogs = useCallback(async () => {
+    try {
+      const response = await API.get(`/blog`);
+      setBlogs(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
+  useEffect(() => {
+    getBlogs();
+  }, [getBlogs]);
   useEffect(() => {
     getProfile();
   }, [getProfile]);
@@ -122,6 +134,13 @@ export default function MainRoles({ authUser, properties }) {
       count: category?.length || 0,
       icon: "fe-database",
       color: "light",
+      roles: ["Super Admin", "Editor"],
+    },
+    {
+      title: "Blogs",
+      count: blogs?.length || 0,
+      icon: "fe-book-open",
+      color: "primary",
       roles: ["Super Admin", "Editor"],
     },
   ];

@@ -50,7 +50,7 @@ export default function CreateBlog() {
   }, []);
 
   if (!authLoading) {
-    if (!authUser?.permissions?.some((item) => item.value === "Create Blog")) {
+    if (!authUser?.permissions?.some((item) => item === "Create Blog")) {
       navigator("/dashboard/access-denied");
     }
   }

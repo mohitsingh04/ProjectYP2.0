@@ -40,9 +40,7 @@ export default function CreateCategory() {
   }, []);
 
   if (!authLoading) {
-    if (
-      !authUser?.permissions?.some((item) => item.value === "Create Category")
-    ) {
+    if (!authUser?.permissions?.some((item) => item === "Create Category")) {
       navigator("/dashboard/access-denied");
     }
   }

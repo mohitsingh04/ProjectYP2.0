@@ -73,7 +73,6 @@ const ExperienceEditModal = ({
         />
       ) : (
         <ExpereninceModalList
-          getProfile={getProfile}
           editableExperiences={editableExperiences}
           onClose={onClose}
           profileProperties={profileProperties}

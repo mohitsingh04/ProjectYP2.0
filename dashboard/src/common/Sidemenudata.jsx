@@ -48,6 +48,17 @@ export const MENUITEMS = [
     ],
   },
   {
+    path: `/dashboard/professionals`,
+    title: "Professionals",
+    icon: "fe-user-check",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+    role: ["Super Admin", "Editor", "Property Manager", "User"],
+  },
+
+  {
     title: "Status",
     icon: "fe-bar-chart",
     type: "sub",

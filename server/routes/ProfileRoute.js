@@ -20,12 +20,16 @@ import {
   DeleteProfileAvatar,
   DeleteProfileBanner,
   GetAllProfileUser,
+  GetProfileUserByObjectId,
   ProfileAvatarChange,
   ProfileBannerChange,
   SwitchProfessionalMail,
   UpdateProfileUser,
 } from "../ProfileController/ProfileUserController.js";
-import { addProfileLocation } from "../ProfileController/ProfileLocationController.js";
+import {
+  addProfileLocation,
+  getLocationByUserId,
+} from "../ProfileController/ProfileLocationController.js";
 import {
   processImage,
   ProfileResuemUploadMulter,
@@ -65,6 +69,7 @@ import {
   GetAllProfieInstitute,
   GetEducationByUserId,
 } from "../ProfileController/ProfileEducationController.js";
+import { getProfileScoreById } from "../ProfileController/ProfileScoreController.js";
 
 const profileRoutes = express.Router();
 profileRoutes.use(bodyParser.json());
@@ -92,6 +97,7 @@ profileRoutes.get(
 
 const avatarUpload = upload.fields([{ name: "avatar", maxCount: 1 }]);
 profileRoutes.get(`/profile/users`, GetAllProfileUser);
+profileRoutes.get(`/profile/user/:objectId`, GetProfileUserByObjectId);
 profileRoutes.patch(`/profile/user/:objectId`, UpdateProfileUser);
 profileRoutes.patch(
   `/profile/user/avatar/:userId`,
@@ -107,6 +113,7 @@ profileRoutes.get(
 );
 
 profileRoutes.patch(`/profile/location`, addProfileLocation);
+profileRoutes.get(`/profile/location/:userId`, getLocationByUserId);
 
 const bannerUpload = upload.fields([{ name: "banner", maxCount: 1 }]);
 profileRoutes.patch(
@@ -128,7 +135,7 @@ const resumeUpload = ProfileResuemUploadMulter.fields([
 ]);
 profileRoutes.post("/profile/doc/resume", resumeUpload, SaveProfileResume);
 profileRoutes.get("/profile/doc/resume/:userId", GetProfileResumeByUserId);
-profileRoutes.get("/profile/doc/resume",GetProfilesResumeAll)
+profileRoutes.get("/profile/doc/resume", GetProfilesResumeAll);
 
 profileRoutes.patch(`/profile/skill`, AddProfileSkill);
 profileRoutes.patch(`/profile/skill/remove/:uniqueId`, RemoveProfileSkill);
@@ -155,5 +162,7 @@ profileRoutes.delete(`/profile/education/:uniqueId`, DeleteEducationById);
 
 profileRoutes.get(`/profile/degree`, GetAllProfieDegree);
 profileRoutes.get(`/profile/institute`, GetAllProfieInstitute);
+
+profileRoutes.get(`/profile/score/:userId`, getProfileScoreById);
 
 export default profileRoutes;
