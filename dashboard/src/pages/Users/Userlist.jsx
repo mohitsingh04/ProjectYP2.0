@@ -175,9 +175,7 @@ export default function Userlist() {
         <div className="d-flex gap-1">
           {!authLoading && (
             <>
-              {authUser?.permissions?.some(
-                (item) => item.value === "Read User"
-              ) && (
+              {authUser?.permissions?.some((item) => item === "Read User") && (
                 <Link
                   to={`/dashboard/user/view/${row._id}`}
                   className="btn btn-primary btn-sm"
@@ -186,7 +184,7 @@ export default function Userlist() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Update User"
+                (item) => item === "Update User"
               ) && (
                 <Link
                   to={`/dashboard/user/edit/${row._id}`}
@@ -196,7 +194,7 @@ export default function Userlist() {
                 </Link>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete User"
+                (item) => item === "Delete User"
               ) && (
                 <Button
                   variant="danger"

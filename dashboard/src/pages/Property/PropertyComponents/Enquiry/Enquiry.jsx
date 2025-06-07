@@ -186,7 +186,7 @@ export default function Enquiry() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Read Enquiry"
+                (item) => item === "Read Enquiry"
               ) && (
                 <Button
                   className="btn btn-primary btn-sm"
@@ -196,7 +196,7 @@ export default function Enquiry() {
                 </Button>
               )}
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Enquiry"
+                (item) => item === "Delete Enquiry"
               ) && (
                 <Button
                   variant="danger"

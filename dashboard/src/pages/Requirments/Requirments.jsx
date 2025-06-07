@@ -100,7 +100,7 @@ export default function Requirments() {
           {!authLoading && (
             <>
               {authUser?.permissions?.some(
-                (item) => item.value === "Delete Blog Tags"
+                (item) => item === "Delete Blog Tags"
               ) && (
                 <Button
                   variant="danger"
