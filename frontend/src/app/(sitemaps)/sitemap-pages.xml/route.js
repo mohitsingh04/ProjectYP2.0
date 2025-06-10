@@ -5,8 +5,9 @@ export async function GET() {
     { path: "", priority: 1.0, changefreq: "weekly" },
     { path: "/properties", priority: 0.9, changefreq: "weekly" },
     { path: "/blog", priority: 0.8, changefreq: "weekly" },
-    { path: "/terms-and-conditions", priority: 0.5, changefreq: "yearly" },
-    { path: "/privacy-policy", priority: 0.5, changefreq: "yearly" },
+    { path: "/events", priority: 0.8, changefreq: "weekly" },
+    { path: "/register", priority: 0.8, changefreq: "weekly" },
+    { path: "/login", priority: 0.8, changefreq: "weekly" },
   ];
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

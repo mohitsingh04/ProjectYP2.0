@@ -303,6 +303,35 @@ export const MENUITEMS = [
     ],
   },
   {
+    title: "Events",
+    icon: "fe-calendar",
+    type: "sub",
+    menusub: true,
+    active: false,
+    selected: false,
+    dirchange: false,
+    role: ["Super Admin", "Editor"],
+    children: [
+      {
+        path: `/dashboard/events`,
+        type: "link",
+        active: false,
+        selected: false,
+        dirchange: false,
+        title: "All Events",
+      },
+      {
+        path: `/dashboard/events/create`,
+        type: "link",
+        active: false,
+        selected: false,
+        dirchange: false,
+        title: "Create Events",
+      },
+    ],
+  },
+
+  {
     title: "Requirments",
     icon: "fe-clipboard",
     type: "link",

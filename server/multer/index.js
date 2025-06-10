@@ -73,6 +73,19 @@ export const ResuemUploadMulter = multer({
     fieldSize: 100 * 1024 * 1024,
   },
 });
+const eventStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "../media/events"),
+  filename: (req, file, cb) => {
+    cb(null, `img-${Date.now()}-${file.originalname.toLowerCase()}`);
+  },
+});
+export const eventUploadMulter = multer({
+  storage: eventStorage,
+  limits: {
+    fileSize: 100 * 1024 * 1024,
+    fieldSize: 100 * 1024 * 1024,
+  },
+});
 
 const ProfileResumeStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "./images"),

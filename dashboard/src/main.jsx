@@ -86,6 +86,10 @@ import BlogSeo from "./pages/Blogs/SEO/blogSeo";
 import YourProperty from "./pages/Property/YourProperty";
 import ProfessionalsList from "./pages/Professional/ProfessionalsList";
 import ProfessionalView from "./pages/Professional/ProfessionalView";
+import Events from "./pages/Events/Events";
+import CreateEvent from "./pages/Events/CreateEvent";
+import EventView from "./pages/Events/EventView";
+import UpdateEvent from "./pages/Events/UpdateEvent";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
@@ -176,6 +180,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               
               <Route path="/dashboard/key-outcomes" element={<ProtectedRoutes><KeyOUtComes/></ProtectedRoutes>} />
               <Route path="/dashboard/requirments" element={<ProtectedRoutes><Requirments/></ProtectedRoutes>} />
+
+              <Route path="/dashboard/events" element={<ProtectedRoutes><Events/></ProtectedRoutes>}/>
+              <Route path="/dashboard/events/create" element={<ProtectedRoutes><CreateEvent/></ProtectedRoutes>}/>
+              <Route path="/dashboard/events/view/:objectId" element={<ProtectedRoutes><EventView/></ProtectedRoutes>}/>
+              <Route path="/dashboard/events/edit/:objectId" element={<ProtectedRoutes><UpdateEvent/></ProtectedRoutes>}/>
             </Route>
           </Routes>
         </BrowserRouter>

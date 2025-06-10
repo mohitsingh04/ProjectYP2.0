@@ -148,7 +148,7 @@ export default function Blog() {
                         <Link href="/">Home</Link>
                       </li>
                       <li className="breadcrumb-item" aria-current="page">
-                        <Link href="/blog">Blogs</Link>
+                        <Link href="/blog">Blog</Link>
                       </li>
                       <li className="breadcrumb-item" aria-current="page">
                         {blog?.title}
@@ -165,6 +165,7 @@ export default function Blog() {
             <div className="row">
               <div className="col-lg-9 col-md-12">
                 <div className="blog">
+                  <h3 className="blog-title">{blog?.title}</h3>
                   <div className="blog-image">
                     <img
                       className="img-fluid"
@@ -202,11 +203,6 @@ export default function Blog() {
                       </ul>
                     </div>
                   </div>
-                  <h3 className="blog-title">
-                    {/* {courese?.course_name}{" "}
-                    {courese?.course_short_name &&
-                      `(${courese?.course_short_name})`} */}
-                  </h3>
                   <div className="blog-content">
                     <p
                       dangerouslySetInnerHTML={{

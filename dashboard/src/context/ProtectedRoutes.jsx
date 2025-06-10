@@ -86,6 +86,10 @@ export default function ProtectedRoutes({ children }) {
       "dashboard/blogs/tags",
       "dashboard/key-outcomes",
       "dashboard/requirments",
+      "/dashboard/events",
+      "/dashboard/events/create",
+      "/dashboard/events/view/:objectId",
+      "/dashboard/events/edit/:objectId",
     ],
     "Super Admin": [
       "/dashboard",
@@ -133,6 +137,10 @@ export default function ProtectedRoutes({ children }) {
       "dashboard/course/soft",
       "dashboard/professionals",
       "dashboard/professionals/view/:object",
+      "/dashboard/events",
+      "/dashboard/events/create",
+      "/dashboard/events/view/:objectId",
+      "/dashboard/events/edit/:objectId",
     ],
   };
 

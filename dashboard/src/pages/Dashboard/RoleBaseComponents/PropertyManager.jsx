@@ -103,7 +103,7 @@ export default function PropertyManager({ authUser, properties }) {
       title: "Teachers",
       count: teachers?.length || 0,
       icon: "fe-users",
-      color: "dark",
+      color: "danger",
     },
     {
       title: "Reviews",

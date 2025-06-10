@@ -10,6 +10,7 @@ export default function MainRoles({ authUser, properties }) {
   const [course, setCourse] = useState([]);
   const [profile, setProfile] = useState("");
   const [blogs, setBlogs] = useState([]);
+  const [professionals, setProfessionals] = useState([]);
 
   const getProfile = useCallback(async () => {
     try {
@@ -35,7 +36,7 @@ export default function MainRoles({ authUser, properties }) {
     } catch (error) {
       console.log(error);
     }
-  });
+  }, []);
   const getCategory = useCallback(async () => {
     try {
       const response = await API.get(`/category`);
@@ -43,7 +44,7 @@ export default function MainRoles({ authUser, properties }) {
     } catch (error) {
       console.log(error);
     }
-  });
+  }, []);
   const getBlogs = useCallback(async () => {
     try {
       const response = await API.get(`/blog`);
@@ -51,11 +52,23 @@ export default function MainRoles({ authUser, properties }) {
     } catch (error) {
       console.log(error);
     }
-  });
+  }, []);
+  const getProfessionals = useCallback(async () => {
+    try {
+      const response = await API.get(`/profile/users`);
+      setProfessionals(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   useEffect(() => {
     getBlogs();
   }, [getBlogs]);
+  useEffect(() => {
+    getProfessionals();
+  }, [getProfessionals]);
+
   useEffect(() => {
     getProfile();
   }, [getProfile]);
@@ -102,15 +115,31 @@ export default function MainRoles({ authUser, properties }) {
     {
       title: "User",
       count: users.filter((item) => item.role === "User").length || 0,
-      icon: "fe-user",
+      icon: "fe-user-check",
       color: "warning",
+      roles: ["Super Admin"],
+    },
+    {
+      title: "Profiles",
+      count: professionals.filter((item) => item.role === "User").length || 0,
+      icon: "fe-file-text",
+      color: "dark",
+      roles: ["Super Admin"],
+    },
+    {
+      title: "Professionals",
+      count:
+        professionals.filter((item) => item.role === "Professionals").length ||
+        0,
+      icon: "fe-clipboard",
+      color: "light",
       roles: ["Super Admin"],
     },
     {
       title: "Properties",
       count: properties?.length || 0,
       icon: "fe-layers",
-      color: "info",
+      color: "secondary",
       roles: ["Super Admin", "Editor"],
     },
     {
@@ -119,27 +148,27 @@ export default function MainRoles({ authUser, properties }) {
         properties.filter((item) => item?.userId === profile?.uniqueId)
           ?.length || 0,
       icon: "fe-briefcase",
-      color: "primary",
+      color: "info",
       roles: ["Super Admin", "Editor"],
     },
     {
       title: "Course",
       count: course?.length || 0,
       icon: "fe-book-open",
-      color: "dark",
+      color: "danger",
       roles: ["Super Admin", "Editor"],
     },
     {
       title: "Category",
       count: category?.length || 0,
       icon: "fe-database",
-      color: "light",
+      color: "warning",
       roles: ["Super Admin", "Editor"],
     },
     {
       title: "Blogs",
       count: blogs?.length || 0,
-      icon: "fe-book-open",
+      icon: "fe-edit-3",
       color: "primary",
       roles: ["Super Admin", "Editor"],
     },

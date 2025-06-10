@@ -4,6 +4,7 @@ import {
   blogUploadMulter,
   categoryUploadMulter,
   courseUploadMulter,
+  eventUploadMulter,
   processImage,
   ResuemUploadMulter,
   upload,
@@ -235,6 +236,14 @@ import {
   getSeoByBlogId,
   updateBlogSeo,
 } from "../controller/BlogSeoController.js";
+import {
+  CreateEvent,
+  deleteEvent,
+  getAllEvents,
+  getEventsbyId,
+  UpdateEvent,
+} from "../controller/EventsController.js";
+import { getYogaType } from "../controller/YogaTypeController.js";
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -527,5 +536,18 @@ router.get(`/apply/applications/:property_id`, getApplyHiringByPropertyId);
 //? User Doc Routes
 router.get(`/user/doc/all`, getAllResume);
 router.get(`/user/doc/:userId`, getResumeByUserId);
+
+//? Events Routes
+const eventsUpload = eventUploadMulter.fields([
+  { name: "featured_image", maxCount: 1 },
+]);
+router.post(`/events`, eventsUpload, processImage, CreateEvent);
+router.get(`/events`, getAllEvents);
+router.delete(`/event/:objectId`, deleteEvent);
+router.get(`/event/:objectId`, getEventsbyId);
+router.patch(`/event/:objectId`, eventsUpload, processImage, UpdateEvent);
+
+//?Yoga Types Route
+router.get(`/yoga-types`, getYogaType);
 
 export default router;

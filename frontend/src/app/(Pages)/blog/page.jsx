@@ -6,6 +6,9 @@ import React, { useCallback, useEffect, useState } from "react";
 export default function AllBlogs() {
   const [blogs, setBlogs] = useState([]);
   const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // ✅
+  const blogsPerPage = 12; // ✅
+
   const getBlogs = useCallback(async () => {
     try {
       const resposnse = await API.get(`/blog`);
@@ -27,7 +30,6 @@ export default function AllBlogs() {
       console.log(error);
     }
   }, []);
-
   useEffect(() => {
     getUsers();
   }, [getUsers]);
@@ -35,6 +37,19 @@ export default function AllBlogs() {
   const getUserToRelatedId = (id) => {
     const val = users.find((item) => item.uniqueId === Number(id));
     return val ? val?.name : "Unknown";
+  };
+
+  const totalPages = Math.ceil(blogs.length / blogsPerPage); // ✅
+  const paginatedBlogs = blogs.slice(
+    // ✅
+    (currentPage - 1) * blogsPerPage,
+    currentPage * blogsPerPage
+  );
+
+  const handlePageClick = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   return (
@@ -63,8 +78,8 @@ export default function AllBlogs() {
         <div className="section py-5">
           <div className="container">
             <div className="row">
-              {blogs.map((blog, index) => (
-                <div className="col-lg-4 col-md-6 d-flex">
+              {paginatedBlogs.map((blog, index) => (
+                <div className="col-lg-4 col-md-6 d-flex" key={index}>
                   <div className="course-box d-flex aos" data-aos="fade-up">
                     <div className="product">
                       <div className="product-img">
@@ -100,19 +115,61 @@ export default function AllBlogs() {
                             {blog?.title}
                           </Link>
                         </h3>
-                        {/* <div className="course-info d-flex align-items-center border-0">
-                          <div className="rating-img d-flex align-items-center">
-                            <p>ll</p>
-                          </div>
-                          <div className="course-view d-flex align-items-center">
-                            <p>ll</p>
-                          </div>
-                        </div> */}
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Pagination */}
+            <div className="row">
+              <div className="col-md-12">
+                <ul className="pagination lms-page lms-pagination">
+                  <li
+                    className={`page-item prev ${
+                      currentPage === 1 ? "disabled" : ""
+                    }`}
+                  >
+                    <a
+                      className="page-link"
+                      href="#"
+                      onClick={() => handlePageClick(currentPage - 1)}
+                    >
+                      <i className="fas fa-angle-left"></i>
+                    </a>
+                  </li>
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <li
+                      key={i}
+                      className={`page-item ${
+                        currentPage === i + 1 ? "active" : ""
+                      }`}
+                    >
+                      <a
+                        className="page-link"
+                        href="#"
+                        onClick={() => handlePageClick(i + 1)}
+                      >
+                        {i + 1}
+                      </a>
+                    </li>
+                  ))}
+                  <li
+                    className={`page-item next ${
+                      currentPage === totalPages ? "disabled" : ""
+                    }`}
+                  >
+                    <a
+                      className="page-link"
+                      href="#"
+                      onClick={() => handlePageClick(currentPage + 1)}
+                    >
+                      <i className="fas fa-angle-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

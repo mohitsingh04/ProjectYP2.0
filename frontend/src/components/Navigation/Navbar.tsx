@@ -111,8 +111,8 @@ export default function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <Link href={`/`} className="submenu">
-                    Contact
+                  <Link href={`/events`} className="submenu">
+                    Events
                   </Link>
                 </li>
               </ul>
