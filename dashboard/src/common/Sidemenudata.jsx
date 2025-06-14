@@ -57,6 +57,16 @@ export const MENUITEMS = [
     dirchange: false,
     role: ["Super Admin", "Editor", "Property Manager", "User"],
   },
+  {
+    path: `/dashboard/searches`,
+    title: "Searches",
+    icon: "fe-search",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+    role: ["Super Admin", "Editor", "Property Manager", "User"],
+  },
 
   {
     title: "Status",

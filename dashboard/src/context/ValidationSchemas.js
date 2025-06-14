@@ -153,9 +153,8 @@ export const faqValidation = Yup.object({
 
 export const reviewValidation = Yup.object({
   name,
-  email,
-  phone_number: mobile_no,
-  gender: Yup.string().required("Gender is required"),
+  email: Yup.string().email("Invalid email"),
+  phone_number: Yup.string(),
   review: Yup.string()
     .max(1500, "Review must be 1500 characters or less")
     .required("Review is required"),

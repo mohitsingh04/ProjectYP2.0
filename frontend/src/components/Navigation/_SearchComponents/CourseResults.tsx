@@ -13,11 +13,13 @@ interface Course {
 interface CourseResultsProps {
   Results: Course[];
   handleClose: () => void;
+  handleStoreSearch: () => void;
 }
 
 export default function CourseResults({
   Results,
   handleClose,
+  handleStoreSearch,
 }: CourseResultsProps) {
   return (
     <div>
@@ -32,7 +34,10 @@ export default function CourseResults({
               href={`/course/${item.uniqueId}/${item.course_name
                 .replace(/\s+/g, "-")
                 .toLowerCase()}`}
-              onClick={handleClose}
+              onClick={async () => {
+                handleStoreSearch();
+                handleClose();
+              }}
             >
               <div className="bg-light p-2 border d-flex justify-content-between">
                 <div className="d-flex">

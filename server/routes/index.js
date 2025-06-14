@@ -110,7 +110,6 @@ import {
   getSeoByPropertyId,
   updateSeo,
 } from "../controller/SeoController.js";
-import { addSearch, getSearch } from "../controller/SearchController.js";
 import {
   addPropertyCourse,
   deletePropertyCourse,
@@ -426,10 +425,6 @@ router.patch("/seo/:objectId", updateSeo);
 router.delete("/seo/:objectId", deleteSeo);
 router.get("/seo/:objectId", getSeoById);
 router.get("/seo/property/:property_id", getSeoByPropertyId);
-
-// Search
-router.get("/search", getSearch);
-router.post("/search", addSearch);
 
 //? Property Course
 router.get("/property-course", getPropertyCourse);

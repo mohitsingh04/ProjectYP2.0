@@ -13,7 +13,6 @@ export default function EditReview({ review, getReview, setReviews }) {
       name: review?.name || "",
       email: review?.email || "",
       phone_number: review?.phone_number || "",
-      gender: review?.gender || "",
       review: review?.review || "",
       rating: review?.rating || 0,
     },
@@ -98,45 +97,6 @@ export default function EditReview({ review, getReview, setReviews }) {
                       {formik.errors.phone_number && (
                         <div className="text-danger">
                           {formik.errors.phone_number}
-                        </div>
-                      )}
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Gender</Form.Label>
-                      <div>
-                        <Form.Check
-                          inline
-                          type="radio"
-                          label="Male"
-                          name="gender"
-                          value="male"
-                          checked={formik.values.gender === "male"}
-                          onChange={formik.handleChange}
-                        />
-                        <Form.Check
-                          inline
-                          type="radio"
-                          label="Female"
-                          name="gender"
-                          value="female"
-                          checked={formik.values.gender === "female"}
-                          onChange={formik.handleChange}
-                        />
-                        <Form.Check
-                          inline
-                          type="radio"
-                          label="Other"
-                          name="gender"
-                          value="other"
-                          checked={formik.values.gender === "other"}
-                          onChange={formik.handleChange}
-                        />
-                      </div>
-                      {formik.errors.gender && (
-                        <div className="text-danger">
-                          {formik.errors.gender}
                         </div>
                       )}
                     </Form.Group>

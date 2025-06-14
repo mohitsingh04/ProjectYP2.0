@@ -1,47 +1,35 @@
 import Review from "../models/Reviews.js";
-
 export const addReview = async (req, res) => {
   try {
-    const {
-      userId,
-      property_id,
-      name,
-      email,
-      phone_number,
-      gender,
-      rating,
-      review,
-    } = req.body;
+    const { userId, property_id, name, email, phone_number, rating, review } =
+      req.body;
 
-    if (
-      !userId ||
-      !property_id ||
-      !name ||
-      !email ||
-      !phone_number ||
-      !rating ||
-      !review
-    ) {
-      return res.status(400).json({ error: "All fields are required!" });
+    if (!userId || !property_id || !name || !rating || !review) {
+      return res.status(400).json({ error: "Missing required fields!" });
     }
 
-    const existPhoneReview = await Review.findOne({
-      phone_number: `+${phone_number}`,
-      property_id: property_id,
-    });
-    if (existPhoneReview) {
-      return res
-        .status(400)
-        .json({ error: "Review already exists for this phone number!" });
+    if (phone_number) {
+      const existPhoneReview = await Review.findOne({
+        phone_number: `+${phone_number}`,
+        property_id,
+      });
+      if (existPhoneReview) {
+        return res
+          .status(400)
+          .json({ error: "Review already exists for this phone number!" });
+      }
     }
-    const existEmailReview = await Review.findOne({
-      email,
-      property_id: property_id,
-    });
-    if (existEmailReview) {
-      return res
-        .status(400)
-        .json({ error: "Review already exists for this email!" });
+
+    if (email) {
+      const existEmailReview = await Review.findOne({
+        email,
+        property_id,
+      });
+      if (existEmailReview) {
+        return res
+          .status(400)
+          .json({ error: "Review already exists for this email!" });
+      }
     }
 
     const lastReview = await Review.findOne().sort({ _id: -1 });
@@ -53,8 +41,7 @@ export const addReview = async (req, res) => {
       property_id,
       name,
       email,
-      phone_number: `+${phone_number}`,
-      gender,
+      phone_number: phone_number ? `+${phone_number}` : undefined,
       rating,
       review,
     });
@@ -65,6 +52,7 @@ export const addReview = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 export const getReview = async (req, res) => {
   try {
     const reviews = await Review.find();
@@ -120,15 +108,16 @@ export const getReviewByPropertyId = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 export const updateReview = async (req, res) => {
   try {
     const { uniqueId } = req.params;
-    const { name, gender, phone_number, email, rating, review } = req.body;
+    const { name, phone_number, email, rating, review } = req.body;
 
-    if (!uniqueId || !review) {
-      return res
-        .status(400)
-        .json({ error: "Unique ID and review are required." });
+    if (!uniqueId || (!name && !phone_number && !email && !rating && !review)) {
+      return res.status(400).json({
+        error: "Unique ID and at least one field to update are required.",
+      });
     }
 
     const currentReview = await Review.findOne({ uniqueId });
@@ -136,35 +125,41 @@ export const updateReview = async (req, res) => {
       return res.status(404).json({ error: "Review not found." });
     }
 
+    const updateFields = {};
+
+    if (name) updateFields.name = name;
+    if (rating) updateFields.rating = rating;
+    if (review) updateFields.review = review;
+
     if (phone_number) {
+      const formattedPhone = phone_number.startsWith("+")
+        ? phone_number
+        : `+${phone_number}`;
+
       const phoneExists = await Review.findOne({
-        phone_number: `+${phone_number}`,
+        phone_number: formattedPhone,
         _id: { $ne: currentReview._id },
-        property_id: currentReview?.property_id,
+        property_id: currentReview.property_id,
       });
+
       if (phoneExists) {
         return res.status(400).json({ error: "Phone number already in use." });
       }
+
+      updateFields.phone_number = formattedPhone;
     }
 
     if (email) {
       const emailExists = await Review.findOne({
         email,
         _id: { $ne: currentReview._id },
-        property_id: currentReview?.property_id,
+        property_id: currentReview.property_id,
       });
+
       if (emailExists) {
         return res.status(400).json({ error: "Email already in use." });
       }
-    }
 
-    const updateFields = { name, gender, rating, review };
-
-    if (phone_number) {
-      updateFields.phone_number = `+${phone_number}`;
-    }
-
-    if (email) {
       updateFields.email = email;
     }
 
@@ -174,9 +169,12 @@ export const updateReview = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    return res.status(200).json({ message: "Review updated successfully." });
+    return res.status(200).json({
+      message: "Review updated successfully.",
+      review: updatedReview,
+    });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Internal Server Error." });
   }
 };

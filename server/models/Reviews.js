@@ -21,9 +21,6 @@ const ReviewSchema = new mongoose.Schema({
   phone_number: {
     type: String,
   },
-  gender: {
-    type: String,
-  },
   rating: {
     type: Number,
     required: [true, "Please Provide a rating"],

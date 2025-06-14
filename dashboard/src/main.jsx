@@ -90,6 +90,8 @@ import Events from "./pages/Events/Events";
 import CreateEvent from "./pages/Events/CreateEvent";
 import EventView from "./pages/Events/EventView";
 import UpdateEvent from "./pages/Events/UpdateEvent";
+import Searches from "./pages/Searches/Searches";
+import SearchView from "./pages/Searches/SearchView";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
@@ -180,6 +182,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               
               <Route path="/dashboard/key-outcomes" element={<ProtectedRoutes><KeyOUtComes/></ProtectedRoutes>} />
               <Route path="/dashboard/requirments" element={<ProtectedRoutes><Requirments/></ProtectedRoutes>} />
+
+              <Route path="/dashboard/searches" element={<ProtectedRoutes><Searches/></ProtectedRoutes>} />
+              <Route path="/dashboard/search/:objectId" element={<ProtectedRoutes><SearchView/></ProtectedRoutes>} />
 
               <Route path="/dashboard/events" element={<ProtectedRoutes><Events/></ProtectedRoutes>}/>
               <Route path="/dashboard/events/create" element={<ProtectedRoutes><CreateEvent/></ProtectedRoutes>}/>

@@ -140,17 +140,19 @@ export default function Reviews() {
                               <Col>
                                 <strong>Name:</strong> {review.name}
                               </Col>
-                              <Col>
-                                <strong>Email:</strong> {review.email}
-                              </Col>
+                              {review?.email && (
+                                <Col>
+                                  <strong>Email:</strong> {review.email}
+                                </Col>
+                              )}
                             </Row>
                             <Row>
-                              <Col>
-                                <strong>Contact:</strong> {review.phone_number}
-                              </Col>
-                              <Col>
-                                <strong>Gender:</strong> {review.gender}
-                              </Col>
+                              {review?.phone_number && (
+                                <Col>
+                                  <strong>Contact:</strong>{" "}
+                                  {review.phone_number}
+                                </Col>
+                              )}
                             </Row>
                             <p className="mt-2">
                               <strong>Rating:</strong>{" "}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 import PropertyResults from "./_SearchComponents/PropertyResults";
 import CourseResults from "./_SearchComponents/CourseResults";
@@ -46,7 +46,6 @@ export default function SearchModal({ show, setShow }: SearchModalProps) {
           propertyData.filter((item: Property) => item.status === "Active")
         );
 
-        console.log(properties);
         const courseRes = await API.get("/course");
         const courseData: Course[] = courseRes.data;
 
@@ -103,9 +102,20 @@ export default function SearchModal({ show, setShow }: SearchModalProps) {
     }
   };
 
+  const handleStoreSearch = useCallback(async () => {
+    try {
+      const payload = { search };
+      const response = await API.post("/search", payload);
+      console.log(response.data.message);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [search]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && search.length >= 3) {
       router.push(`/search/${search}`);
+      handleStoreSearch();
       handleClose();
     }
   };
@@ -152,11 +162,16 @@ export default function SearchModal({ show, setShow }: SearchModalProps) {
           <PropertyResults
             Results={propertyResults}
             handleClose={handleClose}
+            handleStoreSearch={handleStoreSearch}
           />
         )}
 
         {search.length >= 3 && courseResults.length > 0 && (
-          <CourseResults Results={courseResults} handleClose={handleClose} />
+          <CourseResults
+            Results={courseResults}
+            handleClose={handleClose}
+            handleStoreSearch={handleStoreSearch}
+          />
         )}
 
         {search.length >= 3 &&

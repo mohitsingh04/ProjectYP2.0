@@ -14,11 +14,13 @@ interface PropertyItem {
 interface PropertyResultsProps {
   Results: PropertyItem[];
   handleClose: () => void;
+  handleStoreSearch: () => void;
 }
 
 export default function PropertyResults({
   Results,
   handleClose,
+  handleStoreSearch,
 }: PropertyResultsProps) {
   return (
     <div>
@@ -33,7 +35,10 @@ export default function PropertyResults({
               href={`/property/${item.uniqueId}/${item?.property_name
                 ?.replace(/\s+/g, "-")
                 ?.toLowerCase()}`}
-              onClick={handleClose}
+              onClick={async () => {
+                handleStoreSearch();
+                handleClose();
+              }}
             >
               <div className="bg-light p-2 border d-flex justify-content-between">
                 <div className="d-flex">

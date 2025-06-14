@@ -18,6 +18,11 @@ import {
   getAllRanks,
   getRankByPropertyId,
 } from "../AnalyticController/RankController.js";
+import {
+  addSearch,
+  getAllSearches,
+  getSearchesById,
+} from "../AnalyticController/SearchController.js";
 
 const analyticRouter = express.Router();
 analyticRouter.use(bodyParser.json());
@@ -44,5 +49,10 @@ analyticRouter.get(
 //? Ranks
 analyticRouter.get(`/property/rank/:property_id`, getRankByPropertyId);
 analyticRouter.get(`/ranks`, getAllRanks);
+
+//? Search
+analyticRouter.post(`/search`, addSearch);
+analyticRouter.get(`/search`, getAllSearches);
+analyticRouter.get(`/search/:objectId`, getSearchesById);
 
 export default analyticRouter;

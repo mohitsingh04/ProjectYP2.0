@@ -90,6 +90,8 @@ export default function ProtectedRoutes({ children }) {
       "/dashboard/events/create",
       "/dashboard/events/view/:objectId",
       "/dashboard/events/edit/:objectId",
+      "dashboard/searches",
+      "dashboard/search/:objectId",
     ],
     "Super Admin": [
       "/dashboard",
@@ -141,6 +143,8 @@ export default function ProtectedRoutes({ children }) {
       "/dashboard/events/create",
       "/dashboard/events/view/:objectId",
       "/dashboard/events/edit/:objectId",
+      "dashboard/searches",
+      "dashboard/search/:objectId",
     ],
   };
 

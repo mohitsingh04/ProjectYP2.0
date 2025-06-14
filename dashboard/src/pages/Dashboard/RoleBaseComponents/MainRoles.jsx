@@ -121,7 +121,9 @@ export default function MainRoles({ authUser, properties }) {
     },
     {
       title: "Profiles",
-      count: professionals.filter((item) => item.role === "User").length || 0,
+      count:
+        professionals.filter((item) => item.role === "Professional").length ||
+        0,
       icon: "fe-file-text",
       color: "dark",
       roles: ["Super Admin"],

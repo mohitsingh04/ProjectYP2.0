@@ -23,7 +23,6 @@ export default function AddReview({ property, getReview }) {
       name: "",
       email: "",
       phone_number: "",
-      gender: "",
       review: "",
       rating: 0,
     },
@@ -110,45 +109,6 @@ export default function AddReview({ property, getReview }) {
                       {formik.errors.phone_number && (
                         <div className="text-danger">
                           {formik.errors.phone_number}
-                        </div>
-                      )}
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Gender</Form.Label>
-                      <div>
-                        <Form.Check
-                          inline
-                          type="radio"
-                          label="Male"
-                          id="gender-male"
-                          name="gender"
-                          value="male"
-                          onChange={formik.handleChange}
-                        />
-                        <Form.Check
-                          inline
-                          type="radio"
-                          id="gender-female"
-                          label="Female"
-                          name="gender"
-                          value="female"
-                          onChange={formik.handleChange}
-                        />
-                        <Form.Check
-                          inline
-                          type="radio"
-                          id="gender-other"
-                          label="Other"
-                          name="gender"
-                          value="other"
-                          onChange={formik.handleChange}
-                        />
-                      </div>
-                      {formik.errors.gender && (
-                        <div className="text-danger">
-                          {formik.errors.gender}
                         </div>
                       )}
                     </Form.Group>
